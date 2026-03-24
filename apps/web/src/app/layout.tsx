@@ -3,6 +3,7 @@ import { Syne, JetBrains_Mono } from 'next/font/google'
 import '@/app/globals.css'
 import { Providers } from '@/app/providers'
 import { Navbar } from '@/app/components/Navbar'
+import { Footer } from '@/app/components/Footer'
 
 const syne = Syne({
   variable: '--font-syne',
@@ -28,10 +29,11 @@ export default function RootLayout({
 }) {
   return (
     <html suppressHydrationWarning lang="en" className={`${syne.variable} ${jetbrainsMono.variable}`}>
-      <body className="min-h-screen font-sans antialiased bg-charcoal text-text">
+      <body className="min-h-screen font-sans antialiased bg-charcoal text-text flex flex-col">
         <Providers>
           <Navbar />
           <main className="flex-1">{children}</main>
+          <Footer />
         </Providers>
       </body>
     </html>
