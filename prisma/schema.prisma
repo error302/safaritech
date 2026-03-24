@@ -8,20 +8,22 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(uuid())
-  email         String   @unique
-  name          String?
-  passwordHash  String?
-  phone         String?
-  role          String   @default("CUSTOMER")
-  createdAt     DateTime @default(now())
+  id              String    @id @default(uuid())
+  email           String    @unique
+  name            String?
+  passwordHash    String?
+  phone           String?
+  role            String    @default("CUSTOMER")
+  resetToken      String?
+  resetTokenExpiry DateTime?
+  createdAt       DateTime  @default(now())
 
-  orders        Order[]
-  addresses     Address[]
-  wishlistItems WishlistItem[]
-  cartItems     CartItem[]
-  reviews       Review[]
-  blogPosts     BlogPost[]
+  orders          Order[]
+  addresses       Address[]
+  wishlistItems   WishlistItem[]
+  cartItems       CartItem[]
+  reviews         Review[]
+  blogPosts       BlogPost[]
 }
 
 model Product {
