@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --electric: 189 100% 55%;
+    --neon: 189 100% 60%;
+    --blue: 219 80% 44%;
+    --charcoal: 0 0% 3.5%;
+    --surface: 0 0% 9%;
+    --card: 0 0% 10%;
+    --border: 240 4.8% 18.4%;
+    --border-bright: 240 4.3% 19.8%;
+    --text: 0 0% 92%;
+    --muted: 240 4.8% 41.6%;
+    --accent: 20 85% 62%;
+    --green: 142 72% 47%;
+    --yellow: 49 91% 60%;
+    --red: 5 77% 60%;
+    --radius: 0.5rem;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--charcoal));
+    color: hsl(var(--text));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,245,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,245,255,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: -1;
+}

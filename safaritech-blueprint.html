@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ Voltique — Ultimate Production Blueprint</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --electric: #00f5ff;
+    --neon: #0ff;
+    --blue: #0057ff;
+    --charcoal: #0d0d0f;
+    --surface: #111318;
+    --card: #16191f;
+    --border: #1f2530;
+    --border-bright: #2a3240;
+    --text: #e8eaf0;
+    --muted: #6b7585;
+    --accent: #ff6b35;
+    --green: #00e676;
+    --yellow: #ffd740;
+    --red: #ff4444;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--charcoal);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── GRID NOISE BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,245,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,245,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 80px 0 60px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 300px;
+    background: radial-gradient(ellipse, rgba(0,87,255,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,245,255,0.08);
+    border: 1px solid rgba(0,245,255,0.2);
+    color: var(--electric);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 3px;
+    margin-bottom: 24px;
+  }
+
+  .badge::before { content: '▶'; font-size: 8px; }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(48px, 7vw, 80px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+  }
+
+  h1 span.volt { color: var(--electric); }
+  h1 span.ique { color: var(--text); }
+
+  .hero-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hero-desc {
+    font-size: 16px;
+    color: #8892a4;
+    max-width: 560px;
+    line-height: 1.8;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    margin-top: 36px;
+    flex-wrap: wrap;
+  }
+
+  .hero-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .hero-stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--electric);
+  }
+
+  .hero-stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── TOC ── */
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--electric);
+    padding: 28px 32px;
+    margin: 48px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 40px;
+  }
+
+  .toc-title {
+    grid-column: 1/-1;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--electric);
+    margin-bottom: 12px;
+  }
+
+  .toc a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+    padding: 3px 0;
+  }
+
+  .toc a:hover { color: var(--electric); }
+  .toc a::before { content: attr(data-num); color: var(--border-bright); font-size: 10px; min-width: 20px; }
+
+  /* ── SECTION ── */
+  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--electric);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--border-bright), transparent);
+    max-width: 200px;
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(26px, 4vw, 38px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 32px;
+    line-height: 1.1;
+  }
+
+  h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  /* ── STACK TABLE ── */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .stack-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .stack-card:hover { border-color: var(--border-bright); }
+
+  .stack-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--electric), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .stack-card:hover::before { opacity: 1; }
+
+  .stack-cat {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .stack-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(31,37,48,0.6);
+  }
+
+  .stack-item:last-child { border-bottom: none; }
+
+  .stack-tech {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--electric);
+    font-weight: 500;
+    min-width: 160px;
+  }
+
+  .stack-why { font-size: 13px; color: #6b7585; line-height: 1.5; }
+
+  /* ── CODE BLOCK ── */
+  pre {
+    background: #0a0c10;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blue);
+    padding: 20px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #a8b4c8;
+    overflow-x: auto;
+    line-height: 1.7;
+    margin: 16px 0;
+    border-radius: 2px;
+  }
+
+  .kw { color: #569cd6; }
+  .str { color: #ce9178; }
+  .cmt { color: #4a5568; }
+  .fn { color: #dcdcaa; }
+  .num { color: #b5cea8; }
+  .type { color: #4ec9b0; }
+  .var { color: #9cdcfe; }
+  .sym { color: var(--electric); }
+
+  /* ── PHASE TIMELINE ── */
+  .phases { display: flex; flex-direction: column; gap: 0; }
+
+  .phase {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 0;
+  }
+
+  .phase-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .phase-dot {
+    width: 36px; height: 36px;
+    background: var(--card);
+    border: 2px solid var(--electric);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--electric);
+    flex-shrink: 0;
+    z-index: 1;
+  }
+
+  .phase-line {
+    width: 2px;
+    flex: 1;
+    min-height: 24px;
+    background: var(--border);
+    margin: 4px 0;
+  }
+
+  .phase:last-child .phase-line { display: none; }
+
+  .phase-body {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    margin-left: 8px;
+  }
+
+  .phase-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .phase-days {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--electric);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .phase-tasks { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+
+  .phase-tasks li {
+    font-size: 13px;
+    color: #8892a4;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.5;
+  }
+
+  .phase-tasks li::before {
+    content: '→';
+    color: var(--electric);
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  /* ── FOLDER TREE ── */
+  .tree {
+    background: #0a0c10;
+    border: 1px solid var(--border);
+    padding: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 2;
+  }
+
+  .tree .dir { color: var(--electric); font-weight: 500; }
+  .tree .file { color: #8892a4; }
+  .tree .cmt2 { color: #3a4555; font-style: italic; }
+
+  /* ── DB SCHEMA ── */
+  .schema-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+  .schema-table {
+    background: var(--card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .schema-head {
+    background: rgba(0,87,255,0.12);
+    border-bottom: 1px solid rgba(0,87,255,0.2);
+    padding: 10px 14px;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--electric);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .schema-head::before { content: '⬡'; font-size: 10px; }
+
+  .schema-field {
+    padding: 6px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(31,37,48,0.5);
+    gap: 8px;
+  }
+
+  .schema-field:last-child { border-bottom: none; }
+  .field-name { color: #9cdcfe; }
+  .field-type { color: #4ec9b0; font-size: 10px; }
+  .field-pk { color: var(--yellow); font-size: 9px; letter-spacing: 0.05em; }
+
+  /* ── FEATURE GRID ── */
+  .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+  .feature-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-icon {
+    font-size: 22px;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .feature-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .feature-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+  /* ── CHECKLIST ── */
+  .checklist { display: flex; flex-direction: column; gap: 6px; }
+
+  .check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    color: #8892a4;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(31,37,48,0.4);
+  }
+
+  .check-box {
+    width: 16px; height: 16px;
+    border: 1px solid var(--green);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 10px;
+    color: var(--green);
+    margin-top: 1px;
+  }
+
+  /* ── RULES ── */
+  .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .rule {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .rule-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: rgba(0,245,255,0.1);
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .rule-text { font-size: 13px; color: #8892a4; }
+  .rule-text strong { color: var(--text); font-weight: 600; display: block; margin-bottom: 2px; }
+
+  /* ── PAYMENT SECTION ── */
+  .payment-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .pay-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 24px;
+  }
+
+  .pay-card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .pay-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+
+  .pay-badge.stripe { background: rgba(99,91,255,0.15); color: #8b8bff; border: 1px solid rgba(99,91,255,0.3); }
+  .pay-badge.mpesa { background: rgba(0,230,118,0.1); color: var(--green); border: 1px solid rgba(0,230,118,0.2); }
+
+  /* ── DEPLOY STEPS ── */
+  .deploy-steps { display: flex; flex-direction: column; gap: 8px; }
+
+  .deploy-step {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+  }
+
+  .step-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--electric);
+    background: rgba(0,245,255,0.06);
+    width: 32px; height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .step-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .step-desc { font-size: 12px; color: var(--muted); }
+
+  /* ── SCALING LADDER ── */
+  .scale-phases { display: flex; flex-direction: column; gap: 8px; }
+
+  .scale-phase {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 14px 20px;
+  }
+
+  .scale-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 10px;
+    border-radius: 2px;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  .scale-tag.p1 { background: rgba(0,230,118,0.1); color: var(--green); border: 1px solid rgba(0,230,118,0.2); }
+  .scale-tag.p2 { background: rgba(255,215,64,0.1); color: var(--yellow); border: 1px solid rgba(255,215,64,0.2); }
+  .scale-tag.p3 { background: rgba(0,87,255,0.15); color: #6699ff; border: 1px solid rgba(0,87,255,0.3); }
+  .scale-tag.p4 { background: rgba(255,107,53,0.1); color: var(--accent); border: 1px solid rgba(255,107,53,0.2); }
+
+  .scale-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; min-width: 180px; }
+  .scale-detail { font-size: 13px; color: var(--muted); }
+
+  /* ── BRAND ── */
+  .brand-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .color-swatches { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+  .swatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .swatch-box {
+    width: 52px; height: 52px;
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .swatch-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .typo-sample {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .typo-row { display: flex; align-items: baseline; gap: 12px; }
+  .typo-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); min-width: 40px; }
+
+  /* ── DIVIDER ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 8px 0 24px;
+  }
+
+  .divider-line { flex: 1; height: 1px; background: var(--border); }
+  .divider-text { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  /* ── CALLOUT ── */
+  .callout {
+    background: rgba(0,245,255,0.04);
+    border: 1px solid rgba(0,245,255,0.15);
+    border-left: 3px solid var(--electric);
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 13px;
+    color: #8892a4;
+    line-height: 1.7;
+  }
+
+  .callout strong { color: var(--electric); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 48px 0;
+    text-align: center;
+  }
+
+  .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+
+  .footer-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .stack-grid, .schema-grid, .feature-grid, .rules, .payment-cards, .brand-grid { grid-template-columns: 1fr; }
+    .toc { grid-template-columns: 1fr; }
+    .phase { grid-template-columns: 60px 1fr; }
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: white; color: black; }
+    body::before { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="wrap">
+  <div class="hero">
+    <div class="badge">Production Blueprint v1.0</div>
+    <h1><span class="volt">Volt</span><span class="ique">ique</span></h1>
+    <p class="hero-sub">Electronics Brand · Full-Stack · Kenya Market · Cloud Native</p>
+    <p class="hero-desc">The complete end-to-end architecture, stack, database, deployment, and scaling roadmap for a serious electronics e-commerce platform built to survive real traffic.</p>
+    <div class="hero-meta">
+      <div class="hero-stat"><span class="hero-stat-num">8</span><span class="hero-stat-label">Build Phases</span></div>
+      <div class="hero-stat"><span class="hero-stat-num">40+</span><span class="hero-stat-label">Pages & Routes</span></div>
+      <div class="hero-stat"><span class="hero-stat-num">12</span><span class="hero-stat-label">DB Tables</span></div>
+      <div class="hero-stat"><span class="hero-stat-num">2</span><span class="hero-stat-label">Payment Rails</span></div>
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">Table of Contents</div>
+    <a href="#stack" data-num="01">The Tech Stack</a>
+    <a href="#structure" data-num="02">Folder Structure</a>
+    <a href="#routes" data-num="03">Pages & Routes</a>
+    <a href="#database" data-num="04">Database Schema</a>
+    <a href="#payments" data-num="05">Payment Integration</a>
+    <a href="#features" data-num="06">Advanced Features</a>
+    <a href="#phases" data-num="07">Build Phases</a>
+    <a href="#security" data-num="08">Security Hardening</a>
+    <a href="#deploy" data-num="09">Deployment Plan</a>
+    <a href="#scaling" data-num="10">Scaling Strategy</a>
+    <a href="#brand" data-num="11">Brand System</a>
+    <a href="#rules" data-num="12">Golden Rules</a>
+  </div>
+
+  <!-- ── 01 STACK ── -->
+  <section id="stack">
+    <div class="section-label">01 — Core Architecture</div>
+    <h2>The Tech Stack</h2>
+
+    <div class="stack-grid">
+      <div class="stack-card">
+        <div class="stack-cat">Frontend</div>
+        <div class="stack-item"><span class="stack-tech">Next.js 14+ App Router</span><span class="stack-why">SSR, SSG, ISR, edge runtime, file-based routing</span></div>
+        <div class="stack-item"><span class="stack-tech">TypeScript</span><span class="stack-why">Type safety from DB to UI, zero runtime surprises</span></div>
+        <div class="stack-item"><span class="stack-tech">Tailwind CSS</span><span class="stack-why">Utility-first, dark mode, no CSS bloat</span></div>
+        <div class="stack-item"><span class="stack-tech">shadcn/ui</span><span class="stack-why">Copy-paste components, fully yours to own</span></div>
+        <div class="stack-item"><span class="stack-tech">Framer Motion</span><span class="stack-why">Production animations, gesture support</span></div>
+        <div class="stack-item"><span class="stack-tech">Zustand</span><span class="stack-why">Global state — cart, wishlist, UI state</span></div>
+        <div class="stack-item"><span class="stack-tech">TanStack Query</span><span class="stack-why">Server state, caching, background refetch</span></div>
+        <div class="stack-item"><span class="stack-tech">React Hook Form + Zod</span><span class="stack-why">Performant forms with schema validation</span></div>
+      </div>
+
+      <div class="stack-card">
+        <div class="stack-cat">Backend</div>
+        <div class="stack-item"><span class="stack-tech">tRPC</span><span class="stack-why">End-to-end type safety, no REST boilerplate</span></div>
+        <div class="stack-item"><span class="stack-tech">Auth.js v5</span><span class="stack-why">OAuth + credentials, JWT, edge-compatible</span></div>
+        <div class="stack-item"><span class="stack-tech">Prisma ORM</span><span class="stack-why">Type-safe DB queries, auto migrations</span></div>
+        <div class="stack-item"><span class="stack-tech">PostgreSQL (Neon)</span><span class="stack-why">Serverless Postgres, branching, auto-scale</span></div>
+        <div class="stack-item"><span class="stack-tech">Redis (Upstash)</span><span class="stack-why">Sessions, rate limiting, cart caching</span></div>
+        <div class="stack-item"><span class="stack-tech">Stripe</span><span class="stack-why">Cards, subscriptions, webhooks</span></div>
+        <div class="stack-item"><span class="stack-tech">M-Pesa Daraja API</span><span class="stack-why">STK Push, C2B, Lipa na M-Pesa for Kenya</span></div>
+        <div class="stack-item"><span class="stack-tech">Cloudflare R2</span><span class="stack-why">Product images, S3-compatible, cheap egress</span></div>
+      </div>
+
+      <div class="stack-card">
+        <div class="stack-cat">DevOps & Infrastructure</div>
+        <div class="stack-item"><span class="stack-tech">Google Cloud VM</span><span class="stack-why">Main hosting, full control, cost-effective</span></div>
+        <div class="stack-item"><span class="stack-tech">Docker + Compose</span><span class="stack-why">Containerized, reproducible builds</span></div>
+        <div class="stack-item"><span class="stack-tech">NGINX</span><span class="stack-why">Reverse proxy, SSL termination, static assets</span></div>
+        <div class="stack-item"><span class="stack-tech">Let's Encrypt</span><span class="stack-why">Free automated HTTPS certificates</span></div>
+        <div class="stack-item"><span class="stack-tech">Cloudflare DNS + CDN</span><span class="stack-why">DDoS protection, global edge caching</span></div>
+        <div class="stack-item"><span class="stack-tech">GitHub Actions</span><span class="stack-why">CI/CD — lint, test, build, auto deploy</span></div>
+      </div>
+
+      <div class="stack-card">
+        <div class="stack-cat">Monitoring & Observability</div>
+        <div class="stack-item"><span class="stack-tech">Sentry</span><span class="stack-why">Error tracking, performance tracing</span></div>
+        <div class="stack-item"><span class="stack-tech">PostHog</span><span class="stack-why">Analytics, funnels, feature flags, session replay</span></div>
+        <div class="stack-item"><span class="stack-tech">Axiom</span><span class="stack-why">Structured logs, queryable, cheap</span></div>
+        <div class="stack-item"><span class="stack-tech">Resend + React Email</span><span class="stack-why">Transactional email with React templates</span></div>
+        <div class="stack-item"><span class="stack-tech">Doppler</span><span class="stack-why">Centralized secrets management across envs</span></div>
+        <div class="stack-item"><span class="stack-tech">Vitest + Playwright</span><span class="stack-why">Unit, integration, and E2E testing</span></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Why this beats Express + JWT:</strong> tRPC gives you end-to-end TypeScript types — your frontend knows exactly what your backend returns at compile time, not runtime. Auth.js handles CSRF, session rotation, and OAuth out of the box. The days of hand-rolling JWT auth are over.
+    </div>
+  </section>
+
+  <!-- ── 02 STRUCTURE ── -->
+  <section id="structure">
+    <div class="section-label">02 — Monorepo</div>
+    <h2>Folder Structure</h2>
+
+    <div class="tree">
+<span class="dir">voltique/</span>
+├── <span class="dir">apps/</span>
+│   ├── <span class="dir">web/</span>                         <span class="cmt2"># Next.js frontend</span>
+│   │   ├── <span class="dir">src/</span>
+│   │   │   ├── <span class="dir">app/</span>                     <span class="cmt2"># App Router pages</span>
+│   │   │   │   ├── <span class="dir">(marketing)/</span>         <span class="cmt2"># Home, about, blog</span>
+│   │   │   │   ├── <span class="dir">(shop)/</span>              <span class="cmt2"># Shop, product pages</span>
+│   │   │   │   ├── <span class="dir">(auth)/</span>              <span class="cmt2"># Login, register, forgot-pw</span>
+│   │   │   │   ├── <span class="dir">(customer)/</span>          <span class="cmt2"># Dashboard, orders, wishlist</span>
+│   │   │   │   ├── <span class="dir">(admin)/</span>             <span class="cmt2"># Admin panel - RBAC protected</span>
+│   │   │   │   └── <span class="dir">api/</span>                 <span class="cmt2"># API routes + tRPC handler</span>
+│   │   │   ├── <span class="dir">components/</span>
+│   │   │   │   ├── <span class="dir">ui/</span>                  <span class="cmt2"># shadcn components</span>
+│   │   │   │   ├── <span class="dir">shop/</span>                <span class="cmt2"># ProductCard, Cart, Filters</span>
+│   │   │   │   ├── <span class="dir">admin/</span>               <span class="cmt2"># Admin-specific components</span>
+│   │   │   │   └── <span class="dir">shared/</span>              <span class="cmt2"># Navbar, Footer, Layout</span>
+│   │   │   ├── <span class="dir">server/</span>
+│   │   │   │   ├── <span class="file">db.ts</span>                <span class="cmt2"># Prisma client singleton</span>
+│   │   │   │   ├── <span class="file">auth.ts</span>              <span class="cmt2"># Auth.js config</span>
+│   │   │   │   ├── <span class="file">redis.ts</span>             <span class="cmt2"># Upstash Redis client</span>
+│   │   │   │   └── <span class="dir">routers/</span>             <span class="cmt2"># tRPC routers</span>
+│   │   │   │       ├── <span class="file">product.ts</span>
+│   │   │   │       ├── <span class="file">order.ts</span>
+│   │   │   │       ├── <span class="file">user.ts</span>
+│   │   │   │       ├── <span class="file">cart.ts</span>
+│   │   │   │       └── <span class="file">payment.ts</span>
+│   │   │   ├── <span class="dir">lib/</span>                     <span class="cmt2"># utils, formatters, constants</span>
+│   │   │   ├── <span class="dir">hooks/</span>                   <span class="cmt2"># Custom React hooks</span>
+│   │   │   ├── <span class="dir">stores/</span>                  <span class="cmt2"># Zustand: cart, ui, auth</span>
+│   │   │   └── <span class="dir">types/</span>                   <span class="cmt2"># Global TypeScript types</span>
+│   │   └── <span class="file">next.config.ts</span>
+│
+├── <span class="dir">prisma/</span>
+│   ├── <span class="file">schema.prisma</span>
+│   └── <span class="dir">migrations/</span>
+│
+├── <span class="dir">docker/</span>
+│   ├── <span class="file">Dockerfile</span>
+│   └── <span class="file">docker-compose.yml</span>
+│
+├── <span class="dir">nginx/</span>
+│   └── <span class="file">nginx.conf</span>
+│
+├── <span class="dir">.github/workflows/</span>
+│   ├── <span class="file">ci.yml</span>                      <span class="cmt2"># Lint, test, build</span>
+│   └── <span class="file">deploy.yml</span>                  <span class="cmt2"># Auto-deploy on main merge</span>
+│
+├── <span class="file">.env.local</span>                      <span class="cmt2"># Never commit this</span>
+├── <span class="file">.env.example</span>                    <span class="cmt2"># Commit this as reference</span>
+└── <span class="file">README.md</span>
+    </div>
+  </section>
+
+  <!-- ── 03 ROUTES ── -->
+  <section id="routes">
+    <div class="section-label">03 — Sitemap</div>
+    <h2>Pages & Routes</h2>
+
+    <div class="stack-grid">
+      <div class="stack-card">
+        <div class="stack-cat">🌐 Public / Marketing</div>
+        <div class="stack-item"><span class="stack-tech">/</span><span class="stack-why">Homepage — hero, categories, bestsellers, blog teaser</span></div>
+        <div class="stack-item"><span class="stack-tech">/shop</span><span class="stack-why">Full product catalog with filters + sort</span></div>
+        <div class="stack-item"><span class="stack-tech">/shop/[category]</span><span class="stack-why">Category landing — phones, laptops, audio etc.</span></div>
+        <div class="stack-item"><span class="stack-tech">/product/[slug]</span><span class="stack-why">Product detail — images, specs, reviews, buy</span></div>
+        <div class="stack-item"><span class="stack-tech">/blog</span><span class="stack-why">Tech articles, SEO-optimized</span></div>
+        <div class="stack-item"><span class="stack-tech">/blog/[slug]</span><span class="stack-why">Article detail with schema.org markup</span></div>
+        <div class="stack-item"><span class="stack-tech">/about</span><span class="stack-why">Brand story, team, mission</span></div>
+        <div class="stack-item"><span class="stack-tech">/contact</span><span class="stack-why">Form + WhatsApp + map</span></div>
+        <div class="stack-item"><span class="stack-tech">/faq</span><span class="stack-why">Accordion FAQ with schema markup</span></div>
+        <div class="stack-item"><span class="stack-tech">/track-order</span><span class="stack-why">Guest order tracking by email + order ID</span></div>
+        <div class="stack-item"><span class="stack-tech">/deals</span><span class="stack-why">Flash sale countdown page</span></div>
+      </div>
+
+      <div class="stack-card">
+        <div class="stack-cat">👤 Customer (Auth Required)</div>
+        <div class="stack-item"><span class="stack-tech">/login</span><span class="stack-why">Email/pass + Google OAuth</span></div>
+        <div class="stack-item"><span class="stack-tech">/register</span><span class="stack-why">Sign up + email verification</span></div>
+        <div class="stack-item"><span class="stack-tech">/forgot-password</span><span class="stack-why">Resend password reset email</span></div>
+        <div class="stack-item"><span class="stack-tech">/cart</span><span class="stack-why">Cart summary, quantities, coupon code</span></div>
+        <div class="stack-item"><span class="stack-tech">/checkout</span><span class="stack-why">Address, payment selection, order summary</span></div>
+        <div class="stack-item"><span class="stack-tech">/checkout/success</span><span class="stack-why">Confirmation + receipt email trigger</span></div>
+        <div class="stack-item"><span class="stack-tech">/dashboard</span><span class="stack-why">Account overview, recent activity</span></div>
+        <div class="stack-item"><span class="stack-tech">/orders</span><span class="stack-why">Order history, status tracking</span></div>
+        <div class="stack-item"><span class="stack-tech">/orders/[id]</span><span class="stack-why">Single order detail + timeline</span></div>
+        <div class="stack-item"><span class="stack-tech">/wishlist</span><span class="stack-why">Saved products, move to cart</span></div>
+        <div class="stack-item"><span class="stack-tech">/settings</span><span class="stack-why">Profile, addresses, password</span></div>
+      </div>
+
+      <div class="stack-card" style="grid-column: 1/-1;">
+        <div class="stack-cat">🛠 Admin Panel (RBAC Protected)</div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;">
+          <div class="stack-item"><span class="stack-tech">/admin</span><span class="stack-why">KPI dashboard overview</span></div>
+          <div class="stack-item"><span class="stack-tech">/admin/products</span><span class="stack-why">Manage products, bulk import</span></div>
+          <div class="stack-item"><span class="stack-tech">/admin/products/new</span><span class="stack-why">Add product + image upload</span></div>
+          <div class="stack-item"><span class="stack-tech">/admin/orders</span><span class="stack-why">All orders, status management</span></div>
+          <div class="stack-item"><span class="stack-tech">/admin/users</span><span class="stack-why">User management, roles</span></div>
+          <div class="stack-item"><span class="stack-tech">/admin/blog</span><span class="stack-why">Rich text editor, SEO fields</span></div>
+          <div class="stack-item"><span class="stack-tech">/admin/analytics</span><span class="stack-why">Revenue, conversions, funnels</span></div>
+          <div class="stack-item"><span class="stack-tech">/admin/settings</span><span class="stack-why">Promo codes, shipping rates</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 04 DATABASE ── -->
+  <section id="database">
+    <div class="section-label">04 — Data Layer</div>
+    <h2>Database Schema</h2>
+
+    <div class="schema-grid">
+      <div class="schema-table">
+        <div class="schema-head">users</div>
+        <div class="schema-field"><span class="field-name">id</span><span class="field-type">UUID <span class="field-pk">PK</span></span></div>
+        <div class="schema-field"><span class="field-name">name</span><span class="field-type">VARCHAR</span></div>
+        <div class="schema-field"><span class="field-name">email</span><span class="field-type">VARCHAR UNIQUE</span></div>
+        <div class="schema-field"><span class="field-name">password</span><span class="field-type">VARCHAR (hashed)</span></div>
+        <div class="schema-field"><span class="field-name">role</span><span class="field-type">ENUM</span></div>
+        <div class="schema-field"><span class="field-name">phone</span><span class="field-type">VARCHAR</span></div>
+        <div class="schema-field"><span class="field-name">verified_at</span><span class="field-type">TIMESTAMP</span></div>
+        <div class="schema-field"><span class="field-name">created_at</span><span class="field-type">TIMESTAMP</span></div>
+      </div>
+
+      <div class="schema-table">
+        <div class="schema-head">products</div>
+        <div class="schema-field"><span class="field-name">id</span><span class="field-type">UUID <span class="field-pk">PK</span></span></div>
+        <div class="schema-field"><span class="field-name">name</span><span class="field-type">VARCHAR</span></div>
+        <div class="schema-field"><span class="field-name">slug</span><span class="field-type">VARCHAR UNIQUE</span></div>
+        <div class="schema-field"><span class="field-name">description</span><span class="field-type">TEXT</span></div>
+        <div class="schema-field"><span class="field-name">price</span><span class="field-type">DECIMAL</span></div>
+        <div class="schema-field"><span class="field-name">sale_price</span><span class="field-type">DECIMAL</span></div>
+        <div class="schema-field"><span class="field-name">stock</span><span class="field-type">INTEGER</span></div>
+        <div class="schema-field"><span class="field-name">images</span><span class="field-type">TEXT[]</span></div>
+        <div class="schema-field"><span class="field-name">specs</span><span class="field-type">JSONB</span></div>
+        <div class="schema-field"><span class="field-name">category_id</span><span class="field-type">UUID <span class="field-pk">FK</span></span></div>
+        <div class="schema-field"><span class="field-name">brand</span><span class="field-type">VARCHAR</span></div>
+        <div class="schema-field"><span class="field-name">is_featured</span><span class="field-type">BOOLEAN</span></div>
+      </div>
+
+      <div class="schema-table">
+        <div class="schema-head">orders</div>
+        <div class="schema-field"><span class="field-name">id</span><span class="field-type">UUID <span class="field-pk">PK</span></span></div>
+        <div class="schema-field"><span class="field-name">user_id</span><span class="field-type">UUID <span class="field-pk">FK</span></span></div>
+        <div class="schema-field"><span class="field-name">total</span><span class="field-type">DECIMAL</span></div>
+        <div class="schema-field"><span class="field-name">payment_method</span><span class="field-type">ENUM</span></div>
+        <div class="schema-field"><span class="field-name">payment_status</span><span class="field-type">ENUM</span></div>
+        <div class="schema-field"><span class="field-name">order_status</span><span class="field-type">ENUM</span></div>
+        <div class="schema-field"><span class="field-name">mpesa_ref</span><span class="field-type">VARCHAR</span></div>
+        <div class="schema-field"><span class="field-name">stripe_id</span><span class="field-type">VARCHAR</span></div>
+        <div class="schema-field"><span class="field-name">shipping_address</span><span class="field-type">JSONB</span></div>
+        <div class="schema-field"><span class="field-name">created_at</span><span class="field-type">TIMESTAMP</span></div>
+      </div>
+
+      <div class="schema-table">
+        <div class="schema-head">order_items</div>
+        <div class="schema-field"><span class="field-name">id</span><span class="field-type">UUID <span class="field-pk">PK</span></span></div>
+        <div class="schema-field"><span class="field-name">order_id</span><span class="field-type">UUID <span class="field-pk">FK</span></span></div>
+        <div class="schema-field"><span class="field-name">product_id</span><span class="field-type">UUID <span class="field-pk">FK</span></span></div>
+        <div class="schema-field"><span class="field-name">quantity</span><span class="field-type">INTEGER</span></div>
+        <div class="schema-field"><span class="field-name">price_at_purchase</span><span class="field-type">DECIMAL</span></div>
+      </div>
+
+      <div class="schema-table">
+        <div class="schema-head">categories</div>
+        <div class="schema-field"><span class="field-name">id</span><span class="field-type">UUID <span class="field-pk">PK</span></span></div>
+        <div class="schema-field"><span class="field-name">name</span><span class="field-type">VARCHAR</span></div>
+        <div class="schema-field"><span class="field-name">slug</span><span class="field-type">VARCHAR UNIQUE</span></div>
+        <div class="schema-field"><span class="field-name">image</span><span class="field-type">VARCHAR</span></div>
+        <div class="schema-field"><span class="field-name">parent_id</span><span class="field-type">UUID (self-ref)</span></div>
+      </div>
+
+      <div class="schema-table">
+        <div class="schema-head">reviews</div>
+        <div class="schema-field"><span class="field-name">id</span><span class="field-type">UUID <span class="field-pk">PK</span></span></div>
+        <div class="schema-field"><span class="field-name">product_id</span><span class="field-type">UUID <span class="field-pk">FK</span></span></div>
+        <div class="schema-field"><span class="field-name">user_id</span><span class="field-type">UUID <span class="field-pk">FK</span></span></div>
+        <div class="schema-field"><span class="field-name">rating</span><span class="field-type">INTEGER (1-5)</span></div>
+        <div class="schema-field"><span class="field-name">title</span><span class="field-type">VARCHAR</span></div>
+        <div class="schema-field"><span class="field-name">body</span><span class="field-type">TEXT</span></div>
+        <div class="schema-field"><span class="field-name">verified</span><span class="field-type">BOOLEAN</span></div>
+      </div>
+
+      <div class="schema-table">
+        <div class="schema-head">wishlist</div>
+        <div class="schema-field"><span class="field-name">id</span><span class="field-type">UUID <span class="field-pk">PK</span></span></div>
+        <div class="schema-field"><span class="field-name">user_id</span><span class="field-type">UUID <span class="field-pk">FK</span></span></div>
+        <div class="schema-field"><span class="field-name">product_id</span><span class="field-type">UUID <span class="field-pk">FK</span></span></div>
+        <div class="schema-field"><span class="field-name">created_at</span><span class="field-type">TIMESTAMP</span></div>
+      </div>
+
+      <div class="schema-table">
+        <div class="schema-head">blog_posts</div>
+        <div class="schema-field"><span class="field-name">id</span><span class="field-type">UUID <span class="field-pk">PK</span></span></div>
+        <div class="schema-field"><span class="field-name">title</span><span class="field-type">VARCHAR</span></div>
+        <div class="schema-field"><span class="field-name">slug</span><span class="field-type">VARCHAR UNIQUE</span></div>
+        <div class="schema-field"><span class="field-name">content</span><span class="field-type">TEXT (MDX)</span></div>
+        <div class="schema-field"><span class="field-name">featured_image</span><span class="field-type">VARCHAR</span></div>
+        <div class="schema-field"><span class="field-name">seo_title</span><span class="field-type">VARCHAR</span></div>
+        <div class="schema-field"><span class="field-name">seo_desc</span><span class="field-type">VARCHAR</span></div>
+        <div class="schema-field"><span class="field-name">author_id</span><span class="field-type">UUID <span class="field-pk">FK</span></span></div>
+        <div class="schema-field"><span class="field-name">published_at</span><span class="field-type">TIMESTAMP</span></div>
+      </div>
+
+      <div class="schema-table">
+        <div class="schema-head">coupons</div>
+        <div class="schema-field"><span class="field-name">id</span><span class="field-type">UUID <span class="field-pk">PK</span></span></div>
+        <div class="schema-field"><span class="field-name">code</span><span class="field-type">VARCHAR UNIQUE</span></div>
+        <div class="schema-field"><span class="field-name">type</span><span class="field-type">ENUM (%, fixed)</span></div>
+        <div class="schema-field"><span class="field-name">value</span><span class="field-type">DECIMAL</span></div>
+        <div class="schema-field"><span class="field-name">min_order</span><span class="field-type">DECIMAL</span></div>
+        <div class="schema-field"><span class="field-name">uses_limit</span><span class="field-type">INTEGER</span></div>
+        <div class="schema-field"><span class="field-name">expires_at</span><span class="field-type">TIMESTAMP</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 05 PAYMENTS ── -->
+  <section id="payments">
+    <div class="section-label">05 — Payments</div>
+    <h2>Dual Payment Integration</h2>
+
+    <div class="payment-cards">
+      <div class="pay-card">
+        <div class="pay-card-head">
+          <span class="pay-badge stripe">Stripe</span>
+          <h3 style="margin:0; font-size:15px;">Card Payments</h3>
+        </div>
+        <div class="checklist">
+          <div class="check"><div class="check-box">✓</div>Stripe Checkout (hosted) for fast setup</div>
+          <div class="check"><div class="check-box">✓</div>Stripe Elements (custom UI) for branded experience</div>
+          <div class="check"><div class="check-box">✓</div>Webhook handler — verify signature, update order status</div>
+          <div class="check"><div class="check-box">✓</div>payment_intent.succeeded → mark order PAID</div>
+          <div class="check"><div class="check-box">✓</div>Stripe Customer Portal for refunds</div>
+          <div class="check"><div class="check-box">✓</div>Store stripe_customer_id on user record</div>
+        </div>
+      </div>
+
+      <div class="pay-card">
+        <div class="pay-card-head">
+          <span class="pay-badge mpesa">M-Pesa</span>
+          <h3 style="margin:0; font-size:15px;">Daraja API — Kenya</h3>
+        </div>
+        <div class="checklist">
+          <div class="check"><div class="check-box">✓</div>STK Push — prompt on customer's phone</div>
+          <div class="check"><div class="check-box">✓</div>Lipa na M-Pesa Online (Paybill/Till)</div>
+          <div class="check"><div class="check-box">✓</div>C2B callback URL → verify transaction</div>
+          <div class="check"><div class="check-box">✓</div>Store MpesaReceiptNumber on order</div>
+          <div class="check"><div class="check-box">✓</div>Poll transaction status (fallback)</div>
+          <div class="check"><div class="check-box">✓</div>Sandbox → production flow tested</div>
+        </div>
+      </div>
+    </div>
+
+    <pre><span class="cmt">// M-Pesa STK Push — tRPC mutation example</span>
+<span class="kw">export const</span> <span class="var">paymentRouter</span> = <span class="fn">createTRPCRouter</span>({
+  <span class="fn">initiateMpesa</span>: <span class="var">protectedProcedure</span>
+    .<span class="fn">input</span>(<span class="var">z</span>.<span class="fn">object</span>({ orderId: <span class="var">z</span>.<span class="fn">string</span>(), phone: <span class="var">z</span>.<span class="fn">string</span>() }))
+    .<span class="fn">mutation</span>(<span class="kw">async</span> ({ <span class="var">ctx</span>, <span class="var">input</span> }) => {
+      <span class="kw">const</span> <span class="var">order</span> = <span class="kw">await</span> <span class="var">ctx</span>.<span class="var">db</span>.<span class="var">order</span>.<span class="fn">findUniqueOrThrow</span>({ <span class="var">where</span>: { <span class="var">id</span>: <span class="var">input</span>.<span class="var">orderId</span> } });
+      <span class="kw">const</span> <span class="var">token</span> = <span class="kw">await</span> <span class="fn">getMpesaToken</span>();
+      <span class="kw">const</span> <span class="var">res</span> = <span class="kw">await</span> <span class="fn">stkPush</span>({ <span class="var">token</span>, <span class="var">phone</span>: <span class="var">input</span>.<span class="var">phone</span>, <span class="var">amount</span>: <span class="var">order</span>.<span class="var">total</span> });
+      <span class="kw">return</span> { <span class="var">checkoutRequestId</span>: <span class="var">res</span>.<span class="var">CheckoutRequestID</span> };
+    }),
+});</pre>
+  </section>
+
+  <!-- ── 06 FEATURES ── -->
+  <section id="features">
+    <div class="section-label">06 — Advanced Features</div>
+    <h2>Full Feature Set</h2>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <span class="feature-icon">🧠</span>
+        <div class="feature-title">AI Product Search</div>
+        <div class="feature-desc">Semantic search via pgvector. Users type natural language — "cheap earbuds under 2000 KES" — and get relevant results via embeddings.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">💬</span>
+        <div class="feature-title">AI Support Chatbot</div>
+        <div class="feature-desc">Claude API-powered chatbot for order tracking, product questions, and FAQs. Hands off to human support when needed.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🎯</span>
+        <div class="feature-title">Smart Recommendations</div>
+        <div class="feature-desc">"You may also like" and "Frequently bought together" via collaborative filtering on order data.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📈</span>
+        <div class="feature-title">Full SEO Suite</div>
+        <div class="feature-desc">Dynamic metadata, Schema.org product markup, auto-generated sitemap.xml, OpenGraph images via Next.js OG route, structured data for rich results.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">⚡</span>
+        <div class="feature-title">Performance</div>
+        <div class="feature-desc">ISR for product pages, Redis cache for hot data, Cloudflare CDN, next/image optimization, lazy loading. Target Lighthouse 95+.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📧</span>
+        <div class="feature-title">Email Flows</div>
+        <div class="feature-desc">Order confirmation, shipping updates, password reset, abandoned cart recovery — all as React Email templates via Resend.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🏷️</span>
+        <div class="feature-title">Promo & Coupons</div>
+        <div class="feature-desc">Percentage & fixed discounts, minimum order thresholds, expiry dates, single-use codes. Managed from admin panel.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📊</span>
+        <div class="feature-title">Admin Analytics</div>
+        <div class="feature-desc">Revenue charts, top-selling products, conversion funnels, geographic breakdown (Nairobi vs Coast vs rest). Built with Recharts.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🚚</span>
+        <div class="feature-title">Order Tracking</div>
+        <div class="feature-desc">Real-time order status timeline. Guest tracking by email + order ID. SMS updates via Africa's Talking API (Kenya-native).</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 07 PHASES ── -->
+  <section id="phases">
+    <div class="section-label">07 — Build Timeline</div>
+    <h2>Build Phases</h2>
+
+    <div class="phases">
+      <div class="phase">
+        <div class="phase-left">
+          <div class="phase-dot">1</div>
+          <div class="phase-line"></div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-title">Foundation & Setup</div>
+          <div class="phase-days">Days 1–2</div>
+          <ul class="phase-tasks">
+            <li>Scaffold Next.js with TypeScript, Tailwind, App Router</li>
+            <li>Install tRPC, Prisma, Auth.js, Zustand, TanStack Query, Zod</li>
+            <li>Set up monorepo structure, ESLint, Prettier, Husky pre-commit</li>
+            <li>Configure environment variables with Doppler</li>
+            <li>Init Git, push to GitHub, configure branch protection rules</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-left">
+          <div class="phase-dot">2</div>
+          <div class="phase-line"></div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-title">Database & Auth</div>
+          <div class="phase-days">Days 2–4</div>
+          <ul class="phase-tasks">
+            <li>Spin up Neon PostgreSQL, write full Prisma schema, run migrations</li>
+            <li>Configure Auth.js with Google OAuth + credentials provider</li>
+            <li>Set up tRPC context with session + db injection</li>
+            <li>Implement RBAC middleware — CUSTOMER, STAFF, ADMIN roles</li>
+            <li>Email verification flow via Resend</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-left">
+          <div class="phase-dot">3</div>
+          <div class="phase-line"></div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-title">Shop Core</div>
+          <div class="phase-days">Days 4–10</div>
+          <ul class="phase-tasks">
+            <li>Product listing page with filters (price, brand, category, rating) + sort</li>
+            <li>Product detail page — image gallery, specs table, add to cart</li>
+            <li>Cart — Zustand store + Redis persistence for logged-in users</li>
+            <li>Wishlist — optimistic add/remove</li>
+            <li>Search with autocomplete (debounced tRPC query)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-left">
+          <div class="phase-dot">4</div>
+          <div class="phase-line"></div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-title">Checkout & Payments</div>
+          <div class="phase-days">Days 10–14</div>
+          <ul class="phase-tasks">
+            <li>Multi-step checkout — address → payment method → confirm</li>
+            <li>Stripe Checkout integration + webhook handler + order update</li>
+            <li>M-Pesa Daraja STK Push + C2B callback route</li>
+            <li>Coupon code validation at checkout</li>
+            <li>Order confirmation email on payment success</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-left">
+          <div class="phase-dot">5</div>
+          <div class="phase-line"></div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-title">Admin Panel</div>
+          <div class="phase-days">Days 14–18</div>
+          <ul class="phase-tasks">
+            <li>Admin dashboard — revenue, orders, low stock alerts</li>
+            <li>Product CRUD — rich editor, image upload to R2, bulk CSV import</li>
+            <li>Order management — status updates, order timeline view</li>
+            <li>User management — role assignment, ban/unban</li>
+            <li>Blog CMS — rich text editor with MDX support</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-left">
+          <div class="phase-dot">6</div>
+          <div class="phase-line"></div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-title">Polish, SEO & Performance</div>
+          <div class="phase-days">Days 18–22</div>
+          <ul class="phase-tasks">
+            <li>Dynamic metadata exports on every page, OpenGraph image generation</li>
+            <li>Schema.org Product + BreadcrumbList + FAQ structured data</li>
+            <li>Sitemap.xml auto-generation, robots.txt config</li>
+            <li>Loading skeletons, error boundaries, empty states on all routes</li>
+            <li>Lighthouse audit — target 95+ performance, 100 SEO</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-left">
+          <div class="phase-dot">7</div>
+          <div class="phase-line"></div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-title">Testing & Security</div>
+          <div class="phase-days">Days 22–26</div>
+          <ul class="phase-tasks">
+            <li>E2E tests — full checkout flow (Stripe + M-Pesa), auth flows</li>
+            <li>Unit tests — tRPC routers, utility functions, Zod schemas</li>
+            <li>Rate limiting on auth + API routes via Upstash Redis</li>
+            <li>Security headers via next.config.ts (CSP, HSTS, X-Frame)</li>
+            <li>Stripe + M-Pesa webhook signature verification</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-left">
+          <div class="phase-dot">8</div>
+          <div class="phase-line"></div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-title">Deployment & Launch</div>
+          <div class="phase-days">Days 26–28</div>
+          <ul class="phase-tasks">
+            <li>Dockerize app, push image to Google Artifact Registry</li>
+            <li>Deploy to Google Cloud VM with NGINX + Let's Encrypt</li>
+            <li>Configure Cloudflare DNS, enable proxy, set up page rules</li>
+            <li>GitHub Actions CI/CD — auto deploy on main merge</li>
+            <li>Sentry + PostHog + Axiom connected. Ship it. 🚀</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 08 SECURITY ── -->
+  <section id="security">
+    <div class="section-label">08 — Security</div>
+    <h2>Security Hardening</h2>
+
+    <div class="stack-grid">
+      <div class="stack-card">
+        <div class="stack-cat">Application Layer</div>
+        <div class="checklist">
+          <div class="check"><div class="check-box">✓</div>All mutations protected by auth middleware in tRPC</div>
+          <div class="check"><div class="check-box">✓</div>Zod validation on ALL user inputs — no raw data hits the DB</div>
+          <div class="check"><div class="check-box">✓</div>CSRF protection built into Auth.js by default</div>
+          <div class="check"><div class="check-box">✓</div>Passwords hashed with bcrypt (salt rounds ≥ 12)</div>
+          <div class="check"><div class="check-box">✓</div>HttpOnly + SameSite cookies for sessions</div>
+          <div class="check"><div class="check-box">✓</div>Stripe + M-Pesa webhook signature verification on every callback</div>
+        </div>
+      </div>
+
+      <div class="stack-card">
+        <div class="stack-cat">Infrastructure Layer</div>
+        <div class="checklist">
+          <div class="check"><div class="check-box">✓</div>Upstash Redis rate limiting on /api/auth/* routes</div>
+          <div class="check"><div class="check-box">✓</div>Content-Security-Policy headers via next.config.ts</div>
+          <div class="check"><div class="check-box">✓</div>HSTS, X-Frame-Options, X-Content-Type-Options headers</div>
+          <div class="check"><div class="check-box">✓</div>NGINX blocks direct access to .env, .git paths</div>
+          <div class="check"><div class="check-box">✓</div>Cloudflare firewall rules block known bot patterns</div>
+          <div class="check"><div class="check-box">✓</div>GCP firewall — only 80/443 open publicly, SSH via IAP</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 09 DEPLOY ── -->
+  <section id="deploy">
+    <div class="section-label">09 — Deployment</div>
+    <h2>Google Cloud VM Deployment</h2>
+
+    <div class="deploy-steps">
+      <div class="deploy-step">
+        <div class="step-num">1</div>
+        <div><div class="step-title">Provision VM</div><div class="step-desc">e2-medium (2 vCPU, 4GB RAM) in us-central1 or africa-south1. Enable HTTP/HTTPS firewall. Attach static IP.</div></div>
+      </div>
+      <div class="deploy-step">
+        <div class="step-num">2</div>
+        <div><div class="step-title">Install Docker + NGINX</div><div class="step-desc">Install Docker CE, docker-compose, certbot. Configure NGINX as reverse proxy pointing to container port 3000.</div></div>
+      </div>
+      <div class="deploy-step">
+        <div class="step-num">3</div>
+        <div><div class="step-title">SSL Certificate</div><div class="step-desc"><code style="font-family: 'JetBrains Mono', monospace; font-size:11px;">certbot --nginx -d voltique.co.ke -d www.voltique.co.ke</code> — auto-renews via cron.</div></div>
+      </div>
+      <div class="deploy-step">
+        <div class="step-num">4</div>
+        <div><div class="step-title">Deploy App</div><div class="step-desc"><code style="font-family: 'JetBrains Mono', monospace; font-size:11px;">docker-compose up -d --build</code> — builds and starts Next.js app container in detached mode.</div></div>
+      </div>
+      <div class="deploy-step">
+        <div class="step-num">5</div>
+        <div><div class="step-title">Run DB Migrations</div><div class="step-desc"><code style="font-family: 'JetBrains Mono', monospace; font-size:11px;">npx prisma migrate deploy</code> — safe to run on every deploy, only applies pending migrations.</div></div>
+      </div>
+      <div class="deploy-step">
+        <div class="step-num">6</div>
+        <div><div class="step-title">Cloudflare DNS</div><div class="step-desc">Point A record to VM IP. Enable Cloudflare proxy (orange cloud). Set SSL to "Full (strict)". Enable auto-minify.</div></div>
+      </div>
+      <div class="deploy-step">
+        <div class="step-num">7</div>
+        <div><div class="step-title">GitHub Actions CI/CD</div><div class="step-desc">On push to main: typecheck → lint → test → build → SSH to VM → docker pull + restart. Zero-downtime via rolling restart.</div></div>
+      </div>
+    </div>
+
+    <pre><span class="cmt"># docker-compose.yml</span>
+<span class="var">version</span>: <span class="str">'3.8'</span>
+<span class="var">services</span>:
+  <span class="var">web</span>:
+    <span class="var">image</span>: <span class="str">gcr.io/voltique/app:latest</span>
+    <span class="var">ports</span>: [<span class="str">"3000:3000"</span>]
+    <span class="var">env_file</span>: .env.production
+    <span class="var">restart</span>: <span class="str">unless-stopped</span>
+    <span class="var">healthcheck</span>:
+      <span class="var">test</span>: [<span class="str">"CMD"</span>, <span class="str">"curl"</span>, <span class="str">"-f"</span>, <span class="str">"http://localhost:3000/api/health"</span>]
+      <span class="var">interval</span>: <span class="num">30s</span>
+      <span class="var">retries</span>: <span class="num">3</span></pre>
+  </section>
+
+  <!-- ── 10 SCALING ── -->
+  <section id="scaling">
+    <div class="section-label">10 — Growth</div>
+    <h2>Scaling Strategy</h2>
+
+    <div class="scale-phases">
+      <div class="scale-phase">
+        <span class="scale-tag p1">Phase 1</span>
+        <span class="scale-title">Single VM</span>
+        <span class="scale-detail">0–10K users/month. One GCP VM, Neon Postgres free tier, Upstash Redis free tier. Cost ~$10–20/mo.</span>
+      </div>
+      <div class="scale-phase">
+        <span class="scale-tag p2">Phase 2</span>
+        <span class="scale-title">VM Upgrade + CDN</span>
+        <span class="scale-detail">10K–100K users. Upgrade VM to e2-standard-4. Neon paid, Redis paid. Cloudflare caching aggressive. Cost ~$50–100/mo.</span>
+      </div>
+      <div class="scale-phase">
+        <span class="scale-tag p3">Phase 3</span>
+        <span class="scale-title">Load Balancer + Multiple VMs</span>
+        <span class="scale-detail">100K–500K users. GCP Load Balancer + 2-3 VMs. Cloud SQL PostgreSQL. Cloud Memorystore Redis. Cost ~$200–500/mo.</span>
+      </div>
+      <div class="scale-phase">
+        <span class="scale-tag p4">Phase 4</span>
+        <span class="scale-title">GKE + Microservices</span>
+        <span class="scale-detail">500K+ users. Google Kubernetes Engine. Separate services: auth, products, orders, payments. Autoscaling, zero downtime. Cost scales with usage.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 11 BRAND ── -->
+  <section id="brand">
+    <div class="section-label">11 — Identity</div>
+    <h2>Brand System</h2>
+
+    <div class="brand-grid">
+      <div class="stack-card">
+        <div class="stack-cat">Color Palette</div>
+        <div class="color-swatches">
+          <div class="swatch"><div class="swatch-box" style="background:#00f5ff;"></div><div class="swatch-label">Electric<br>#00F5FF</div></div>
+          <div class="swatch"><div class="swatch-box" style="background:#0057ff;"></div><div class="swatch-label">Volt Blue<br>#0057FF</div></div>
+          <div class="swatch"><div class="swatch-box" style="background:#0d0d0f; border: 1px solid #333;"></div><div class="swatch-label">Charcoal<br>#0D0D0F</div></div>
+          <div class="swatch"><div class="swatch-box" style="background:#16191f;"></div><div class="swatch-label">Surface<br>#16191F</div></div>
+          <div class="swatch"><div class="swatch-box" style="background:#ff6b35;"></div><div class="swatch-label">Accent<br>#FF6B35</div></div>
+          <div class="swatch"><div class="swatch-box" style="background:#e8eaf0;"></div><div class="swatch-label">Light<br>#E8EAF0</div></div>
+        </div>
+      </div>
+
+      <div class="stack-card">
+        <div class="stack-cat">Typography</div>
+        <div class="typo-sample">
+          <div class="typo-row">
+            <span class="typo-tag">H1</span>
+            <span style="font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; color: var(--text);">Syne 800</span>
+          </div>
+          <div class="typo-row">
+            <span class="typo-tag">H2</span>
+            <span style="font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--text);">Syne Bold 700</span>
+          </div>
+          <div class="typo-row">
+            <span class="typo-tag">Body</span>
+            <span style="font-family: 'DM Sans', sans-serif; font-size: 14px; color: #8892a4;">DM Sans Regular 400</span>
+          </div>
+          <div class="typo-row">
+            <span class="typo-tag">Code</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--electric);">JetBrains Mono</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 12 RULES ── -->
+  <section id="rules">
+    <div class="section-label">12 — Principles</div>
+    <h2>Golden Rules</h2>
+
+    <div class="rules">
+      <div class="rule"><div class="rule-num">01</div><div class="rule-text"><strong>Type Everything</strong>If TypeScript complains, fix it. Never @ts-ignore. Types are documentation that can't lie.</div></div>
+      <div class="rule"><div class="rule-num">02</div><div class="rule-text"><strong>Validate at the Boundary</strong>Zod schemas on every tRPC input. No raw user data ever touches the database.</div></div>
+      <div class="rule"><div class="rule-num">03</div><div class="rule-text"><strong>Verify Webhooks</strong>Always verify Stripe and M-Pesa webhook signatures. Never trust a callback without checking the signature.</div></div>
+      <div class="rule"><div class="rule-num">04</div><div class="rule-text"><strong>No Blank Screens</strong>Every route needs loading.tsx and error.tsx. Users should never stare at white.</div></div>
+      <div class="rule"><div class="rule-num">05</div><div class="rule-text"><strong>Secrets Are Sacred</strong>.env.local is gitignored. Doppler syncs to production. One leaked key = full breach.</div></div>
+      <div class="rule"><div class="rule-num">06</div><div class="rule-text"><strong>Test Payments in Sandbox</strong>Run full checkout flows in Stripe test mode AND M-Pesa sandbox before touching production keys.</div></div>
+      <div class="rule"><div class="rule-num">07</div><div class="rule-text"><strong>Deploy Early</strong>Push a landing page on Day 1. Real feedback from real users beats planning in isolation every time.</div></div>
+      <div class="rule"><div class="rule-num">08</div><div class="rule-text"><strong>Optimistic UI Always</strong>Cart add, wishlist toggle — update the UI instantly, sync to server in background. Never make users wait.</div></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo"><span style="color:var(--electric);">Volt</span>ique</div>
+    <p class="footer-sub">Ultimate Production Blueprint · Built for Kenya & Beyond</p>
+  </footer>
+</div>
+
+</body>
+</html>
