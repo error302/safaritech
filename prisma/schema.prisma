@@ -61,6 +61,8 @@ model Order {
   total             Int
   paymentStatus     String      @default("PENDING")
   paymentMethod     String
+  stripeId          String?
+  mpesaRef          String?
   createdAt         DateTime    @default(now())
 
   items             OrderItem[]
