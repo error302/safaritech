@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
-import { Search, Filter, Grid, List } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
+import { Search, Grid, List, ChevronDown } from 'lucide-react'
 
-const products = [
+const allProducts = [
   { id: '1', name: 'iPhone 15 Pro Max', price: 149999, category: 'phones', stock: 15 },
   { id: '2', name: 'MacBook Pro M3', price: 199999, category: 'laptops', stock: 8 },
   { id: '3', name: 'Sony WH-1000XM5', price: 34999, category: 'audio', stock: 25 },
@@ -13,20 +14,54 @@ const products = [
   { id: '6', name: 'AirPods Pro 2', price: 24999, category: 'audio', stock: 50 },
   { id: '7', name: 'Apple Watch Ultra 2', price: 89999, category: 'wearables', stock: 18 },
   { id: '8', name: 'iPad Pro 12.9"', price: 139999, category: 'tablets', stock: 10 },
+  { id: '9', name: 'Google Pixel 8', price: 99999, category: 'phones', stock: 15 },
+  { id: '10', name: 'Samsung Galaxy Buds2', price: 14999, category: 'audio', stock: 30 },
 ]
 
-const categories = ['All', 'phones', 'laptops', 'audio', 'wearables', 'tablets']
+const categories = [
+  { label: 'All', value: '' },
+  { label: 'Phones', value: 'phones' },
+  { label: 'Laptops', value: 'laptops' },
+  { label: 'Audio', value: 'audio' },
+  { label: 'Wearables', value: 'wearables' },
+  { label: 'Tablets', value: 'tablets' },
+]
 
-export default function Shop() {
+const sortOptions = [
+  { label: 'Featured', value: 'featured' },
+  { label: 'Price: Low to High', value: 'price-low' },
+  { label: 'Price: High to Low', value: 'price-high' },
+  { label: 'Name: A-Z', value: 'name' },
+]
+
+function ShopContent() {
+  const searchParams = useSearchParams()
+  const initialCategory = searchParams.get('category') || ''
+  
   const [search, setSearch] = useState('')
-  const [category, setCategory] = useState('All')
+  const [category, setCategory] = useState(initialCategory)
+  const [sortBy, setSortBy] = useState('featured')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
-  const filteredProducts = products.filter(p => {
-    const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase())
-    const matchesCategory = category === 'All' || p.category === category
-    return matchesSearch && matchesCategory
-  })
+  useEffect(() => {
+    const cat = searchParams.get('category')
+    if (cat) setCategory(cat)
+  }, [searchParams])
+
+  const filteredProducts = allProducts
+    .filter(p => {
+      const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase())
+      const matchesCategory = !category || p.category === category
+      return matchesSearch && matchesCategory
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'price-low': return a.price - b.price
+        case 'price-high': return b.price - a.price
+        case 'name': return a.name.localeCompare(b.name)
+        default: return 0
+      }
+    })
 
   return (
     <div className="min-h-screen py-8">
@@ -37,7 +72,7 @@ export default function Shop() {
         </div>
 
         {/* Filters */}
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted" />
             <input
@@ -49,22 +84,32 @@ export default function Shop() {
             />
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             <div className="flex gap-2 rounded-lg border border-border bg-card p-1">
-              {categories.slice(0, 4).map((cat) => (
+              {categories.map((cat) => (
                 <button
-                  key={cat}
-                  onClick={() => setCategory(cat)}
-                  className={`rounded-md px-3 py-1.5 text-sm capitalize transition-colors ${
-                    category === cat
+                  key={cat.value}
+                  onClick={() => setCategory(cat.value)}
+                  className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
+                    category === cat.value
                       ? 'bg-electric text-charcoal'
                       : 'text-muted hover:text-text'
                   }`}
                 >
-                  {cat}
+                  {cat.label}
                 </button>
               ))}
             </div>
+
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="rounded-lg border border-border bg-card px-3 py-2 text-sm focus:border-electric focus:outline-none"
+            >
+              {sortOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
             
             <div className="flex gap-1 rounded-lg border border-border bg-card p-1">
               <button
@@ -117,5 +162,17 @@ export default function Shop() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function Shop() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen py-8 flex items-center justify-center">
+        <p className="text-muted">Loading...</p>
+      </div>
+    }>
+      <ShopContent />
+    </Suspense>
   )
 }
