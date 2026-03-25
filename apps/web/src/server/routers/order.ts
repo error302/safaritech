@@ -39,6 +39,7 @@ export const orderRouter = router({
       const order = await ctx.prisma.order.create({
         data: {
           userId: ctx.session.user.id,
+          subtotal: total,
           total,
           paymentMethod: input.paymentMethod,
           paymentStatus: 'PENDING',

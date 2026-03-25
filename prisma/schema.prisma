@@ -14,6 +14,7 @@ model User {
   passwordHash    String?
   phone           String?
   role            String    @default("CUSTOMER")
+  stripeId        String?   @unique
   resetToken      String?
   resetTokenExpiry DateTime?
   createdAt       DateTime  @default(now())
@@ -32,6 +33,7 @@ model Product {
   name        String
   description String
   price       Int
+  salePrice   Int?
   stock       Int       @default(0)
   images      String    @default("")
   specs       String?   @default("{}")
@@ -50,6 +52,7 @@ model Category {
   id       String    @id @default(uuid())
   name     String    @unique
   slug     String    @unique
+  image    String?
   products Product[]
 }
 
@@ -59,10 +62,14 @@ model Order {
   userId            String
   status            String      @default("PENDING")
   total             Int
+  subtotal          Int
+  discount          Int         @default(0)
   paymentStatus     String      @default("PENDING")
   paymentMethod     String
   stripeId          String?
   mpesaRef          String?
+  couponId          String?
+  coupon            Coupon?     @relation(fields: [couponId], references: [id])
   createdAt         DateTime    @default(now())
 
   items             OrderItem[]
@@ -97,21 +104,21 @@ model Address {
 }
 
 model WishlistItem {
-  id        String  @id @default(uuid())
-  user      User    @relation(fields: [userId], references: [id])
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
   userId    String
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
   productId String
   createdAt DateTime @default(now())
 }
 
 model CartItem {
-  id        String  @id @default(uuid())
-  user      User    @relation(fields: [userId], references: [id])
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
   userId    String
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
   productId String
-  quantity  Int     @default(1)
+  quantity  Int      @default(1)
   createdAt DateTime @default(now())
 }
 
@@ -122,35 +129,41 @@ model Review {
   product   Product  @relation(fields: [productId], references: [id])
   productId String
   rating    Int
+  title     String?
   comment   String?
   createdAt DateTime @default(now())
 }
 
 model BlogPost {
-  id          String   @id @default(uuid())
-  title       String
-  slug        String   @unique
-  content     String
-  excerpt     String?
-  author      User     @relation(fields: [authorId], references: [id])
-  authorId    String
-  published   Boolean  @default(false)
-  publishedAt DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String    @id @default(uuid())
+  title        String
+  slug         String    @unique
+  content      String
+  excerpt      String?
+  featuredImage String?
+  seoTitle     String?
+  seoDesc      String?
+  author       User      @relation(fields: [authorId], references: [id])
+  authorId     String
+  published    Boolean   @default(false)
+  publishedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }
 
 model Coupon {
-  id            String   @id @default(uuid())
-  code          String   @unique
+  id            String    @id @default(uuid())
+  code          String    @unique
   description   String?
   discountType  String
   discountValue Int
   minOrderValue Int?
   maxDiscount   Int?
   usageLimit    Int?
-  usedCount     Int      @default(0)
+  usedCount     Int       @default(0)
   expiresAt     DateTime?
-  isActive      Boolean  @default(true)
-  createdAt     DateTime @default(now())
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+
+  orders        Order[]
 }
