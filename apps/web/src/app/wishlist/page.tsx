@@ -1,5 +1,9 @@
+'use client'
+
 import Link from 'next/link'
+import { useState } from 'react'
 import { Heart, ShoppingCart, Trash2 } from 'lucide-react'
+import { useCartStore } from '@/app/stores/cartStore'
 
 const wishlistItems = [
   { id: '1', name: 'iPhone 15 Pro Max', price: 149999, salePrice: 139999, category: 'phones' },
@@ -8,14 +12,30 @@ const wishlistItems = [
 ]
 
 export default function Wishlist() {
+  const [items, setItems] = useState(wishlistItems)
+  const addItem = useCartStore((state) => state.addItem)
+
+  const handleAddToCart = (item: typeof wishlistItems[0]) => {
+    addItem({
+      id: item.id,
+      name: item.name,
+      price: item.salePrice || item.price,
+      quantity: 1,
+    })
+  }
+
+  const handleRemove = (id: string) => {
+    setItems(items.filter(item => item.id !== id))
+  }
+
   return (
     <div className="min-h-screen py-8">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <h1 className="mb-8 text-3xl font-bold">My Wishlist</h1>
+        <h1 className="mb-8 text-3xl font-bold">My Wishlist ({items.length})</h1>
 
-        {wishlistItems.length > 0 ? (
+        {items.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {wishlistItems.map((item) => (
+            {items.map((item) => (
               <div key={item.id} className="rounded-xl border border-border bg-card overflow-hidden group">
                 <Link href={`/product/${item.id}`} className="block">
                   <div className="aspect-square bg-surface relative">
@@ -42,11 +62,17 @@ export default function Wishlist() {
                     )}
                   </div>
                   <div className="flex gap-2">
-                    <button className="btn btn-primary flex-1 py-2">
+                    <button 
+                      onClick={() => handleAddToCart(item)}
+                      className="btn btn-primary flex-1 py-2"
+                    >
                       <ShoppingCart className="mr-2 h-4 w-4" />
                       Add to Cart
                     </button>
-                    <button className="p-2 rounded-lg border border-border hover:border-red hover:bg-red/10 text-muted hover:text-red transition-colors">
+                    <button 
+                      onClick={() => handleRemove(item.id)}
+                      className="p-2 rounded-lg border border-border hover:border-red hover:bg-red/10 text-muted hover:text-red transition-colors"
+                    >
                       <Trash2 className="h-5 w-5" />
                     </button>
                   </div>

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ShoppingCart, CreditCard, Smartphone, Lock, ArrowLeft } from 'lucide-react'
+import { ShoppingCart, CreditCard, Smartphone, Lock, ArrowLeft, Tag, X, CheckCircle } from 'lucide-react'
 import { useCartStore } from '@/app/stores/cartStore'
 
 export default function Checkout() {
@@ -11,6 +11,9 @@ export default function Checkout() {
   const { items, total, clearCart } = useCartStore()
   const [loading, setLoading] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState<'mpesa' | 'card'>('mpesa')
+  const [couponCode, setCouponCode] = useState('')
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number } | null>(null)
+  const [couponError, setCouponError] = useState('')
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -24,7 +27,30 @@ export default function Checkout() {
 
   const cartTotal = total()
   const shipping = cartTotal > 10000 ? 0 : 500
-  const finalTotal = cartTotal + shipping
+  const discount = appliedCoupon ? appliedCoupon.discount : 0
+  const finalTotal = cartTotal + shipping - discount
+
+  const handleApplyCoupon = () => {
+    setCouponError('')
+    if (!couponCode.trim()) {
+      setCouponError('Please enter a coupon code')
+      return
+    }
+    
+    // Demo coupon validation
+    if (couponCode.toUpperCase() === 'WELCOME10') {
+      setAppliedCoupon({ code: 'WELCOME10', discount: Math.floor(cartTotal * 0.1) })
+    } else if (couponCode.toUpperCase() === 'FLAT500') {
+      setAppliedCoupon({ code: 'FLAT500', discount: 500 })
+    } else {
+      setCouponError('Invalid coupon code')
+    }
+  }
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null)
+    setCouponCode('')
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -232,11 +258,60 @@ export default function Checkout() {
                 ))}
               </div>
 
+              {/* Coupon */}
+              <div className="border-t border-border pt-4 mb-4">
+                <label className="mb-2 block text-sm font-medium">Coupon Code</label>
+                {appliedCoupon ? (
+                  <div className="flex items-center justify-between rounded-lg bg-green/10 border border-green/20 p-3">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green" />
+                      <span className="text-sm font-medium text-green">{appliedCoupon.code}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleRemoveCoupon}
+                      className="text-muted hover:text-red"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value)}
+                        placeholder="Enter code"
+                        className="flex-1 rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text focus:border-electric focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleApplyCoupon}
+                        className="btn btn-secondary px-4 py-2 text-sm"
+                      >
+                        <Tag className="h-4 w-4" />
+                      </button>
+                    </div>
+                    {couponError && (
+                      <p className="text-sm text-red">{couponError}</p>
+                    )}
+                    <p className="text-xs text-muted">Try: WELCOME10 or FLAT500</p>
+                  </div>
+                )}
+              </div>
+
               <div className="border-t border-border pt-4 space-y-2">
                 <div className="flex justify-between">
                   <span className="text-muted">Subtotal</span>
                   <span>KSh {cartTotal.toLocaleString()}</span>
                 </div>
+                {discount > 0 && (
+                  <div className="flex justify-between text-green">
+                    <span>Discount</span>
+                    <span>-KSh {discount.toLocaleString()}</span>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span className="text-muted">Shipping</span>
                   <span>{shipping === 0 ? 'FREE' : `KSh ${shipping.toLocaleString()}`}</span>

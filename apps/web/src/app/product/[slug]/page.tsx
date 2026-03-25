@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { Heart, Share2, ShoppingCart, Star, ChevronRight, Minus, Plus, Check } from 'lucide-react'
+import { Heart, Share2, ShoppingCart, Star, ChevronRight, Minus, Plus, Check, CheckCircle } from 'lucide-react'
 import { useCartStore } from '@/app/stores/cartStore'
 
 const product = {
@@ -35,6 +35,7 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1)
   const [selectedImage, setSelectedImage] = useState(0)
   const [isWishlisted, setIsWishlisted] = useState(false)
+  const [showToast, setShowToast] = useState(false)
   const addItem = useCartStore((state) => state.addItem)
 
   const handleAddToCart = () => {
@@ -44,6 +45,8 @@ export default function ProductDetail() {
       price: product.salePrice || product.price,
       quantity,
     })
+    setShowToast(true)
+    setTimeout(() => setShowToast(false), 3000)
   }
 
   const discount = product.salePrice ? Math.round((1 - product.salePrice / product.price) * 100) : 0
@@ -51,6 +54,14 @@ export default function ProductDetail() {
   return (
     <div className="min-h-screen py-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Toast notification */}
+        {showToast && (
+          <div className="fixed top-20 right-4 z-50 flex items-center gap-2 rounded-lg bg-green px-4 py-3 text-white shadow-lg">
+            <CheckCircle className="h-5 w-5" />
+            <span>Added to cart!</span>
+          </div>
+        )}
+
         {/* Breadcrumb */}
         <nav className="mb-8 flex items-center gap-2 text-sm">
           <Link href="/" className="text-muted hover:text-electric">Home</Link>
