@@ -1,10 +1,13 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { trpc } from "@/utils/trpc";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [cartCount] = useState(3);
+  
+  const { data: cart } = trpc.cart.getCart.useQuery();
+  const cartCount = cart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
 
   return (
     <>

@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { trpc } from "@/utils/trpc";
 
-const navItems = [
+const navItemsBase = [
   {
     label: "Home",
     href: "/",
@@ -27,7 +28,6 @@ const navItems = [
   {
     label: "Cart",
     href: "/cart",
-    badge: 3,
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
@@ -48,6 +48,15 @@ const navItems = [
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
+  const { data: cart } = trpc.cart.getCart.useQuery();
+  const cartCount = cart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
+
+  const navItems = navItemsBase.map((item) => {
+    if (item.href === "/cart") {
+      return { ...item, badge: cartCount };
+    }
+    return item;
+  });
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-safaridark border-t border-safariborder">
@@ -63,7 +72,7 @@ export default function MobileBottomNav() {
               <span className={active ? "text-neon" : "text-gray-500"}>
                 {item.icon}
               </span>
-              {"badge" in item && item.badge && (
+              {"badge" in item && item.badge && item.badge > 0 && (
                 <span className="absolute top-0 right-2 bg-neon text-black text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                   {item.badge}
                 </span>

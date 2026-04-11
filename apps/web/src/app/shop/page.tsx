@@ -1,10 +1,17 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import { trpc } from "@/utils/trpc";
 import ProductCard from "@/components/ProductCard";
-import { products, categories } from "@/lib/products";
 
 const brands = ["Apple", "Samsung", "ASUS ROG", "Logitech", "Sony", "Lenovo"];
+
+const staticCategories = [
+  { id: "phones", label: "Phones", icon: "📱", count: 124 },
+  { id: "laptops", label: "Laptops & PCs", icon: "💻", count: 89 },
+  { id: "gaming", label: "Gaming", icon: "🎮", count: 67 },
+  { id: "accessories", label: "Accessories", icon: "🎧", count: 215 },
+];
 
 export default function ShopPage() {
   const searchParams = useSearchParams();
@@ -17,6 +24,13 @@ export default function ShopPage() {
   const [sortBy, setSortBy] = useState("popular");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const { data: productsData, isLoading } = trpc.product.getAll.useQuery({
+    category: selectedCat !== "all" ? selectedCat : undefined,
+    limit: 100,
+  });
+
+  const products = productsData?.products ?? [];
+
   const toggleBrand = (brand: string) =>
     setSelectedBrands((prev) =>
       prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand]
@@ -24,17 +38,26 @@ export default function ShopPage() {
 
   const filtered = useMemo(() => {
     let list = products;
-    if (selectedCat !== "all") list = list.filter((p) => p.category === selectedCat);
-    if (selectedBrands.length > 0) list = list.filter((p) => selectedBrands.includes(p.brand));
-    if (inStockOnly) list = list.filter((p) => p.inStock);
-    list = list.filter((p) => p.price <= maxPrice);
+    
+    if (selectedBrands.length > 0) {
+      list = list.filter((p: any) => selectedBrands.includes(p.category?.name || ''));
+    }
+    if (inStockOnly) {
+      list = list.filter((p: any) => p.stock > 0);
+    }
+    list = list.filter((p: any) => p.price <= maxPrice);
 
-    if (sortBy === "price-asc") list = [...list].sort((a, b) => a.price - b.price);
-    if (sortBy === "price-desc") list = [...list].sort((a, b) => b.price - a.price);
-    if (sortBy === "rating") list = [...list].sort((a, b) => b.rating - a.rating);
+    if (sortBy === "price-asc") list = [...list].sort((a: any, b: any) => a.price - b.price);
+    if (sortBy === "price-desc") list = [...list].sort((a: any, b: any) => b.price - a.price);
+    if (sortBy === "rating") list = [...list].sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0));
 
     return list;
-  }, [selectedCat, selectedBrands, maxPrice, inStockOnly, sortBy]);
+  }, [products, selectedBrands, maxPrice, inStockOnly, sortBy]);
+
+  useEffect(() => {
+    const cat = searchParams.get("cat");
+    if (cat) setSelectedCat(cat);
+  }, [searchParams]);
 
   const FilterPanel = () => (
     <aside className="w-full md:w-64 shrink-0 space-y-6">
@@ -120,7 +143,7 @@ export default function ShopPage() {
           <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
             <div>
               <h1 className="font-display font-bold text-2xl text-white">
-                {selectedCat === "all" ? "All Products" : categories.find((c) => c.id === selectedCat)?.label || selectedCat}
+                {selectedCat === "all" ? "All Products" : staticCategories.find((c) => c.id === selectedCat)?.label || selectedCat}
               </h1>
               <p className="text-sm text-gray-500 mt-0.5">{filtered.length} products found</p>
             </div>
@@ -158,7 +181,7 @@ export default function ShopPage() {
             >
               All
             </button>
-            {categories.map((cat) => (
+            {staticCategories.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCat(cat.id)}
@@ -182,7 +205,13 @@ export default function ShopPage() {
 
           {/* Product grid */}
           <div className="flex-1 min-w-0">
-            {filtered.length === 0 ? (
+            {isLoading ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                {Array(8).fill(0).map((_, i) => (
+                  <div key={i} className="bg-safarigray border border-safariborder rounded-2xl h-80 animate-pulse" />
+                ))}
+              </div>
+            ) : filtered.length === 0 ? (
               <div className="text-center py-24">
                 <div className="text-5xl mb-4">🔍</div>
                 <div className="font-display font-bold text-xl text-white mb-2">No products found</div>
@@ -190,7 +219,7 @@ export default function ShopPage() {
               </div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                {filtered.map((p) => <ProductCard key={p.id} product={p} />)}
+                {filtered.map((p: any) => <ProductCard key={p.id} product={p} />)}
               </div>
             )}
           </div>

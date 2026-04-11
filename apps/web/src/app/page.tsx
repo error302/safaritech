@@ -1,7 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { trpc } from "@/utils/trpc";
 import ProductCard from "@/components/ProductCard";
-import { products, categories } from "@/lib/products";
 
 const trustItems = [
   { icon: "✅", text: "M-Pesa Pay" },
@@ -12,10 +14,23 @@ const trustItems = [
   { icon: "📦", text: "Ships Same Day" },
 ];
 
-const hotDeals = products.filter((p) => p.isHot).slice(0, 4);
-const bestSellers = products.slice(0, 4);
+const staticCategories = [
+  { id: "phones", label: "Phones", icon: "📱", count: 124, color: "#00FF9F" },
+  { id: "laptops", label: "Laptops & PCs", icon: "💻", count: 89, color: "#00B8FF" },
+  { id: "gaming", label: "Gaming", icon: "🎮", count: 67, color: "#FF6B6B" },
+  { id: "accessories", label: "Accessories", icon: "🎧", count: 215, color: "#FFB347" },
+];
 
 export default function HomePage() {
+  const { data: productsData, isLoading: productsLoading } = trpc.product.getAll.useQuery({ limit: 50 });
+  const { data: featuredData, isLoading: featuredLoading } = trpc.product.getFeatured.useQuery();
+  
+  const products = productsData?.products ?? [];
+  const featured = featuredData ?? [];
+
+  const hotDeals = products.filter((p: any) => p.isHot).slice(0, 4);
+  const bestSellers = featured.slice(0, 4);
+
   return (
     <>
       {/* ═══════════════ HERO ═══════════════ */}
@@ -143,7 +158,7 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {categories.map((cat) => (
+          {staticCategories.map((cat) => (
             <Link
               key={cat.id}
               href={`/shop?cat=${cat.id}`}
@@ -175,7 +190,13 @@ export default function HomePage() {
             <Link href="/shop" className="text-sm text-gray-400 hover:text-neon transition-colors">View all →</Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-            {bestSellers.map((p) => <ProductCard key={p.id} product={p} />)}
+            {productsLoading ? (
+              Array(4).fill(0).map((_, i) => (
+                <div key={i} className="bg-safarigray border border-safariborder rounded-2xl h-80 animate-pulse" />
+              ))
+            ) : (
+              bestSellers.map((p: any) => <ProductCard key={p.id} product={p} />)
+            )}
           </div>
         </div>
       </section>
@@ -226,7 +247,13 @@ export default function HomePage() {
             <Link href="/shop?filter=deals" className="text-sm text-gray-400 hover:text-neon transition-colors">All deals →</Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-            {hotDeals.map((p) => <ProductCard key={p.id} product={p} />)}
+            {productsLoading ? (
+              Array(4).fill(0).map((_, i) => (
+                <div key={i} className="bg-safarigray border border-safariborder rounded-2xl h-80 animate-pulse" />
+              ))
+            ) : (
+              hotDeals.map((p: any) => <ProductCard key={p.id} product={p} />)
+            )}
           </div>
         </div>
       </section>
