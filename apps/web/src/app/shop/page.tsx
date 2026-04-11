@@ -1,178 +1,201 @@
-'use client'
+"use client";
+import { useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
+import ProductCard from "@/components/ProductCard";
+import { products, categories } from "@/lib/products";
 
-import { useState, useEffect, Suspense } from 'react'
-import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
-import { Search, Grid, List, ChevronDown } from 'lucide-react'
+const brands = ["Apple", "Samsung", "ASUS ROG", "Logitech", "Sony", "Lenovo"];
 
-const allProducts = [
-  { id: '1', name: 'iPhone 15 Pro Max', price: 149999, category: 'phones', stock: 15 },
-  { id: '2', name: 'MacBook Pro M3', price: 199999, category: 'laptops', stock: 8 },
-  { id: '3', name: 'Sony WH-1000XM5', price: 34999, category: 'audio', stock: 25 },
-  { id: '4', name: 'Samsung Galaxy S24', price: 119999, category: 'phones', stock: 20 },
-  { id: '5', name: 'Dell XPS 15', price: 159999, category: 'laptops', stock: 12 },
-  { id: '6', name: 'AirPods Pro 2', price: 24999, category: 'audio', stock: 50 },
-  { id: '7', name: 'Apple Watch Ultra 2', price: 89999, category: 'wearables', stock: 18 },
-  { id: '8', name: 'iPad Pro 12.9"', price: 139999, category: 'tablets', stock: 10 },
-  { id: '9', name: 'Google Pixel 8', price: 99999, category: 'phones', stock: 15 },
-  { id: '10', name: 'Samsung Galaxy Buds2', price: 14999, category: 'audio', stock: 30 },
-]
+export default function ShopPage() {
+  const searchParams = useSearchParams();
+  const initCat = searchParams.get("cat") || "all";
 
-const categories = [
-  { label: 'All', value: '' },
-  { label: 'Phones', value: 'phones' },
-  { label: 'Laptops', value: 'laptops' },
-  { label: 'Audio', value: 'audio' },
-  { label: 'Wearables', value: 'wearables' },
-  { label: 'Tablets', value: 'tablets' },
-]
+  const [selectedCat, setSelectedCat] = useState(initCat);
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const [maxPrice, setMaxPrice] = useState(400000);
+  const [inStockOnly, setInStockOnly] = useState(false);
+  const [sortBy, setSortBy] = useState("popular");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-const sortOptions = [
-  { label: 'Featured', value: 'featured' },
-  { label: 'Price: Low to High', value: 'price-low' },
-  { label: 'Price: High to Low', value: 'price-high' },
-  { label: 'Name: A-Z', value: 'name' },
-]
+  const toggleBrand = (brand: string) =>
+    setSelectedBrands((prev) =>
+      prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand]
+    );
 
-function ShopContent() {
-  const searchParams = useSearchParams()
-  const initialCategory = searchParams.get('category') || ''
-  
-  const [search, setSearch] = useState('')
-  const [category, setCategory] = useState(initialCategory)
-  const [sortBy, setSortBy] = useState('featured')
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const filtered = useMemo(() => {
+    let list = products;
+    if (selectedCat !== "all") list = list.filter((p) => p.category === selectedCat);
+    if (selectedBrands.length > 0) list = list.filter((p) => selectedBrands.includes(p.brand));
+    if (inStockOnly) list = list.filter((p) => p.inStock);
+    list = list.filter((p) => p.price <= maxPrice);
 
-  useEffect(() => {
-    const cat = searchParams.get('category')
-    if (cat) setCategory(cat)
-  }, [searchParams])
+    if (sortBy === "price-asc") list = [...list].sort((a, b) => a.price - b.price);
+    if (sortBy === "price-desc") list = [...list].sort((a, b) => b.price - a.price);
+    if (sortBy === "rating") list = [...list].sort((a, b) => b.rating - a.rating);
 
-  const filteredProducts = allProducts
-    .filter(p => {
-      const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase())
-      const matchesCategory = !category || p.category === category
-      return matchesSearch && matchesCategory
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case 'price-low': return a.price - b.price
-        case 'price-high': return b.price - a.price
-        case 'name': return a.name.localeCompare(b.name)
-        default: return 0
-      }
-    })
+    return list;
+  }, [selectedCat, selectedBrands, maxPrice, inStockOnly, sortBy]);
 
-  return (
-    <div className="min-h-screen py-8">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="mb-2 text-4xl font-bold">Shop</h1>
-          <p className="text-muted">Browse our collection of premium electronics</p>
+  const FilterPanel = () => (
+    <aside className="w-full md:w-64 shrink-0 space-y-6">
+      {/* Price Range */}
+      <div className="bg-safarigray border border-safariborder rounded-2xl p-5">
+        <div className="font-display font-semibold text-sm text-white mb-4">Price Range</div>
+        <input
+          type="range"
+          min={5000}
+          max={400000}
+          step={5000}
+          value={maxPrice}
+          onChange={(e) => setMaxPrice(Number(e.target.value))}
+          className="w-full"
+        />
+        <div className="flex justify-between text-xs text-gray-500 mt-2">
+          <span>KES 5,000</span>
+          <span className="text-neon font-semibold">KES {maxPrice.toLocaleString()}</span>
         </div>
+      </div>
 
-        {/* Filters */}
-        <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted" />
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-lg border border-border bg-card py-2.5 pl-10 pr-4 text-text placeholder:text-muted focus:border-electric focus:outline-none"
-            />
-          </div>
-          
-          <div className="flex items-center gap-4 flex-wrap">
-            <div className="flex gap-2 rounded-lg border border-border bg-card p-1">
-              {categories.map((cat) => (
-                <button
-                  key={cat.value}
-                  onClick={() => setCategory(cat.value)}
-                  className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
-                    category === cat.value
-                      ? 'bg-electric text-charcoal'
-                      : 'text-muted hover:text-text'
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
-
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="rounded-lg border border-border bg-card px-3 py-2 text-sm focus:border-electric focus:outline-none"
-            >
-              {sortOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-            
-            <div className="flex gap-1 rounded-lg border border-border bg-card p-1">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 ${viewMode === 'grid' ? 'text-electric' : 'text-muted'}`}
-              >
-                <Grid className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`p-2 ${viewMode === 'list' ? 'text-electric' : 'text-muted'}`}
-              >
-                <List className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Products Grid */}
-        <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4' : 'grid-cols-1'}`}>
-          {filteredProducts.map((product) => (
-            <Link
-              key={product.id}
-              href={`/product/${product.id}`}
-              className="group rounded-xl border border-border bg-card overflow-hidden transition-all hover:border-electric/50 hover:shadow-lg hover:shadow-electric/10"
-            >
-              <div className="aspect-square bg-surface relative">
-                <div className="absolute inset-0 flex items-center justify-center text-muted">
-                  Product Image
-                </div>
-                {product.stock < 10 && (
-                  <span className="absolute left-2 top-2 rounded bg-yellow/20 px-2 py-1 text-xs font-medium text-yellow">
-                    Low Stock
-                  </span>
-                )}
-              </div>
-              <div className="p-4">
-                <p className="mb-1 text-xs text-electric uppercase">{product.category}</p>
-                <h3 className="mb-2 font-semibold">{product.name}</h3>
-                <p className="text-lg font-bold text-electric">KSh {product.price.toLocaleString()}</p>
-              </div>
-            </Link>
+      {/* Brand */}
+      <div className="bg-safarigray border border-safariborder rounded-2xl p-5">
+        <div className="font-display font-semibold text-sm text-white mb-4">Brand</div>
+        <div className="space-y-2.5">
+          {brands.map((brand) => (
+            <label key={brand} className="flex items-center gap-3 cursor-pointer group">
+              <input
+                type="checkbox"
+                checked={selectedBrands.includes(brand)}
+                onChange={() => toggleBrand(brand)}
+                className="rounded"
+              />
+              <span className="text-sm text-gray-400 group-hover:text-white transition-colors">{brand}</span>
+            </label>
           ))}
         </div>
+      </div>
 
-        {filteredProducts.length === 0 && (
-          <div className="py-16 text-center">
-            <p className="text-lg text-muted">No products found matching your criteria.</p>
+      {/* Stock */}
+      <div className="bg-safarigray border border-safariborder rounded-2xl p-5">
+        <div className="font-display font-semibold text-sm text-white mb-4">Availability</div>
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={inStockOnly}
+            onChange={() => setInStockOnly(!inStockOnly)}
+          />
+          <span className="text-sm text-gray-400">In Stock Only</span>
+        </label>
+      </div>
+
+      {/* Gaming-specific */}
+      {selectedCat === "gaming" && (
+        <div className="bg-safarigray border border-safariborder rounded-2xl p-5">
+          <div className="font-display font-semibold text-sm text-white mb-4">Gaming Filters</div>
+          <div className="space-y-2.5">
+            {["RGB Lighting", "Wireless", "Mechanical", "4K Ready"].map((f) => (
+              <label key={f} className="flex items-center gap-3 cursor-pointer group">
+                <input type="checkbox" />
+                <span className="text-sm text-gray-400 group-hover:text-white transition-colors">{f}</span>
+              </label>
+            ))}
           </div>
-        )}
+        </div>
+      )}
+
+      {/* Reset */}
+      <button
+        onClick={() => { setSelectedCat("all"); setSelectedBrands([]); setMaxPrice(400000); setInStockOnly(false); }}
+        className="w-full border border-safariborder text-gray-400 hover:border-neon hover:text-neon text-sm py-2.5 rounded-xl transition-all font-semibold"
+      >
+        Reset Filters
+      </button>
+    </aside>
+  );
+
+  return (
+    <div className="min-h-screen bg-safaridark">
+      {/* Header */}
+      <div className="bg-safarigray border-b border-safariborder">
+        <div className="max-w-7xl mx-auto px-4 py-5">
+          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+            <div>
+              <h1 className="font-display font-bold text-2xl text-white">
+                {selectedCat === "all" ? "All Products" : categories.find((c) => c.id === selectedCat)?.label || selectedCat}
+              </h1>
+              <p className="text-sm text-gray-500 mt-0.5">{filtered.length} products found</p>
+            </div>
+            <div className="flex items-center gap-3">
+              {/* Mobile filter toggle */}
+              <button
+                className="md:hidden flex items-center gap-2 border border-safariborder text-gray-400 text-sm px-4 py-2 rounded-xl hover:border-neon transition-all"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/>
+                </svg>
+                Filters
+              </button>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="bg-safarigray border border-safariborder rounded-xl px-4 py-2 text-sm text-gray-300 focus:outline-none focus:border-neon"
+              >
+                <option value="popular">Popular</option>
+                <option value="price-asc">Price: Low → High</option>
+                <option value="price-desc">Price: High → Low</option>
+                <option value="rating">Highest Rated</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Category tabs */}
+          <div className="flex gap-2 mt-4 overflow-x-auto pb-1 scrollbar-none">
+            <button
+              onClick={() => setSelectedCat("all")}
+              className={`shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                selectedCat === "all" ? "bg-neon text-black" : "bg-safaridark border border-safariborder text-gray-400 hover:border-neon hover:text-neon"
+              }`}
+            >
+              All
+            </button>
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCat(cat.id)}
+                className={`shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                  selectedCat === cat.id ? "bg-neon text-black" : "bg-safaridark border border-safariborder text-gray-400 hover:border-neon hover:text-neon"
+                }`}
+              >
+                {cat.icon} {cat.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="flex gap-8">
+          {/* Sidebar — desktop always visible, mobile overlay */}
+          <div className={`md:block ${sidebarOpen ? "block" : "hidden"}`}>
+            <FilterPanel />
+          </div>
+
+          {/* Product grid */}
+          <div className="flex-1 min-w-0">
+            {filtered.length === 0 ? (
+              <div className="text-center py-24">
+                <div className="text-5xl mb-4">🔍</div>
+                <div className="font-display font-bold text-xl text-white mb-2">No products found</div>
+                <p className="text-gray-500 text-sm">Try adjusting your filters</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                {filtered.map((p) => <ProductCard key={p.id} product={p} />)}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
-  )
-}
-
-export default function Shop() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen py-8 flex items-center justify-center">
-        <p className="text-muted">Loading...</p>
-      </div>
-    }>
-      <ShopContent />
-    </Suspense>
-  )
+  );
 }

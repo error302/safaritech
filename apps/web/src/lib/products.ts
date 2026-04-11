@@ -1,0 +1,218 @@
+export type Product = {
+  id: number;
+  slug: string;
+  name: string;
+  brand: string;
+  price: number;
+  originalPrice?: number;
+  category: string;
+  img: string;
+  images?: string[];
+  inStock: boolean;
+  isHot?: boolean;
+  badge?: string;
+  rating: number;
+  reviews: number;
+  description: string;
+  specs: string[];
+  colors?: string[];
+  storageOptions?: string[];
+};
+
+export const products: Product[] = [
+  {
+    id: 1,
+    slug: "iphone-16-pro-256gb",
+    name: "iPhone 16 Pro 256GB",
+    brand: "Apple",
+    price: 185000,
+    originalPrice: 199000,
+    category: "phones",
+    img: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=600&h=600&fit=crop",
+    inStock: true,
+    isHot: true,
+    badge: "Best Seller",
+    rating: 4.9,
+    reviews: 847,
+    description: "Titanium design. A18 Pro chip. 48MP Fusion camera. The most advanced iPhone ever built.",
+    specs: [
+      "6.3-inch Super Retina XDR ProMotion display",
+      "A18 Pro chip with 6-core GPU",
+      "48MP Fusion + 12MP Ultra Wide + 5x Telephoto",
+      "Up to 27 hours video playback",
+      "USB 3 — up to 20x faster transfers",
+    ],
+    colors: ["#1C1C1E", "#E8E0D4", "#4A90D9"],
+    storageOptions: ["128GB", "256GB", "512GB", "1TB"],
+  },
+  {
+    id: 2,
+    slug: "samsung-galaxy-s25-ultra",
+    name: "Samsung Galaxy S25 Ultra 512GB",
+    brand: "Samsung",
+    price: 210000,
+    originalPrice: 235000,
+    category: "phones",
+    img: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&h=600&fit=crop",
+    inStock: true,
+    isHot: true,
+    badge: "Galaxy AI",
+    rating: 4.8,
+    reviews: 612,
+    description: "Galaxy AI is here. Built-in S Pen. 200MP camera system. The ultimate Android powerhouse.",
+    specs: [
+      "6.8-inch Dynamic AMOLED 2X 120Hz",
+      "Snapdragon 8 Elite for Galaxy",
+      "200MP main + 50MP Ultra Wide + 10x Telephoto",
+      "5000mAh with 45W Super Fast Charging",
+      "S Pen included",
+    ],
+    colors: ["#1A1A2E", "#E8D5B7", "#2D5A27"],
+    storageOptions: ["256GB", "512GB", "1TB"],
+  },
+  {
+    id: 3,
+    slug: "asus-rog-strix-g16",
+    name: "ASUS ROG Strix G16 RTX 4070",
+    brand: "ASUS ROG",
+    price: 145000,
+    originalPrice: 165000,
+    category: "laptops",
+    img: "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=600&h=600&fit=crop",
+    inStock: true,
+    isHot: false,
+    badge: "Gaming Beast",
+    rating: 4.7,
+    reviews: 289,
+    description: "Dominate every game with RTX 4070, Intel Core i9, and a 240Hz display engineered for victory.",
+    specs: [
+      "16-inch QHD 240Hz IPS display",
+      "Intel Core i9-14900HX processor",
+      "NVIDIA GeForce RTX 4070 8GB GDDR6",
+      "32GB DDR5 RAM + 1TB NVMe SSD",
+      "RGB Backlit keyboard per-key",
+    ],
+  },
+  {
+    id: 4,
+    slug: "custom-gaming-pc-rtx4090",
+    name: "Custom Gaming PC RTX 4090",
+    brand: "Safaritech Build",
+    price: 320000,
+    category: "gaming",
+    img: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=600&h=600&fit=crop",
+    inStock: true,
+    isHot: true,
+    badge: "Top Tier",
+    rating: 5.0,
+    reviews: 43,
+    description: "Our flagship custom build. RTX 4090 with full RGB, liquid cooling, and 2TB NVMe. Ready to ship.",
+    specs: [
+      "Intel Core i9-14900K (24-core)",
+      "NVIDIA GeForce RTX 4090 24GB",
+      "64GB DDR5 6000MHz RAM",
+      "2TB Samsung 990 Pro NVMe SSD",
+      "360mm AIO Liquid Cooling + full RGB",
+      "850W 80+ Gold PSU",
+    ],
+  },
+  {
+    id: 5,
+    slug: "macbook-pro-m4-14",
+    name: "MacBook Pro M4 14-inch",
+    brand: "Apple",
+    price: 255000,
+    originalPrice: 275000,
+    category: "laptops",
+    img: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=600&fit=crop",
+    inStock: true,
+    badge: "M4 Chip",
+    rating: 4.9,
+    reviews: 431,
+    description: "Supercharged by M4. Up to 24 hours battery. The world's best laptop for creators and developers.",
+    specs: [
+      "14.2-inch Liquid Retina XDR display",
+      "Apple M4 chip (10-core CPU, 10-core GPU)",
+      "16GB unified memory",
+      "512GB SSD",
+      "Up to 24 hours battery life",
+    ],
+    colors: ["#C0C0C0", "#1C1C1E"],
+    storageOptions: ["512GB", "1TB", "2TB"],
+  },
+  {
+    id: 6,
+    slug: "ps5-slim-bundle",
+    name: "PlayStation 5 Slim + Extra Controller",
+    brand: "Sony",
+    price: 68000,
+    originalPrice: 75000,
+    category: "gaming",
+    img: "https://images.unsplash.com/photo-1607853202273-797f1c22a38e?w=600&h=600&fit=crop",
+    inStock: true,
+    badge: "Bundle Deal",
+    rating: 4.8,
+    reviews: 923,
+    description: "The PS5 Slim with an extra DualSense controller. Play with a friend right out of the box.",
+    specs: [
+      "AMD Zen 2 8-core CPU @ 3.5GHz",
+      "AMD RDNA 2 GPU — 10.28 TFLOPS",
+      "16GB GDDR6 RAM",
+      "1TB NVMe SSD",
+      "4K UHD Blu-ray drive",
+      "DualSense Wireless Controller x2",
+    ],
+  },
+  {
+    id: 7,
+    slug: "samsung-galaxy-buds3-pro",
+    name: "Samsung Galaxy Buds3 Pro",
+    brand: "Samsung",
+    price: 19500,
+    originalPrice: 24000,
+    category: "accessories",
+    img: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=600&h=600&fit=crop",
+    inStock: true,
+    badge: "ANC",
+    rating: 4.6,
+    reviews: 512,
+    description: "Intelligent Active Noise Cancelling. 360 Audio. Up to 30 hours total playback.",
+    specs: [
+      "Intelligent ANC with 3 mics per bud",
+      "360 Audio with Dolby Head Tracking",
+      "10mm two-way speaker",
+      "6hrs bud + 24hrs case playback",
+      "IPX7 water resistance",
+    ],
+    colors: ["#1C1C1E", "#F5F5F5"],
+  },
+  {
+    id: 8,
+    slug: "logitech-g502-x-plus",
+    name: "Logitech G502 X Plus Gaming Mouse",
+    brand: "Logitech",
+    price: 12500,
+    originalPrice: 15000,
+    category: "accessories",
+    img: "https://images.unsplash.com/photo-1527814050087-3793815479db?w=600&h=600&fit=crop",
+    inStock: true,
+    badge: "Pro Pick",
+    rating: 4.7,
+    reviews: 334,
+    description: "LIGHTFORCE hybrid switches. HERO 25K sensor. LIGHTSPEED wireless. Built to win.",
+    specs: [
+      "HERO 25K gaming sensor",
+      "LIGHTFORCE optical-mechanical switches",
+      "LIGHTSYNC RGB with POWERPLAY compatible",
+      "140-hour battery life",
+      "13 programmable buttons",
+    ],
+  },
+];
+
+export const categories = [
+  { id: "phones", label: "Phones", icon: "📱", count: 124, color: "#00FF9F" },
+  { id: "laptops", label: "Laptops & PCs", icon: "💻", count: 89, color: "#00B8FF" },
+  { id: "gaming", label: "Gaming", icon: "🎮", count: 67, color: "#FF6B6B" },
+  { id: "accessories", label: "Accessories", icon: "🎧", count: 215, color: "#FFB347" },
+];

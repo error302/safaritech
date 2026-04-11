@@ -1,41 +1,29 @@
-import type { Metadata } from 'next'
-import { Syne, JetBrains_Mono } from 'next/font/google'
-import '@/app/globals.css'
-import { Providers } from '@/app/providers'
-import { Navbar } from '@/app/components/Navbar'
-import { Footer } from '@/app/components/Footer'
-
-const syne = Syne({
-  variable: '--font-syne',
-  subsets: ['latin'],
-  weight: ['400', '600', '700', '800'],
-})
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: '--font-mono',
-  subsets: ['latin'],
-  weight: ['300', '400', '500'],
-})
+import type { Metadata } from "next";
+import "./globals.css";
+import Navbar from "@/components/Navbar";
+import MobileBottomNav from "@/components/MobileBottomNav";
 
 export const metadata: Metadata = {
-  title: 'Safaritech - Kenya Electronics Marketplace',
-  description: 'Ultimate electronics marketplace for Kenya - Smartphones, Laptops, Audio & More',
-}
+  title: "Safaritech — Tech That Moves Kenya",
+  description: "Phones, Laptops, Gaming PCs & Accessories. Fast M-Pesa delivery across Kenya.",
+  keywords: "phones nairobi, laptops kenya, gaming pc, mpesa, safaritech",
+  openGraph: {
+    title: "Safaritech",
+    description: "Tech That Moves Kenya",
+    siteName: "Safaritech",
+  },
+};
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html suppressHydrationWarning lang="en" className={`${syne.variable} ${jetbrainsMono.variable}`}>
-      <body className="min-h-screen font-sans antialiased bg-charcoal text-text flex flex-col">
-        <Providers>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </Providers>
+    <html lang="en">
+      <body className="bg-safaridark text-white font-body antialiased">
+        <Navbar />
+        <main className="min-h-screen pb-16 md:pb-0">
+          {children}
+        </main>
+        <MobileBottomNav />
       </body>
     </html>
-  )
+  );
 }
