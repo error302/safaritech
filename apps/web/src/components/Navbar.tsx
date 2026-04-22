@@ -1,6 +1,7 @@
 "use client";
-import Link from "next/link";
+
 import { useState } from "react";
+import Link from "next/link";
 import { trpc } from "@/utils/trpc";
 
 export default function Navbar() {
@@ -13,9 +14,7 @@ export default function Navbar() {
     <>
       <nav className="bg-safaridark border-b border-safariborder sticky top-0 z-50 backdrop-blur-md bg-opacity-95">
         <div className="max-w-7xl mx-auto px-4">
-          {/* Top bar */}
           <div className="flex items-center justify-between h-16 gap-4">
-            {/* Logo */}
             <Link href="/" className="flex items-center gap-2 shrink-0">
               <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                 <ellipse cx="14" cy="11" rx="7" ry="10" stroke="#00FF9F" strokeWidth="1.5" fill="none" transform="rotate(-15 14 11)"/>
@@ -27,7 +26,6 @@ export default function Navbar() {
               </span>
             </Link>
 
-            {/* Desktop search */}
             <div className="hidden md:flex flex-1 max-w-xl mx-4">
               <div className="relative w-full">
                 <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -41,7 +39,6 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* Desktop nav links */}
             <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-400">
               <Link href="/shop?cat=phones" className="hover:text-neon transition-colors">Phones</Link>
               <Link href="/shop?cat=laptops" className="hover:text-neon transition-colors">Laptops & PCs</Link>
@@ -49,9 +46,7 @@ export default function Navbar() {
               <Link href="/shop?cat=accessories" className="hover:text-neon transition-colors">Accessories</Link>
             </div>
 
-            {/* Right icons */}
             <div className="flex items-center gap-2 shrink-0">
-              {/* M-Pesa badge */}
               <Link href="/checkout" className="hidden md:flex items-center gap-1.5 bg-green-600 hover:bg-green-500 transition-colors text-white text-xs font-semibold px-3 py-1.5 rounded-xl">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/>
@@ -59,7 +54,6 @@ export default function Navbar() {
                 M-Pesa
               </Link>
 
-              {/* Cart */}
               <Link href="/cart" className="relative p-2 rounded-xl hover:bg-safarigray transition-colors">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
@@ -71,14 +65,12 @@ export default function Navbar() {
                 )}
               </Link>
 
-              {/* Account */}
               <Link href="/account" className="hidden md:block p-2 rounded-xl hover:bg-safarigray transition-colors">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
                 </svg>
               </Link>
 
-              {/* Mobile hamburger */}
               <button
                 className="md:hidden p-2 rounded-xl hover:bg-safarigray transition-colors"
                 onClick={() => setMobileOpen(!mobileOpen)}
@@ -93,7 +85,6 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Category nav bar */}
           <div className="hidden md:flex items-center gap-1 py-2 border-t border-safariborder text-sm overflow-x-auto">
             {["All Products", "Phones", "Samsung", "Apple", "Laptops", "Gaming PCs", "Accessories", "Headphones", "Smartwatches", "Deals 🔥"].map((item) => (
               <Link
@@ -107,7 +98,6 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile dropdown */}
         {mobileOpen && (
           <div className="md:hidden border-t border-safariborder bg-safaridark">
             <div className="px-4 py-3">

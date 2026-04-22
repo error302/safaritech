@@ -1,64 +1,140 @@
-import { Search, MoreVertical } from 'lucide-react'
+"use client";
 
-const users = [
-  { id: '1', name: 'John Doe', email: 'john@example.com', role: 'admin', joined: '2024-01-15' },
-  { id: '2', name: 'Sarah Kimani', email: 'sarah@example.com', role: 'customer', joined: '2024-01-20' },
-  { id: '3', name: 'David Ochieng', email: 'david@example.com', role: 'customer', joined: '2024-01-22' },
-]
+import { useState } from "react";
+import { Shield, UserX } from "lucide-react";
+import { trpc } from "@/utils/trpc";
+import AdminHeader from "@/components/admin/AdminHeader";
+import DataTable from "@/components/admin/DataTable";
+import Modal from "@/components/admin/Modal";
 
-export default function AdminUsers() {
-  return (
-    <div className="min-h-screen py-8">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold">Users</h1>
-          <p className="text-muted">Manage customer accounts</p>
+type UserRow = {
+  id: string;
+  name: string | null;
+  email: string;
+  role: string;
+  createdAt: Date;
+};
+
+export default function AdminUsersPage() {
+  const utils = trpc.useUtils();
+
+  const { data: users, isLoading } = trpc.user.getAll.useQuery();
+
+  const updateRole = trpc.user.updateRole.useMutation({
+    onSuccess: () => { utils.user.getAll.invalidate(); },
+  });
+
+  const [selectedUser, setSelectedUser] = useState<UserRow | null>(null);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+
+  const columns = [
+    {
+      key: "name",
+      label: "User",
+      render: (row: UserRow) => (
+        <div>
+          <p className="font-medium text-white">{row.name || "No name"}</p>
+          <p className="text-xs text-gray-500">{row.email}</p>
         </div>
+      ),
+    },
+    {
+      key: "role",
+      label: "Role",
+      render: (row: UserRow) => (
+        <span className={`px-2 py-1 rounded-full text-xs font-semibold border ${
+          row.role === "ADMIN"
+            ? "bg-neon/10 text-neon border-neon/20"
+            : "bg-safarigray text-gray-400 border-safariborder"
+        }`}>
+          {row.role}
+        </span>
+      ),
+    },
+    {
+      key: "createdAt",
+      label: "Joined",
+      render: (row: UserRow) => (
+        <span className="text-gray-500 text-sm">
+          {new Date(row.createdAt).toLocaleDateString("en-KE")}
+        </span>
+      ),
+    },
+    {
+      key: "actions",
+      label: "",
+      render: (row: UserRow) => (
+        <button
+          onClick={() => { setSelectedUser(row); setShowRoleModal(true); }}
+          className="p-2 rounded-lg hover:bg-safaridark text-gray-400 hover:text-neon transition-all"
+        >
+          <Shield className="w-4 h-4" />
+        </button>
+      ),
+    },
+  ];
 
-        <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="p-4 border-b border-border">
-            <div className="relative max-w-md">
-              <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted" />
-              <input
-                type="text"
-                placeholder="Search users..."
-                className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 pl-10 text-text placeholder:text-muted focus:border-electric focus:outline-none"
-              />
+  return (
+    <div className="space-y-6">
+      <AdminHeader title="Users" description="Manage customer accounts" />
+
+      <DataTable
+        data={(users ?? []) as unknown as Record<string, unknown>[]}
+        columns={columns as any}
+        rowKey="id"
+        emptyMessage="No users found"
+      />
+
+      <Modal
+        open={showRoleModal}
+        onClose={() => { setShowRoleModal(false); setSelectedUser(null); }}
+        title="Update User Role"
+        size="sm"
+      >
+        {selectedUser && (
+          <div className="space-y-4">
+            <div className="bg-safaridark border border-safariborder rounded-xl p-4">
+              <p className="text-white font-medium">{selectedUser.name || "No name"}</p>
+              <p className="text-sm text-gray-500">{selectedUser.email}</p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  if (selectedUser) {
+                    updateRole.mutate({ userId: selectedUser.id, role: "CUSTOMER" });
+                    setShowRoleModal(false);
+                  }
+                }}
+                disabled={updateRole.isPending}
+                className={`flex-1 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+                  selectedUser.role === "CUSTOMER"
+                    ? "bg-neon text-black"
+                    : "bg-safarigray text-gray-400 border border-safariborder hover:border-neon hover:text-white"
+                }`}
+              >
+                Customer
+              </button>
+              <button
+                onClick={() => {
+                  if (selectedUser) {
+                    updateRole.mutate({ userId: selectedUser.id, role: "ADMIN" });
+                    setShowRoleModal(false);
+                  }
+                }}
+                disabled={updateRole.isPending}
+                className={`flex-1 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+                  selectedUser.role === "ADMIN"
+                    ? "bg-neon text-black"
+                    : "bg-safarigray text-gray-400 border border-safariborder hover:border-neon hover:text-white"
+                }`}
+              >
+                Admin
+              </button>
             </div>
           </div>
-
-          <table className="w-full">
-            <thead className="border-b border-border bg-surface">
-              <tr>
-                <th className="px-4 py-3 text-left text-sm font-medium text-muted">Name</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-muted">Email</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-muted">Role</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-muted">Joined</th>
-                <th className="px-4 py-3 text-right text-sm font-medium text-muted">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {users.map((user) => (
-                <tr key={user.id} className="hover:bg-surface">
-                  <td className="px-4 py-3 font-medium">{user.name}</td>
-                  <td className="px-4 py-3 text-muted">{user.email}</td>
-                  <td className="px-4 py-3">
-                    <span className={`capitalize ${user.role === 'admin' ? 'text-electric' : 'text-muted'}`}>
-                      {user.role}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-muted">{user.joined}</td>
-                  <td className="px-4 py-3 text-right">
-                    <button className="p-2 text-muted hover:text-electric">
-                      <MoreVertical className="h-4 w-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+        )}
+      </Modal>
     </div>
-  )
+  );
 }

@@ -1,96 +1,127 @@
-import { DollarSign, ShoppingCart, Users, Package, TrendingUp, TrendingDown } from 'lucide-react'
+"use client";
 
-const stats = [
-  { label: 'Total Revenue', value: 'KSh 2.4M', change: '+12.5%', up: true, icon: DollarSign },
-  { label: 'Total Orders', value: '1,234', change: '+8.2%', up: true, icon: ShoppingCart },
-  { label: 'Active Users', value: '5,678', change: '+23.1%', up: true, icon: Users },
-  { label: 'Products', value: '456', change: '+3.2%', up: true, icon: Package },
-]
+import { DollarSign, ShoppingCart, Package, Users, TrendingUp, TrendingDown } from "lucide-react";
+import { trpc } from "@/utils/trpc";
+import { AdminStatCard } from "@/components/admin/AdminStatCard";
 
-const topProducts = [
-  { name: 'iPhone 15 Pro Max', sales: 156, revenue: 'KSh 21.8M' },
-  { name: 'MacBook Pro M3', sales: 89, revenue: 'KSh 17.8M' },
-  { name: 'AirPods Pro 2', sales: 234, revenue: 'KSh 5.8M' },
-  { name: 'Samsung Galaxy S24', sales: 112, revenue: 'KSh 13.4M' },
-]
+function formatKES(amount: number) {
+  return `KSh ${(amount / 100).toLocaleString()}`;
+}
 
-const recentOrders = [
-  { id: 'ORD-001', customer: 'John Doe', amount: 'KSh 139,999', status: 'Delivered' },
-  { id: 'ORD-002', customer: 'Sarah Kimani', amount: 'KSh 49,999', status: 'Shipped' },
-  { id: 'ORD-003', customer: 'David Ochieng', amount: 'KSh 249,999', status: 'Processing' },
-]
+export default function AdminAnalyticsPage() {
+  const { data: stats, isLoading } = trpc.order.adminGetStats.useQuery();
 
-export default function AdminAnalytics() {
-  return (
-    <div className="min-h-screen py-8">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold">Analytics Dashboard</h1>
-          <p className="text-muted">Overview of your store performance</p>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {stats.map((stat) => (
-            <div key={stat.label} className="rounded-xl border border-border bg-card p-6">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-muted">{stat.label}</p>
-                <stat.icon className="h-5 w-5 text-electric" />
-              </div>
-              <p className="text-2xl font-bold">{stat.value}</p>
-              <div className={`flex items-center gap-1 text-sm ${stat.up ? 'text-green' : 'text-red'}`}>
-                {stat.up ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-                {stat.change}
-              </div>
-            </div>
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {Array(4).fill(0).map((_, i) => (
+            <div key={i} className="bg-safarigray border border-safariborder rounded-2xl p-6 h-28 animate-pulse" />
           ))}
         </div>
+      </div>
+    );
+  }
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Top Products */}
-          <div className="rounded-xl border border-border bg-card p-6">
-            <h2 className="mb-4 text-lg font-semibold">Top Selling Products</h2>
-            <div className="space-y-4">
-              {topProducts.map((product, idx) => (
-                <div key={idx} className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">{product.name}</p>
-                    <p className="text-sm text-muted">{product.sales} units sold</p>
-                  </div>
-                  <p className="font-semibold text-electric">{product.revenue}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+  const orders = stats?.totalOrders ?? 0;
+  const revenue = stats?.totalRevenue ?? 0;
+  const pending = stats?.pendingOrders ?? 0;
+  const products = stats?.totalProducts ?? 0;
+  const users = stats?.totalUsers ?? 0;
 
-          {/* Recent Orders */}
-          <div className="rounded-xl border border-border bg-card p-6">
-            <h2 className="mb-4 text-lg font-semibold">Recent Orders</h2>
-            <div className="space-y-4">
-              {recentOrders.map((order) => (
-                <div key={order.id} className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">{order.id}</p>
-                    <p className="text-sm text-muted">{order.customer}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-semibold">{order.amount}</p>
-                    <p className="text-sm text-green">{order.status}</p>
-                  </div>
-                </div>
-              ))}
+  return (
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-2xl md:text-3xl font-display font-bold text-white">Analytics</h1>
+        <p className="text-sm text-gray-500 mt-1">Store performance metrics</p>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <AdminStatCard
+          label="Total Revenue"
+          value={formatKES(revenue)}
+          change="Lifetime earnings"
+          changeType="positive"
+          icon={<DollarSign className="w-5 h-5" />}
+        />
+        <AdminStatCard
+          label="Total Orders"
+          value={orders.toString()}
+          change={`${pending} pending`}
+          changeType="neutral"
+          icon={<ShoppingCart className="w-5 h-5" />}
+        />
+        <AdminStatCard
+          label="Products"
+          value={products.toString()}
+          icon={<Package className="w-5 h-5" />}
+        />
+        <AdminStatCard
+          label="Registered Users"
+          value={users.toString()}
+          icon={<Users className="w-5 h-5" />}
+        />
+      </div>
+
+      {/* Placeholder for charts - can be extended with recharts or chart.js later */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-safarigray border border-safariborder rounded-2xl p-6">
+          <h2 className="font-display font-bold text-white mb-4">Revenue Trend</h2>
+          <div className="h-64 flex items-center justify-center text-gray-600 border-2 border-dashed border-safariborder rounded-xl">
+            <div className="text-center">
+              <p className="text-gray-500 mb-2">Chart area</p>
+              <p className="text-xs text-gray-600">Install recharts or chart.js to enable charts</p>
             </div>
           </div>
         </div>
 
-        {/* Chart placeholder */}
-        <div className="mt-8 rounded-xl border border-border bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">Revenue Over Time</h2>
-          <div className="h-64 bg-surface rounded-lg flex items-center justify-center">
-            <p className="text-muted">Chart visualization</p>
+        <div className="bg-safarigray border border-safariborder rounded-2xl p-6">
+          <h2 className="font-display font-bold text-white mb-4">Orders by Status</h2>
+          <div className="space-y-4">
+            {[
+              { label: "Pending", count: stats?.recentOrders?.filter(o => o.status === "PENDING").length ?? 0, color: "bg-yellow" },
+              { label: "Processing", count: stats?.recentOrders?.filter(o => o.status === "PROCESSING").length ?? 0, color: "bg-blue" },
+              { label: "Shipped", count: stats?.recentOrders?.filter(o => o.status === "SHIPPED").length ?? 0, color: "bg-purple" },
+              { label: "Delivered", count: stats?.recentOrders?.filter(o => o.status === "DELIVERED").length ?? 0, color: "bg-neon" },
+            ].map((item) => (
+              <div key={item.label}>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-gray-400">{item.label}</span>
+                  <span className="text-white font-medium">{item.count}</span>
+                </div>
+                <div className="h-2 bg-safaridark rounded-full overflow-hidden">
+                  <div
+                    className={`h-full ${item.color} rounded-full transition-all`}
+                    style={{ width: orders > 0 ? `${(item.count / Math.max(orders, 1)) * 100}%` : "0%" }}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
+
+      <div className="bg-safarigray border border-safariborder rounded-2xl p-6">
+        <h2 className="font-display font-bold text-white mb-4">Top Selling Products</h2>
+        <div className="space-y-3">
+          {stats?.topProducts?.length ? (
+            stats.topProducts.map((product, i) => (
+              <div key={product.id} className="flex items-center gap-4">
+                <div className="w-8 h-8 rounded-lg bg-neon/10 flex items-center justify-center text-neon text-sm font-bold shrink-0">
+                  #{i + 1}
+                </div>
+                <div className="flex-1">
+                  <p className="text-white text-sm font-medium">{product.name}</p>
+                </div>
+                <div className="text-sm text-gray-500">{product.orderCount} orders</div>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500 text-center py-8">No sales data yet</p>
+          )}
+        </div>
+      </div>
     </div>
-  )
+  );
 }
