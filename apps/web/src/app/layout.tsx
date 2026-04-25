@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import MobileBottomNav from "@/components/MobileBottomNav";
+import { Providers } from "./providers";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Safaritech — Tech That Moves Kenya",
@@ -18,11 +21,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="bg-safaridark text-white font-body antialiased">
-        <Navbar />
-        <main className="min-h-screen pb-16 md:pb-0">
-          {children}
-        </main>
-        <MobileBottomNav />
+        <Providers>
+          <Navbar />
+          <main className="min-h-screen pb-16 md:pb-0">
+            {children}
+          </main>
+          <MobileBottomNav />
+        </Providers>
       </body>
     </html>
   );
