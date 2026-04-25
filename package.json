@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "install": "npm install --legacy-peer-deps",
+    "preinstall": "npm config set legacy-peer-deps true",
     "dev": "npm --prefix apps/web run dev",
     "build": "npm --prefix apps/web run build",
     "lint": "npm --prefix apps/web run lint",

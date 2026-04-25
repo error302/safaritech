@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm install --legacy-peer-deps && npm run build",
+  "buildCommand": "npm run build",
   "installCommand": "npm install --legacy-peer-deps",
   "env": {
     "DATABASE_URL": "postgres://08f9e75a6975bf8766ece70c89ca23fb3622ff59013b6b43d6fbfb6661cc8467:sk_wSIOpK8WEftESImWVgzH1@db.prisma.io:5432/postgres?sslmode=require"
