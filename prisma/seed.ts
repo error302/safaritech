@@ -230,24 +230,25 @@ async function main() {
       userId: users[1].id,
       status: "DELIVERED",
       total: 43998,
+      subtotal: 43998,
       paymentStatus: "CONFIRMED",
       paymentMethod: "MPESA",
-      shippingAddressId: addresses[0].id,
       createdAt: new Date("2024-01-15"),
     },
     {
       userId: users[2].id,
       status: "PROCESSING",
       total: 129999,
+      subtotal: 129999,
       paymentStatus: "PENDING",
       paymentMethod: "CARD",
-      shippingAddressId: addresses[2].id,
       createdAt: new Date("2024-03-20"),
     },
     {
       userId: users[3].id,
       status: "SHIPPED",
       total: 34999,
+      subtotal: 34999,
       paymentStatus: "CONFIRMED",
       paymentMethod: "MPESA",
       createdAt: new Date("2024-02-10"),
@@ -256,7 +257,15 @@ async function main() {
 
   for (const order of ordersData) {
     await prisma.order.create({
-      data: order,
+      data: {
+        user: { connect: { id: order.userId } },
+        status: order.status,
+        total: order.total,
+        subtotal: order.subtotal,
+        paymentStatus: order.paymentStatus,
+        paymentMethod: order.paymentMethod,
+        createdAt: order.createdAt,
+      },
     });
   }
 

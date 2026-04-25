@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Flame, Star, ShoppingCart } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 
 type ProductFromServer = {
@@ -135,11 +136,11 @@ export default function ProductCard({ product }: { product: Product }) {
               </span>
             )}
           </div>
-          {getProductIsHot(product) && (
-            <div className="absolute top-3 right-3">
-              <span className="text-lg">🔥</span>
-            </div>
-          )}
+              {getProductIsHot(product) && (
+          <div className="absolute top-3 right-3">
+            <Flame className="w-5 h-5 text-orange-400" />
+          </div>
+        )}
           {!getProductInStock(product) && (
             <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
               <span className="bg-red-500 text-white text-xs font-semibold px-3 py-1.5 rounded-xl">Out of Stock</span>
@@ -156,15 +157,13 @@ export default function ProductCard({ product }: { product: Product }) {
 
           {/* Rating */}
           <div className="flex items-center gap-1.5 mb-3">
-            <div className="flex">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <svg key={i} width="12" height="12" viewBox="0 0 24 24" fill={i < Math.round(getProductRating(product)) ? "#FFB347" : "none"} stroke="#FFB347" strokeWidth="2">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                </svg>
-              ))}
-            </div>
-            <span className="text-xs text-gray-500">({getProductReviews(product).toLocaleString()})</span>
-          </div>
+                <div className="flex">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} size={12} className={i < Math.round(getProductRating(product)) ? "fill-amber-400 text-amber-400" : "text-amber-400/30"} />
+                  ))}
+                </div>
+                <span className="text-xs text-gray-500">({getProductReviews(product).toLocaleString()})</span>
+              </div>
 
           {/* Price */}
           <div className="flex items-baseline gap-2 mb-3">
@@ -179,13 +178,14 @@ export default function ProductCard({ product }: { product: Product }) {
           </div>
 
           {/* Add to cart */}
-          <button
-            className="w-full bg-neon hover:bg-neon-dim active:scale-95 text-black font-semibold text-sm py-2.5 rounded-xl transition-all duration-150 font-display disabled:opacity-50"
-            onClick={handleAddToCart}
-            disabled={addToCart.isPending || !getProductInStock(product)}
-          >
-            {addToCart.isPending ? 'Adding...' : getProductInStock(product) ? 'Add to Cart' : 'Out of Stock'}
-          </button>
+        <button
+          className="w-full bg-neon hover:bg-neon-dim active:scale-95 text-black font-semibold text-sm py-2.5 rounded-xl transition-all duration-150 font-display disabled:opacity-50 flex items-center justify-center gap-2"
+          onClick={handleAddToCart}
+          disabled={addToCart.isPending || !getProductInStock(product)}
+        >
+          <ShoppingCart size={14} />
+          {addToCart.isPending ? 'Adding...' : getProductInStock(product) ? 'Add to Cart' : 'Out of Stock'}
+        </button>
         </div>
       </div>
     </Link>
