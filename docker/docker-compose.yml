@@ -2,38 +2,36 @@ version: '3.9'
 services:
   web:
     build:
-      context: ../apps/web
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: docker/Dockerfile
     ports:
-      - 3000:3000
+      - "3000:3000"
     environment:
-      - NODE_ENV=development
-      - DATABASE_URL=${DATABASE_URL}
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/safaritech
+      - NEXTAUTH_SECRET=safaritech-secret-key-change-in-production
+      - NEXTAUTH_URL=http://localhost:3000
       - NEXT_PUBLIC_APP_URL=http://localhost:3000
-    volumes:
-      - ../apps/web:/usr/src/app
-      - /usr/src/app/node_modules
-    command: npm run dev
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   postgres:
-    image: postgres:15
+    image: postgres:15-alpine
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: safaritech
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - 6379:6379
-    volumes:
-      - redis-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres-data:
-  redis-data:
