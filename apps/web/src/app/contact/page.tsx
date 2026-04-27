@@ -25,20 +25,20 @@ export default function Contact() {
 
   if (sent) {
     return (
-      <div className="min-h-screen py-16 flex items-center justify-center">
+      <div className="md:bg-safaridark bg-gray-50 min-h-screen py-16 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-4">
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green/10">
             <Send className="h-10 w-10 text-green" />
           </div>
-          <h1 className="mb-4 text-3xl font-bold">Message Sent!</h1>
-          <p className="text-muted mb-8">
+          <h1 className="mb-4 text-3xl font-bold font-display text-gray-900 md:text-white">Message Sent!</h1>
+          <p className="text-gray-500 md:text-gray-400 mb-8">
             Thank you for reaching out. We&apos;ll get back to you within 24 hours.
           </p>
           <a
             href="https://wa.me/254700000000"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn btn-primary"
+            className="bg-neon hover:bg-neon-dim text-black font-bold px-5 py-2.5 rounded-lg text-sm transition-all"
           >
             <MessageCircle className="mr-2 h-5 w-5" />
             Chat on WhatsApp
@@ -49,11 +49,11 @@ export default function Contact() {
   }
 
   return (
-    <div className="min-h-screen py-16">
+    <div className="md:bg-safaridark bg-gray-50 min-h-screen py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h1 className="mb-4 text-4xl font-bold">Get In Touch</h1>
-          <p className="text-muted max-w-2xl mx-auto">
+          <h1 className="mb-4 text-4xl font-bold font-display text-gray-900 md:text-white">Get In Touch</h1>
+          <p className="text-gray-500 md:text-gray-400 max-w-2xl mx-auto">
             Have a question? We&apos;re here to help. Reach out through any of our channels below.
           </p>
         </div>
@@ -61,41 +61,41 @@ export default function Contact() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Contact Info */}
           <div className="lg:col-span-1 space-y-4">
-            <div className="rounded-xl border border-border bg-card p-6">
+            <div className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-6">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-electric/10 text-electric">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-neon/10 text-neon">
                   <Phone className="h-6 w-6" />
                 </div>
                 <div>
                   <h3 className="font-semibold">Phone</h3>
-                  <p className="text-muted">+254 700 000 000</p>
-                  <p className="text-sm text-muted mt-1">Mon-Sat, 8am-8pm</p>
+                  <p className="text-gray-500 md:text-gray-400">+254 700 000 000</p>
+                  <p className="text-sm text-gray-500 md:text-gray-400 mt-1">Mon-Sat, 8am-8pm</p>
                 </div>
               </div>
             </div>
 
-            <div className="rounded-xl border border-border bg-card p-6">
+            <div className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-6">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-electric/10 text-electric">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-neon/10 text-neon">
                   <Mail className="h-6 w-6" />
                 </div>
                 <div>
                   <h3 className="font-semibold">Email</h3>
-                  <p className="text-muted">hello@safaritech.co.ke</p>
-                  <p className="text-sm text-muted mt-1">We reply within 24 hours</p>
+                  <p className="text-gray-500 md:text-gray-400">hello@safaritech.co.ke</p>
+                  <p className="text-sm text-gray-500 md:text-gray-400 mt-1">We reply within 24 hours</p>
                 </div>
               </div>
             </div>
 
-            <div className="rounded-xl border border-border bg-card p-6">
+            <div className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-6">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-electric/10 text-electric">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-neon/10 text-neon">
                   <MapPin className="h-6 w-6" />
                 </div>
                 <div>
                   <h3 className="font-semibold">Office</h3>
-                  <p className="text-muted">Westlands Business Centre</p>
-                  <p className="text-sm text-muted">Nairobi, Kenya</p>
+                  <p className="text-gray-500 md:text-gray-400">Westlands Business Centre</p>
+                  <p className="text-sm text-gray-500 md:text-gray-400">Nairobi, Kenya</p>
                 </div>
               </div>
             </div>
@@ -113,9 +113,9 @@ export default function Contact() {
 
           {/* Contact Form */}
           <div className="lg:col-span-2">
-            <form onSubmit={handleSubmit} className="rounded-xl border border-border bg-card p-8">
+            <form onSubmit={handleSubmit} className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-8">
               <h2 className="mb-6 text-xl font-semibold">Send us a Message</h2>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                   <label htmlFor="name" className="mb-2 block text-sm font-medium">
@@ -127,7 +127,7 @@ export default function Contact() {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
-                    className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 text-text placeholder:text-muted focus:border-electric focus:outline-none"
+                    className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-gray-900 md:text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-neon focus:outline-none"
                     placeholder="John Doe"
                   />
                 </div>
@@ -141,7 +141,7 @@ export default function Contact() {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
-                    className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 text-text placeholder:text-muted focus:border-electric focus:outline-none"
+                    className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-gray-900 md:text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-neon focus:outline-none"
                     placeholder="you@example.com"
                   />
                 </div>
@@ -157,7 +157,7 @@ export default function Contact() {
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 text-text placeholder:text-muted focus:border-electric focus:outline-none"
+                    className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-gray-900 md:text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-neon focus:outline-none"
                     placeholder="+254 7XX XXX XXX"
                   />
                 </div>
@@ -170,7 +170,7 @@ export default function Contact() {
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     required
-                    className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 text-text focus:border-electric focus:outline-none"
+                    className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-gray-900 md:text-white focus:border-neon focus:outline-none"
                   >
                     <option value="">Select a subject</option>
                     <option value="order">Order Inquiry</option>
@@ -192,7 +192,7 @@ export default function Contact() {
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   required
                   rows={5}
-                  className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 text-text placeholder:text-muted focus:border-electric focus:outline-none resize-none"
+                  className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-gray-900 md:text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-neon focus:outline-none resize-none"
                   placeholder="How can we help you?"
                 />
               </div>
@@ -200,7 +200,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={loading}
-                className="btn btn-primary w-full py-3"
+                className="bg-neon hover:bg-neon-dim text-black font-bold px-5 py-2.5 rounded-lg text-sm transition-all w-full py-3"
               >
                 {loading ? (
                   'Sending...'

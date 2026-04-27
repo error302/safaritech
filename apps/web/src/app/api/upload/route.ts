@@ -34,15 +34,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ url, filename, path: url })
     }
 
-    const cloudName = process.env.CLOUDINARY_CLOUD_NAME
-    const apiKey = process.env.CLOUDINARY_API_KEY
-    const apiSecret = process.env.CLOUDINARY_API_SECRET
+const cloudName = process.env.CLOUDINARY_CLOUD_NAME
+  const apiKey = process.env.CLOUDINARY_API_KEY
+  const apiSecret = process.env.CLOUDINARY_API_SECRET
 
-    if (!cloudName || !apiKey || !apiSecret) {
-      return NextResponse.json({ error: 'Cloudinary not configured' }, { status: 500 })
-    }
+  if (!cloudName || !apiKey || !apiSecret) {
+    // Fallback to local storage if Cloudinary not configured
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`
+    const filename = `${uniqueSuffix}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
+    const uploadDir = join(process.cwd(), 'public', 'uploads')
+    await mkdir(uploadDir, { recursive: true })
+    const filepath = join(uploadDir, filename)
+    const bytes2 = await file.arrayBuffer()
+    await writeFile(filepath, Buffer.from(bytes2))
+    const url = `/uploads/${filename}`
+    return NextResponse.json({ url, filename, path: url })
+  }
 
-    const bytes = await file.arrayBuffer()
+  const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
     const base64 = buffer.toString('base64')
     const dataUri = `data:${file.type};base64,${base64}`
@@ -90,7 +99,7 @@ async function generateSignature(timestamp: number, apiSecret: string, folder: s
   const data = encoder.encode(text)
   const hashBuffer = await crypto.subtle.digest('SHA-1', data)
   const hashArray = Array.from(new Uint8Array(hashBuffer))
-  return hashArray.map(b => b.toString(16).padStart(1, '0')).join('')
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
 export async function DELETE(request: Request) {

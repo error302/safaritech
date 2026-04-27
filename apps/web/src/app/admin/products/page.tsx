@@ -111,12 +111,12 @@ export default function AdminProductsPage() {
 
   return (
     <div className="space-y-6">
-      <AdminHeader
-        title="Products"
-        description="Manage your product catalog"
-        addNewHref="#"
-        addNewLabel="Add Product"
-      />
+    <AdminHeader
+      title="Products"
+      description="Manage your product catalog"
+      addNewLabel="Add Product"
+      onAddNew={() => { setEditProduct(null); setOpenForm(true); }}
+    />
 
       {/* Table */}
       <DataTable

@@ -115,24 +115,24 @@ export default function FAQ() {
     : faqs
 
   return (
-    <div className="min-h-screen py-16">
+    <div className="md:bg-safaridark bg-gray-50 min-h-screen py-16">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h1 className="mb-4 text-4xl font-bold">Frequently Asked Questions</h1>
-          <p className="text-muted">
+          <h1 className="mb-4 text-4xl font-bold font-display text-gray-900 md:text-white">Frequently Asked Questions</h1>
+          <p className="text-gray-500 md:text-gray-400">
             Can&apos;t find what you&apos;re looking for? Contact our support team.
           </p>
         </div>
 
         {/* Search */}
         <div className="relative mb-8">
-          <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted" />
+          <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500 md:text-gray-400" />
           <input
             type="text"
             placeholder="Search for answers..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-xl border border-border bg-card py-3 pl-12 pr-4 text-text placeholder:text-muted focus:border-electric focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray py-3 pl-12 pr-4 text-gray-900 md:text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-neon focus:outline-none"
           />
         </div>
 
@@ -147,7 +147,7 @@ export default function FAQ() {
                   return (
                     <div
                       key={id}
-                      className="rounded-xl border border-border bg-card overflow-hidden"
+                      className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray overflow-hidden"
                     >
                       <button
                         onClick={() => toggleFaq(id)}
@@ -155,13 +155,13 @@ export default function FAQ() {
                       >
                         <span className="font-medium">{item.q}</span>
                         <ChevronDown
-                          className={`h-5 w-5 text-muted transition-transform ${
+                          className={`h-5 w-5 text-gray-500 md:text-gray-400 transition-transform ${
                             openFaqs[id] ? 'rotate-180' : ''
                           }`}
                         />
                       </button>
                       {openFaqs[id] && (
-                        <div className="border-t border-border p-4 text-muted">
+                        <div className="border-t border-gray-200 md:border-safariborder p-4 text-gray-500 md:text-gray-400">
                           {item.a}
                         </div>
                       )}
@@ -174,16 +174,16 @@ export default function FAQ() {
         </div>
 
         {/* Contact CTA */}
-        <div className="mt-16 rounded-xl border border-border bg-card p-8 text-center">
+        <div className="mt-16 rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-8 text-center">
           <h3 className="mb-2 text-xl font-semibold">Still have questions?</h3>
-          <p className="text-muted mb-6">
+          <p className="text-gray-500 md:text-gray-400 mb-6">
             Can&apos;t find the answer you&apos;re looking for? Our team is here to help.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="https://wa.me/254700000000" className="btn btn-primary">
+            <a href="https://wa.me/254700000000" className="bg-neon hover:bg-neon-dim text-black font-bold px-5 py-2.5 rounded-lg text-sm transition-all">
               Chat on WhatsApp
             </a>
-            <a href="/contact" className="btn btn-secondary">
+            <a href="/contact" className="border border-gray-200 md:border-safariborder text-gray-700 md:text-gray-300 px-5 py-2.5 rounded-lg text-sm font-medium transition-all hover:border-neon hover:text-neon">
               Contact Us
             </a>
           </div>

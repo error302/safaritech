@@ -24,18 +24,18 @@ const values = [
 
 export default function About() {
   return (
-    <div className="min-h-screen">
+    <div className="md:bg-safaridark bg-gray-50 min-h-screen">
       {/* Hero */}
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue/20 via-transparent to-electric/10" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <h1 className="mb-6 text-5xl font-bold">
+            <h1 className="mb-6 text-5xl font-bold font-display text-gray-900 md:text-white">
               Empowering Kenya&apos;s
-              <span className="bg-gradient-to-r from-electric to-blue bg-clip-text text-transparent"> Tech Future</span>
+              <span className="bg-gradient-to-r from-neon to-blue bg-clip-text text-transparent"> Tech Future</span>
             </h1>
-            <p className="text-xl text-muted">
-              We&apos;re on a mission to make premium technology accessible to every Kenyan, 
+            <p className="text-xl text-gray-500 md:text-gray-400">
+              We&apos;re on a mission to make premium technology accessible to every Kenyan,
               with unbeatable prices, genuine products, and world-class service.
             </p>
           </div>
@@ -43,16 +43,16 @@ export default function About() {
       </section>
 
       {/* Stats */}
-      <section className="py-12 border-y border-border">
+      <section className="py-12 border-y border-gray-200 md:border-safariborder">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat) => (
               <div key={stat.label} className="text-center">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-electric/10 text-electric">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-neon/10 text-neon">
                   <stat.icon className="h-6 w-6" />
                 </div>
-                <p className="text-3xl font-bold">{stat.value}</p>
-                <p className="text-sm text-muted">{stat.label}</p>
+                <p className="text-3xl font-bold font-display text-gray-900 md:text-white">{stat.value}</p>
+                <p className="text-sm text-gray-500 md:text-gray-400">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -64,30 +64,30 @@ export default function About() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="mb-6 text-3xl font-bold">Our Story</h2>
-              <div className="space-y-4 text-muted">
+              <h2 className="mb-6 text-3xl font-bold font-display text-gray-900 md:text-white">Our Story</h2>
+              <div className="space-y-4 text-gray-500 md:text-gray-400">
                 <p>
-                  Founded in 2019, Safaritech started with a simple vision: to bring the world&apos;s 
+                  Founded in 2019, Safaritech started with a simple vision: to bring the world&apos;s
                   best technology to Kenya without the premium price tag.
                 </p>
                 <p>
-                  What began as a small online shop has grown into Kenya&apos;s trusted electronics 
+                  What began as a small online shop has grown into Kenya&apos;s trusted electronics
                   marketplace, serving over 50,000 customers across the country.
                 </p>
                 <p>
-                  We partner directly with global brands to ensure authentic products with full warranty 
+                  We partner directly with global brands to ensure authentic products with full warranty
                   coverage, while our local presence means fast delivery and responsive support.
                 </p>
                 <p>
-                  Today, we offer over 1,000 products across smartphones, laptops, audio, wearables, 
+                  Today, we offer over 1,000 products across smartphones, laptops, audio, wearables,
                   and more — all backed by our commitment to quality, authenticity, and customer satisfaction.
                 </p>
               </div>
             </div>
-            <div className="aspect-square rounded-2xl bg-gradient-to-br from-electric/20 to-blue/20 flex items-center justify-center">
+            <div className="aspect-square rounded-2xl bg-gradient-to-br from-neon/20 to-blue/20 flex items-center justify-center">
               <div className="text-center">
-                <p className="text-6xl font-bold text-electric">2019</p>
-                <p className="text-muted mt-2">Founded in Nairobi</p>
+                <p className="text-6xl font-bold text-neon">2019</p>
+                <p className="text-gray-500 md:text-gray-400 mt-2">Founded in Nairobi</p>
               </div>
             </div>
           </div>
@@ -95,17 +95,17 @@ export default function About() {
       </section>
 
       {/* Values */}
-      <section className="py-16 border-t border-border">
+      <section className="py-16 border-t border-gray-200 md:border-safariborder">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="mb-12 text-center text-3xl font-bold">Our Values</h2>
+          <h2 className="mb-12 text-center text-3xl font-bold font-display text-gray-900 md:text-white">Our Values</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {values.map((value) => (
-              <div key={value.title} className="rounded-xl border border-border bg-card p-6">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-electric/10 text-electric">
+              <div key={value.title} className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-6">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-neon/10 text-neon">
                   <value.icon className="h-6 w-6" />
                 </div>
                 <h3 className="mb-2 text-lg font-semibold">{value.title}</h3>
-                <p className="text-sm text-muted">{value.desc}</p>
+                <p className="text-sm text-gray-500 md:text-gray-400">{value.desc}</p>
               </div>
             ))}
           </div>
@@ -113,17 +113,17 @@ export default function About() {
       </section>
 
       {/* Team */}
-      <section className="py-16 border-t border-border">
+      <section className="py-16 border-t border-gray-200 md:border-safariborder">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="mb-12 text-center text-3xl font-bold">Meet Our Team</h2>
+          <h2 className="mb-12 text-center text-3xl font-bold font-display text-gray-900 md:text-white">Meet Our Team</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {team.map((member) => (
-              <div key={member.name} className="rounded-xl border border-border bg-card p-6 text-center">
-                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-electric/10 text-electric text-2xl font-bold">
+              <div key={member.name} className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-6 text-center">
+                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-neon/10 text-neon text-2xl font-bold">
                   {member.image}
                 </div>
                 <h3 className="font-semibold">{member.name}</h3>
-                <p className="text-sm text-muted">{member.role}</p>
+                <p className="text-sm text-gray-500 md:text-gray-400">{member.role}</p>
               </div>
             ))}
           </div>
@@ -131,17 +131,17 @@ export default function About() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 border-t border-border">
+      <section className="py-16 border-t border-gray-200 md:border-safariborder">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="mb-4 text-3xl font-bold">Ready to Shop?</h2>
-          <p className="mb-8 text-muted max-w-2xl mx-auto">
+          <h2 className="mb-4 text-3xl font-bold font-display text-gray-900 md:text-white">Ready to Shop?</h2>
+          <p className="mb-8 text-gray-500 md:text-gray-400 max-w-2xl mx-auto">
             Explore our wide range of electronics and experience the Safaritech difference.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/shop" className="btn btn-primary">
+            <Link href="/shop" className="bg-neon hover:bg-neon-dim text-black font-bold px-5 py-2.5 rounded-lg text-sm transition-all">
               Browse Products
             </Link>
-            <Link href="/contact" className="btn btn-secondary">
+            <Link href="/contact" className="border border-gray-200 md:border-safariborder text-gray-700 md:text-gray-300 px-5 py-2.5 rounded-lg text-sm font-medium transition-all hover:border-neon hover:text-neon">
               Contact Us
             </Link>
           </div>

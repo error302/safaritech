@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Upload, X, Image as ImageIcon, Cloud, HardDrive } from "lucide-react";
+import { Upload, X, Cloud, HardDrive } from "lucide-react";
 
 type Props = {
   value?: string;
@@ -10,10 +10,11 @@ type Props = {
   uploadTo?: "cloudinary" | "local";
 };
 
-export default function ImageUploader({ value, onChange, multiple = false, uploadTo = "cloudinary" }: Props) {
+export default function ImageUploader({ value, onChange, multiple = false, uploadTo: initialUploadTo = "cloudinary" }: Props) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [dragOver, setDragOver] = useState(false);
+  const [uploadTo, setUploadTo] = useState<"cloudinary" | "local">(initialUploadTo);
   const fileInput = useRef<HTMLInputElement>(null);
 
   const existingUrls = value ? value.split(",").filter(Boolean) : [];
@@ -54,7 +55,7 @@ export default function ImageUploader({ value, onChange, multiple = false, uploa
         onChange(data.url);
       }
     } catch (err) {
-      setError(String(err));
+      setError(err instanceof Error ? err.message : String(err));
     } finally {
       setUploading(false);
     }
@@ -74,14 +75,13 @@ export default function ImageUploader({ value, onChange, multiple = false, uploa
 
   return (
     <div className="space-y-3">
-      {/* Upload Method Toggle */}
       <div className="flex items-center gap-4">
         <span className="text-xs text-gray-500">Upload to:</span>
         <button
           type="button"
-          onClick={() => {}}
+          onClick={() => setUploadTo("cloudinary")}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-            uploadTo === "cloudinary" ? "bg-neon/10 text-neon border-neon/20" : "bg-safarigray text-gray-400 border-safariborder"
+            uploadTo === "cloudinary" ? "bg-neon/10 text-neon border-neon/20" : "bg-safarigray text-gray-400 border-safariborder hover:text-white"
           }`}
         >
           <Cloud className="w-3.5 h-3.5" />
@@ -89,9 +89,9 @@ export default function ImageUploader({ value, onChange, multiple = false, uploa
         </button>
         <button
           type="button"
-          onClick={() => {}}
+          onClick={() => setUploadTo("local")}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-            uploadTo === "local" ? "bg-neon/10 text-neon border-neon/20" : "bg-safarigray text-gray-400 border-safariborder"
+            uploadTo === "local" ? "bg-neon/10 text-neon border-neon/20" : "bg-safarigray text-gray-400 border-safariborder hover:text-white"
           }`}
         >
           <HardDrive className="w-3.5 h-3.5" />
@@ -99,7 +99,6 @@ export default function ImageUploader({ value, onChange, multiple = false, uploa
         </button>
       </div>
 
-      {/* Existing Images */}
       {existingUrls.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {existingUrls.map((url, i) => (
@@ -117,55 +116,52 @@ export default function ImageUploader({ value, onChange, multiple = false, uploa
         </div>
       )}
 
-      {/* Drop Zone */}
-      {(!multiple || existingUrls.length === 0) && (
-        <div
-          onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-          onDragLeave={() => setDragOver(false)}
-          onDrop={handleDrop}
-          onClick={() => fileInput.current?.click()}
-          className={`relative flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed cursor-pointer transition-all ${
-            dragOver
-              ? "border-neon bg-neon/5"
-              : "border-safariborder hover:border-neon/50 bg-safarigray/50"
-          } h-32`}
-        >
-          <input
-            ref={fileInput}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) handleFile(file);
-            }}
-          />
+      <div
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={handleDrop}
+        onClick={() => fileInput.current?.click()}
+        className={`relative flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed cursor-pointer transition-all ${
+          dragOver
+            ? "border-neon bg-neon/5"
+            : "border-safariborder hover:border-neon/50 bg-safarigray/50"
+        } h-32`}
+      >
+        <input
+          ref={fileInput}
+          type="file"
+          accept="image/*"
+          multiple={multiple}
+          className="hidden"
+          onChange={(e) => {
+            const files = e.target.files;
+            if (files) {
+              Array.from(files).forEach((file) => handleFile(file));
+            }
+          }}
+        />
 
-          {uploading ? (
-            <div className="flex items-center gap-2 text-neon">
-              <div className="w-5 h-5 border-2 border-neon border-t-transparent rounded-full animate-spin" />
-              <span className="text-sm font-medium">Uploading...</span>
+        {uploading ? (
+          <div className="flex items-center gap-2 text-neon">
+            <div className="w-5 h-5 border-2 border-neon border-t-transparent rounded-full animate-spin" />
+            <span className="text-sm font-medium">Uploading...</span>
+          </div>
+        ) : (
+          <>
+            <div className="w-10 h-10 rounded-xl bg-safariborder flex items-center justify-center text-gray-500">
+              <Upload className="w-5 h-5" />
             </div>
-          ) : (
-            <>
-              <div className="w-10 h-10 rounded-xl bg-safariborder flex items-center justify-center text-gray-500">
-                <Upload className="w-5 h-5" />
-              </div>
-              <div className="text-center">
-                <p className="text-sm font-medium text-white">
-                  Click or drag image to upload
-                </p>
-                <p className="text-xs text-gray-500 mt-0.5">PNG, JPG, WebP up to 10MB</p>
-              </div>
-            </>
-          )}
-        </div>
-      )}
+            <div className="text-center">
+              <p className="text-sm font-medium text-white">
+                Click or drag image to upload
+              </p>
+              <p className="text-xs text-gray-500 mt-0.5">PNG, JPG, WebP up to 10MB</p>
+            </div>
+          </>
+        )}
+      </div>
 
-      {/* Error */}
-      {error && (
-        <p className="text-xs text-red-500">{error}</p>
-      )}
+      {error && <p className="text-xs text-red-500">{error}</p>}
     </div>
   );
 }

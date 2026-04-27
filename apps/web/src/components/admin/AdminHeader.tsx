@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Bell, Search, Plus } from "lucide-react";
 
 type Props = {
@@ -8,9 +7,10 @@ type Props = {
   description?: string;
   addNewHref?: string;
   addNewLabel?: string;
+  onAddNew?: () => void;
 };
 
-export default function AdminHeader({ title, description, addNewHref, addNewLabel }: Props) {
+export default function AdminHeader({ title, description, addNewHref, addNewLabel, onAddNew }: Props) {
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
@@ -29,14 +29,14 @@ export default function AdminHeader({ title, description, addNewHref, addNewLabe
         <button className="p-2 rounded-xl hover:bg-safarigray text-gray-400 hover:text-white border border-safariborder transition-all">
           <Bell className="w-5 h-5" />
         </button>
-        {addNewHref && (
-          <Link
-            href={addNewHref}
+        {(addNewHref || onAddNew) && (
+          <button
+            onClick={onAddNew}
             className="flex items-center gap-2 bg-neon hover:bg-neon-dim text-black font-semibold px-4 py-2 rounded-xl text-sm transition-all active:scale-95"
           >
             <Plus className="w-4 h-4" />
             {addNewLabel || "Add New"}
-          </Link>
+          </button>
         )}
       </div>
     </div>

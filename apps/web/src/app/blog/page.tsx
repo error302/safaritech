@@ -36,11 +36,11 @@ const posts = [
 
 export default function Blog() {
   return (
-    <div className="min-h-screen py-12">
+    <div className="md:bg-safaridark bg-gray-50 min-h-screen py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12">
-          <h1 className="mb-4 text-4xl font-bold">Tech Blog</h1>
-          <p className="text-muted max-w-2xl">
+          <h1 className="mb-4 text-4xl font-bold font-display text-gray-900 md:text-white">Tech Blog</h1>
+          <p className="text-gray-500 md:text-gray-400 max-w-2xl">
             Stay updated with the latest tech trends, buying guides, and product reviews.
           </p>
         </div>
@@ -50,20 +50,20 @@ export default function Blog() {
             <Link
               key={post.id}
               href={`/blog/${post.slug}`}
-              className="group rounded-xl border border-border bg-card overflow-hidden transition-all hover:border-electric/50 hover:shadow-lg hover:shadow-electric/10"
+              className="group rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray overflow-hidden transition-all hover:border-electric/50 hover:shadow-lg hover:shadow-electric/10"
             >
               <div className={`aspect-video ${post.image} flex items-center justify-center`}>
-                <span className="text-muted">Blog Image</span>
+                <span className="text-gray-500 md:text-gray-400">Blog Image</span>
               </div>
               <div className="p-6">
-                <span className="mb-3 inline-block text-xs font-medium text-electric">
+                <span className="mb-3 inline-block text-xs font-medium text-neon">
                   {post.category}
                 </span>
-                <h2 className="mb-3 text-xl font-bold group-hover:text-electric transition-colors">
+                <h2 className="mb-3 text-xl font-bold group-hover:text-neon transition-colors text-gray-900 md:text-white">
                   {post.title}
                 </h2>
-                <p className="mb-4 text-sm text-muted line-clamp-2">{post.excerpt}</p>
-                <div className="flex items-center gap-4 text-sm text-muted">
+                <p className="mb-4 text-sm text-gray-500 md:text-gray-400 line-clamp-2">{post.excerpt}</p>
+                <div className="flex items-center gap-4 text-sm text-gray-500 md:text-gray-400">
                   <div className="flex items-center gap-1">
                     <User className="h-4 w-4" />
                     {post.author}
@@ -79,7 +79,7 @@ export default function Blog() {
         </div>
 
         <div className="mt-12 flex justify-center">
-          <button className="btn btn-secondary">
+          <button className="border border-gray-200 md:border-safariborder text-gray-700 md:text-gray-300 px-5 py-2.5 rounded-lg text-sm font-medium transition-all hover:border-neon hover:text-neon">
             Load More Articles
           </button>
         </div>

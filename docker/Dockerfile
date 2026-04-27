@@ -1,8 +1,9 @@
-FROM node:20-alpine
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy workspace root files
+RUN apk add --no-cache openssl
+
 COPY package.json package-lock.json ./
 COPY prisma prisma/
 COPY apps/web/package.json apps/web/
@@ -13,16 +14,29 @@ COPY apps/web/postcss.config.* apps/web/
 COPY apps/web/public apps/web/public
 COPY apps/web/src apps/web/src
 
-# Install dependencies
-RUN npm ci --legacy-peer-deps
+RUN npm install --legacy-peer-deps
 
-# Build Next.js app (runs prisma generate automatically via postinstall)
 WORKDIR /app/apps/web
 RUN npm run build
+
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+RUN apk add --no-cache openssl
+
+COPY --from=builder /app/package.json /app/package-lock.json ./
+COPY --from=builder /app/prisma prisma/
+COPY --from=builder /app/apps/web apps/web/
+COPY --from=builder /app/node_modules node_modules/
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 EXPOSE 3000
 
-CMD ["npm", "run", "start"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["npm", "--prefix", "apps/web", "run", "start"]

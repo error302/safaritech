@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { trpc } from "@/utils/trpc";
+import ImageUploader from "./ImageUploader";
 
 type Category = { id: string; name: string };
 type Product = {
@@ -46,17 +47,19 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
   const createProduct = trpc.product.create.useMutation({
     onSuccess: () => {
       utils.product.adminGetAll.invalidate();
+      utils.product.getAll.invalidate();
       onSuccess();
     },
-    onError: (err) => setError(String(err)),
+    onError: (err) => setError(err.message),
   });
 
   const updateProduct = trpc.product.update.useMutation({
     onSuccess: () => {
       utils.product.adminGetAll.invalidate();
+      utils.product.getAll.invalidate();
       onSuccess();
     },
-    onError: (err) => setError(String(err)),
+    onError: (err) => setError(err.message),
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -76,7 +79,7 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
       price: priceNum,
       salePrice: salePrice ? parseFloat(salePrice) : undefined,
       stock: parseInt(stock) || 0,
-      images: images.trim(),
+      images: images.trim() || undefined,
       categoryId: categoryId || undefined,
     };
 
@@ -91,54 +94,8 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      {/* Images */}
-      <div>
-        <label className="block text-sm font-medium text-white mb-2">Product Images</label>
-        <input
-          type="text"
-          value={images}
-          onChange={(e) => setImages(e.target.value)}
-          placeholder="Image URL (comma-separated for multiple)"
-          className="w-full bg-safaridark border border-safariborder rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-neon"
-        />
-        <div className="mt-2">
-            <input
-              type="file"
-              accept="image/*"
-              id="product-image-input"
-              className="hidden"
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (!file) return;
-                const formData = new FormData();
-                formData.append("file", file);
-                formData.append("uploadTo", "cloudinary");
-                const res = await fetch("/api/upload", { method: "POST", body: formData });
-                if (res.ok) {
-                  const data = await res.json();
-                  setImages(images ? `${images},${data.url}` : data.url);
-                }
-              }}
-            />
-            <label
-              htmlFor="product-image-input"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-safariborder text-sm text-gray-400 hover:text-white hover:border-neon cursor-pointer transition-all"
-            >
-              Upload Image
-            </label>
-        </div>
-        {images && (
-          <div className="flex gap-2 mt-2">
-            {images.split(",").filter(Boolean).map((url, i) => (
-              <div key={i} className="w-16 h-16 rounded-lg overflow-hidden border border-safariborder">
-                <img src={url.trim()} alt="" className="w-full h-full object-cover" />
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      <ImageUploader value={images} onChange={setImages} multiple uploadTo="cloudinary" />
 
-      {/* Name */}
       <div>
         <label className="block text-sm font-medium text-white mb-2">Product Name *</label>
         <input
@@ -151,7 +108,6 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
         />
       </div>
 
-      {/* Slug */}
       <div>
         <label className="block text-sm font-medium text-white mb-2">Slug</label>
         <input
@@ -163,7 +119,6 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
         <p className="text-xs text-gray-600 mt-1">Auto-generated from name</p>
       </div>
 
-      {/* Description */}
       <div>
         <label className="block text-sm font-medium text-white mb-2">Description *</label>
         <textarea
@@ -176,7 +131,6 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
         />
       </div>
 
-      {/* Prices */}
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-white mb-2">Price (KSh) *</label>
@@ -203,7 +157,6 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
         </div>
       </div>
 
-      {/* Stock & Category */}
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-white mb-2">Stock</label>
@@ -231,10 +184,8 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
         </div>
       </div>
 
-      {/* Error */}
       {error && <p className="text-xs text-red-500">{error}</p>}
 
-      {/* Submit */}
       <div className="flex justify-end gap-3 pt-2">
         <button
           type="submit"

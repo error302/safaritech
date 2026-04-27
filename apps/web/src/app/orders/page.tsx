@@ -1,106 +1,30 @@
 import Link from 'next/link'
 import { Package, ChevronRight, Clock, Truck, CheckCircle } from 'lucide-react'
 
-const orders = [
-  {
-    id: 'ORD-ABC123',
-    date: '2024-01-20',
-    status: 'delivered',
-    total: 139999,
-    items: [{ name: 'iPhone 15 Pro Max', quantity: 1 }],
-  },
-  {
-    id: 'ORD-DEF456',
-    date: '2024-01-22',
-    status: 'shipped',
-    total: 49999,
-    items: [{ name: 'AirPods Pro 2', quantity: 2 }],
-  },
-  {
-    id: 'ORD-GHI789',
-    date: '2024-01-23',
-    status: 'processing',
-    total: 249999,
-    items: [
-      { name: 'MacBook Pro M3', quantity: 1 },
-      { name: 'Apple Magic Mouse', quantity: 1 },
-    ],
-  },
-]
-
-const statusConfig = {
-  pending: { label: 'Pending', icon: Clock, color: 'text-yellow' },
-  processing: { label: 'Processing', icon: Package, color: 'text-blue' },
-  shipped: { label: 'Shipped', icon: Truck, color: 'text-purple' },
-  delivered: { label: 'Delivered', icon: CheckCircle, color: 'text-green' },
+const statusConfig: Record<string, { label: string; icon: typeof Clock; color: string }> = {
+  pending: { label: 'Pending', icon: Clock, color: 'text-amber-600 md:text-yellow' },
+  processing: { label: 'Processing', icon: Package, color: 'text-blue-600 md:text-blue' },
+  shipped: { label: 'Shipped', icon: Truck, color: 'text-purple-600 md:text-purple' },
+  delivered: { label: 'Delivered', icon: CheckCircle, color: 'text-green-600 md:text-neon' },
 }
 
 export default function Orders() {
   return (
-    <div className="min-h-screen py-8">
+    <div className="md:bg-safaridark bg-gray-50 min-h-screen py-6 md:py-8">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <h1 className="mb-8 text-3xl font-bold">My Orders</h1>
+        <h1 className="mb-6 md:mb-8 font-display font-bold text-2xl md:text-3xl md:text-white text-gray-900">My Orders</h1>
 
-        {orders.length > 0 ? (
-          <div className="space-y-4">
-            {orders.map((order) => {
-              const status = statusConfig[order.status as keyof typeof statusConfig]
-              const StatusIcon = status.icon
-
-              return (
-                <div key={order.id} className="rounded-xl border border-border bg-card overflow-hidden">
-                  <div className="border-b border-border p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-mono font-medium">{order.id}</p>
-                        <p className="text-sm text-muted">{order.date}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <StatusIcon className={`h-4 w-4 ${status.color}`} />
-                        <span className={`text-sm font-medium ${status.color}`}>
-                          {status.label}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-4">
-                    <div className="space-y-2 mb-4">
-                      {order.items.map((item, idx) => (
-                        <div key={idx} className="flex justify-between text-sm">
-                          <span className="text-muted">{item.name} x{item.quantity}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="flex items-center justify-between pt-4 border-t border-border">
-                      <span className="font-semibold">Total</span>
-                      <span className="font-bold text-electric">
-                        KSh {order.total.toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-
-                  <Link
-                    href={`/orders/${order.id}`}
-                    className="flex items-center justify-between p-4 border-t border-border text-sm text-electric hover:bg-surface transition-colors"
-                  >
-                    <span>View Details</span>
-                    <ChevronRight className="h-4 w-4" />
-                  </Link>
-                </div>
-              )
-            })}
-          </div>
-        ) : (
-          <div className="text-center py-16">
-            <Package className="mx-auto h-16 w-16 text-muted mb-4" />
-            <h2 className="mb-2 text-xl font-semibold">No orders yet</h2>
-            <p className="text-muted mb-6">Start shopping to see your orders here.</p>
-            <Link href="/shop" className="btn btn-primary">
-              Browse Products
-            </Link>
-          </div>
-        )}
+        <div className="bg-white md:bg-safarigray border border-gray-200 md:border-safariborder rounded-xl p-8 md:p-12 text-center">
+          <Package className="mx-auto h-12 w-12 md:h-16 md:w-16 text-gray-300 md:text-gray-600 mb-4" />
+          <h2 className="mb-2 text-lg md:text-xl font-semibold text-gray-900 md:text-white">No orders yet</h2>
+          <p className="text-sm text-gray-500 md:text-gray-400 mb-6">Start shopping to see your orders here.</p>
+          <Link
+            href="/shop"
+            className="inline-block bg-neon hover:bg-neon-dim text-black font-bold px-6 py-2.5 rounded-lg text-sm transition-all"
+          >
+            Browse Products
+          </Link>
+        </div>
       </div>
     </div>
   )

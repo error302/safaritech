@@ -106,86 +106,80 @@ export default function ProductCard({ product }: { product: Product }) {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     const productId = typeof product.id === 'number' ? product.id.toString() : product.id;
     addToCart.mutate({ productId, quantity: 1 });
   };
 
   return (
     <Link href={`/products/${getProductSlug(product)}`} className="group block">
-      <div className="product-card bg-safarigray border border-safariborder rounded-2xl overflow-hidden neon-border">
-        {/* Image */}
-        <div className="relative aspect-square overflow-hidden bg-[#0d0d0d]">
+      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 hover:shadow-sm transition-all duration-200">
+        <div className="relative aspect-square overflow-hidden bg-gray-50">
           <Image
             src={getProductImage(product)}
             alt={getProductName(product)}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
             sizes="(max-width: 768px) 50vw, 25vw"
           />
-          {/* Badges */}
-          <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+          <div className="absolute top-2 left-2 flex flex-col gap-1">
             {getProductBadge(product) && (
-              <span className="bg-neon text-black text-[10px] font-bold px-2.5 py-1 rounded-lg font-display">
+              <span className="bg-neon text-black text-[9px] md:text-[10px] font-bold px-2 py-0.5 rounded-md font-display">
                 {getProductBadge(product)}
               </span>
             )}
             {discount && (
-              <span className="bg-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg font-display">
+              <span className="bg-red-600 text-white text-[9px] md:text-[10px] font-bold px-2 py-0.5 rounded-md">
                 -{discount}%
               </span>
             )}
           </div>
-              {getProductIsHot(product) && (
-          <div className="absolute top-3 right-3">
-            <Flame className="w-5 h-5 text-orange-400" />
-          </div>
-        )}
+          {getProductIsHot(product) && (
+            <div className="absolute top-2 right-2">
+              <Flame className="w-4 h-4 md:w-5 md:h-5 text-orange-500" />
+            </div>
+          )}
           {!getProductInStock(product) && (
-            <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-              <span className="bg-red-500 text-white text-xs font-semibold px-3 py-1.5 rounded-xl">Out of Stock</span>
+            <div className="absolute inset-0 bg-white/70 flex items-center justify-center">
+              <span className="bg-gray-900 text-white text-[10px] md:text-xs font-semibold px-3 py-1.5 rounded-lg">Out of Stock</span>
             </div>
           )}
         </div>
 
-        {/* Info */}
-        <div className="p-4">
-          <div className="text-xs text-gray-500 font-medium mb-1">{getProductBrand(product)}</div>
-          <div className="font-semibold text-sm text-white line-clamp-2 leading-snug mb-2">
+        <div className="p-3 md:p-4">
+          <div className="text-[10px] md:text-xs text-gray-400 font-medium mb-0.5">{getProductBrand(product)}</div>
+          <div className="font-medium text-xs md:text-sm text-gray-900 line-clamp-2 leading-snug mb-1.5">
             {getProductName(product)}
           </div>
 
-          {/* Rating */}
-          <div className="flex items-center gap-1.5 mb-3">
-                <div className="flex">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} size={12} className={i < Math.round(getProductRating(product)) ? "fill-amber-400 text-amber-400" : "text-amber-400/30"} />
-                  ))}
-                </div>
-                <span className="text-xs text-gray-500">({getProductReviews(product).toLocaleString()})</span>
-              </div>
+          <div className="flex items-center gap-1 mb-2">
+            <div className="flex">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} size={10} className={i < Math.round(getProductRating(product)) ? "fill-amber-400 text-amber-400" : "text-gray-200"} />
+              ))}
+            </div>
+            <span className="text-[10px] text-gray-400">({getProductReviews(product).toLocaleString()})</span>
+          </div>
 
-          {/* Price */}
-          <div className="flex items-baseline gap-2 mb-3">
-            <span className="font-display font-bold text-lg text-neon">
+          <div className="flex items-baseline gap-1.5 mb-2.5">
+            <span className="font-display font-bold text-sm md:text-lg text-gray-900">
               KES {getProductPrice(product).toLocaleString()}
             </span>
             {getProductOriginalPrice(product) && (
-              <span className="text-xs text-gray-600 line-through">
+              <span className="text-[10px] md:text-xs text-gray-400 line-through">
                 {getProductOriginalPrice(product)!.toLocaleString()}
               </span>
             )}
           </div>
 
-          {/* Add to cart */}
-        <button
-          className="w-full bg-neon hover:bg-neon-dim active:scale-95 text-black font-semibold text-sm py-2.5 rounded-xl transition-all duration-150 font-display disabled:opacity-50 flex items-center justify-center gap-2"
-          onClick={handleAddToCart}
-          disabled={addToCart.isPending || !getProductInStock(product)}
-        >
-          <ShoppingCart size={14} />
-          {addToCart.isPending ? 'Adding...' : getProductInStock(product) ? 'Add to Cart' : 'Out of Stock'}
-        </button>
+          <button
+            className="w-full bg-neon hover:bg-neon-dim active:scale-[0.98] text-black font-semibold text-xs md:text-sm py-2 md:py-2.5 rounded-lg transition-all duration-150 font-display disabled:opacity-40 flex items-center justify-center gap-1.5"
+            onClick={handleAddToCart}
+            disabled={addToCart.isPending || !getProductInStock(product)}
+          >
+            <ShoppingCart size={12} />
+            {addToCart.isPending ? 'Adding...' : getProductInStock(product) ? 'Add to Cart' : 'Out of Stock'}
+          </button>
         </div>
       </div>
     </Link>
