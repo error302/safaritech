@@ -76,7 +76,7 @@ className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-10 pr-4 py-2.5
 M-Pesa
 </Link>
 
-<Link href="/cart" className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-600">
+<Link href="/cart" className="hidden md:flex relative p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-600">
 <ShoppingCart className="w-5 h-5" />
 {cartCount > 0 && (
 <span className="absolute -top-0.5 -right-0.5 bg-red-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-white">

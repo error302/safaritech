@@ -113,8 +113,8 @@ export default function ProductCard({ product }: { product: Product }) {
 
   return (
     <Link href={`/products/${getProductSlug(product)}`} className="group block">
-      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 hover:shadow-sm transition-all duration-200">
-        <div className="relative aspect-square overflow-hidden bg-gray-50">
+<div className="bg-white md:bg-safarigray border border-gray-200 md:border-safariborder rounded-xl overflow-hidden hover:border-gray-300 md:hover:border-gray-500 hover:shadow-sm transition-all duration-200">
+<div className="relative aspect-square overflow-hidden bg-gray-50 md:bg-safaridark">
           <Image
             src={getProductImage(product)}
             alt={getProductName(product)}
@@ -139,32 +139,32 @@ export default function ProductCard({ product }: { product: Product }) {
               <Flame className="w-4 h-4 md:w-5 md:h-5 text-orange-500" />
             </div>
           )}
-          {!getProductInStock(product) && (
-            <div className="absolute inset-0 bg-white/70 flex items-center justify-center">
-              <span className="bg-gray-900 text-white text-[10px] md:text-xs font-semibold px-3 py-1.5 rounded-lg">Out of Stock</span>
-            </div>
-          )}
+{!getProductInStock(product) && (
+<div className="absolute inset-0 bg-white/70 md:bg-safaridark/70 flex items-center justify-center">
+<span className="bg-gray-900 text-white text-[10px] md:text-xs font-semibold px-3 py-1.5 rounded-lg">Out of Stock</span>
+</div>
+)}
         </div>
 
-        <div className="p-3 md:p-4">
-          <div className="text-[10px] md:text-xs text-gray-400 font-medium mb-0.5">{getProductBrand(product)}</div>
-          <div className="font-medium text-xs md:text-sm text-gray-900 line-clamp-2 leading-snug mb-1.5">
-            {getProductName(product)}
-          </div>
+<div className="p-3 md:p-4">
+<div className="text-[10px] md:text-xs text-gray-400 font-medium mb-0.5">{getProductBrand(product)}</div>
+<div className="font-medium text-xs md:text-sm text-gray-900 md:text-white line-clamp-2 leading-snug mb-1.5">
+{getProductName(product)}
+</div>
 
-          <div className="flex items-center gap-1 mb-2">
-            <div className="flex">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} size={10} className={i < Math.round(getProductRating(product)) ? "fill-amber-400 text-amber-400" : "text-gray-200"} />
-              ))}
-            </div>
-            <span className="text-[10px] text-gray-400">({getProductReviews(product).toLocaleString()})</span>
-          </div>
+<div className="flex items-center gap-1 mb-2">
+<div className="flex">
+{Array.from({ length: 5 }).map((_, i) => (
+<Star key={i} size={10} className={i < Math.round(getProductRating(product)) ? "fill-amber-400 text-amber-400" : "text-gray-200 md:text-gray-600"} />
+))}
+</div>
+<span className="text-[10px] text-gray-400">({getProductReviews(product).toLocaleString()})</span>
+</div>
 
-          <div className="flex items-baseline gap-1.5 mb-2.5">
-            <span className="font-display font-bold text-sm md:text-lg text-gray-900">
-              KES {getProductPrice(product).toLocaleString()}
-            </span>
+<div className="flex items-baseline gap-1.5 mb-2.5">
+<span className="font-display font-bold text-sm md:text-lg text-gray-900 md:text-white">
+KES {getProductPrice(product).toLocaleString()}
+</span>
             {getProductOriginalPrice(product) && (
               <span className="text-[10px] md:text-xs text-gray-400 line-through">
                 {getProductOriginalPrice(product)!.toLocaleString()}
