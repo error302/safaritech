@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     const { stkCallback } = body.Body
 
     const order = await prisma.order.findFirst({
-      where: { mpesaRef: stkCallback.CheckoutRequestID } as never,
+      where: { mpesaRef: stkCallback.CheckoutRequestID },
     })
 
     if (!order) {

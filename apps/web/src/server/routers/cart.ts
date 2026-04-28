@@ -69,6 +69,10 @@ export const cartRouter = router({
       quantity: z.number().min(1),
     }))
     .mutation(async ({ ctx, input }) => {
+      const cartItem = await ctx.prisma.cartItem.findUnique({ where: { id: input.itemId } });
+      if (!cartItem || cartItem.userId !== ctx.session.user.id) {
+        throw new Error('Unauthorized');
+      }
       const item = await ctx.prisma.cartItem.update({
         where: { id: input.itemId },
         data: { quantity: input.quantity },
@@ -79,6 +83,10 @@ export const cartRouter = router({
   removeItem: protectedProcedure
     .input(z.object({ itemId: z.string() }))
     .mutation(async ({ ctx, input }) => {
+      const cartItem = await ctx.prisma.cartItem.findUnique({ where: { id: input.itemId } });
+      if (!cartItem || cartItem.userId !== ctx.session.user.id) {
+        throw new Error('Unauthorized');
+      }
       await ctx.prisma.cartItem.delete({
         where: { id: input.itemId },
       })

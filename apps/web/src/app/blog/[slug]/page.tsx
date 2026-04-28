@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import { ChevronLeft, Calendar, User, Share2, Facebook, Twitter } from 'lucide-react'
+// TODO: Install DOMPurify and sanitize HTML when blog becomes dynamic
+// import DOMPurify from 'dompurify'
 
 const post = {
   title: 'Best Smartphones to Buy in Kenya in 2024',

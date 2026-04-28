@@ -70,10 +70,10 @@ export const orderRouter = router({
           callbackUrl: `${process.env.NEXTAUTH_URL}/api/webhooks/mpesa`,
         })
 
-        await ctx.prisma.order.update({
-          where: { id: order.id },
-          data: { mpesaRef: mpesaResult.CheckoutRequestID } as never,
-        })
+await ctx.prisma.order.update({
+      where: { id: order.id },
+      data: { mpesaRef: mpesaResult.CheckoutRequestID },
+    })
 
         return { orderId: order.id, checkoutRequestId: mpesaResult.CheckoutRequestID }
       }

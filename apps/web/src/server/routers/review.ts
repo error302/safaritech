@@ -38,20 +38,25 @@ export const reviewRouter = router({
       comment: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      const { id, ...data } = input
-      const review = await ctx.prisma.review.update({
-        where: { id },
-        data,
-      })
-      return review
+const review = await ctx.prisma.review.findUnique({ where: { id: input.id } });
+if (!review || review.userId !== ctx.session.user.id) {
+throw new Error('Unauthorized');
+}
+const { id, ...data } = input;
+const updatedReview = await ctx.prisma.review.update({ where: { id }, data });
+return updatedReview;
     }),
 
-  delete: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      await ctx.prisma.review.delete({
-        where: { id: input.id },
-      })
-      return { success: true }
-    }),
+delete: protectedProcedure
+  .input(z.object({ id: z.string() }))
+  .mutation(async ({ ctx, input }) => {
+    const review = await ctx.prisma.review.findUnique({ where: { id: input.id } });
+    if (!review || review.userId !== ctx.session.user.id) {
+      throw new Error('Unauthorized');
+    }
+    await ctx.prisma.review.delete({
+      where: { id: input.id },
+    })
+    return { success: true }
+  }),
 })

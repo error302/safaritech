@@ -17,11 +17,11 @@ export async function POST(req: Request) {
       where: { email },
     })
 
+    // Return success even if user doesn't exist to prevent email enumeration
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({
+        message: 'If an account with that email exists, a reset link has been sent.',
+      })
     }
 
     const resetToken = crypto.randomBytes(32).toString('hex')

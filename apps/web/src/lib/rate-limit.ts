@@ -1,3 +1,10 @@
+/**
+ * NOTE: This in-memory rate limiter is for development only.
+ * For production with serverless deployments (Vercel), use Redis or Vercel KV
+ * to share rate limit state across function instances.
+ * 
+ * TODO: Switch to Upstash Redis or Vercel KV for production.
+ */
 interface RateLimitStore {
   [key: string]: { count: number; resetTime: number }
 }

@@ -14,12 +14,12 @@ export const productRouter = router({
       const where: Record<string, unknown> = {}
 
       if (category) where.category = { slug: category }
-      if (search) {
-        where.OR = [
-          { name: { contains: search } },
-          { description: { contains: search } },
-        ]
-      }
+if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+      ]
+    }
 
       const products = await ctx.prisma.product.findMany({
         where,
@@ -114,12 +114,12 @@ export const productRouter = router({
     .query(async ({ ctx, input }) => {
       const where: Record<string, unknown> = {}
 
-      if (input?.search) {
-        where.OR = [
-          { name: { contains: input.search } },
-          { description: { contains: input.search } },
-        ]
-      }
+if (input?.search) {
+      where.OR = [
+        { name: { contains: input.search, mode: 'insensitive' } },
+        { description: { contains: input.search, mode: 'insensitive' } },
+      ]
+    }
       if (input?.categoryId) where.categoryId = input.categoryId
 
       const products = await ctx.prisma.product.findMany({
