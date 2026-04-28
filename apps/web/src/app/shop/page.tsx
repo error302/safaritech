@@ -3,6 +3,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { trpc } from "@/utils/trpc";
 import ProductCard from "@/components/ProductCard";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { Smartphone, Laptop, Gamepad2, Headphones, Search, SlidersHorizontal, X } from "lucide-react";
 
 const brands = ["Apple", "Samsung", "ASUS ROG", "Logitech", "Sony", "Lenovo"];
@@ -25,10 +26,14 @@ export default function ShopPage() {
   const [sortBy, setSortBy] = useState("popular");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const { data: productsData, isLoading } = trpc.product.getAll.useQuery({
+  const { data: productsData, isLoading, refetch } = trpc.product.getAll.useQuery({
     category: selectedCat !== "all" ? selectedCat : undefined,
     limit: 100,
   });
+
+  const handleRefresh = async () => {
+    await refetch()
+  }
 
   const products = productsData?.products ?? [];
 
@@ -205,13 +210,13 @@ export default function ShopPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-5 md:py-8">
-        <div className="flex gap-6">
-          <div className="hidden md:block">
-            <FilterPanel />
-          </div>
+<div className="max-w-7xl mx-auto px-4 py-5 md:py-8">
+      <div className="flex gap-6">
+        <div className="hidden md:block">
+          <FilterPanel />
+        </div>
 
-          <div className="flex-1 min-w-0">
+        <PullToRefresh onRefresh={handleRefresh} className="flex-1 min-w-0">
             {isLoading ? (
               <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
                 {Array(8).fill(0).map((_, i) => (
@@ -228,10 +233,10 @@ export default function ShopPage() {
               <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
                 {filtered.map((p: any) => <ProductCard key={p.id} product={p} />)}
               </div>
-            )}
-          </div>
-        </div>
-      </div>
+)}
+      </PullToRefresh>
     </div>
-  );
+  </div>
+</div>
+);
 }

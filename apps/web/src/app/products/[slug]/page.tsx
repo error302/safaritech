@@ -40,6 +40,8 @@ export default function ProductPage({ params }: Props) {
   const imageList = product?.images ? product.images.split(",").map((s: string) => s.trim()).filter(Boolean) : [];
   const mainImage = imageList[0] || "/placeholder.jpg";
   const [selectedImage, setSelectedImage] = useState(0);
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomPosition, setZoomPosition] = useState({ x: 0.5, y: 0.5 });
 
   if (isLoading) {
     return (
@@ -135,14 +137,38 @@ const handleAddToCart = () => {
       <div className="max-w-7xl mx-auto px-4 py-5 md:py-8">
         <div className="grid md:grid-cols-2 gap-6 md:gap-10 lg:gap-16">
           <div className="md:sticky md:top-24 self-start">
-            <div className="relative aspect-square rounded-xl md:rounded-3xl overflow-hidden bg-gray-100 md:bg-safarigray border border-gray-200 md:border-safariborder mb-3">
-              <Image
-                src={imageList[selectedImage] || mainImage}
-                alt={product.name}
-                fill
-                className="object-cover"
-                priority
-              />
+<div 
+            className="relative aspect-square rounded-xl md:rounded-3xl overflow-hidden bg-gray-100 md:bg-safarigray border border-gray-200 md:border-safariborder mb-3 cursor-zoom-in"
+            onClick={() => setIsZoomed(!isZoomed)}
+            onTouchStart={(e) => {
+              const touch = e.touches[0]
+              const rect = e.currentTarget.getBoundingClientRect()
+              setZoomPosition({
+                x: (touch.clientX - rect.left) / rect.width,
+                y: (touch.clientY - rect.top) / rect.height
+              })
+            }}
+            onTouchMove={(e) => {
+              if (!isZoomed) return
+              const touch = e.touches[0]
+              const rect = e.currentTarget.getBoundingClientRect()
+              setZoomPosition({
+                x: (touch.clientX - rect.left) / rect.width,
+                y: (touch.clientY - rect.top) / rect.height
+              })
+            }}
+          >
+            <Image
+              src={imageList[selectedImage] || mainImage}
+              alt={product.name}
+              fill
+              className={`object-cover transition-transform duration-300 ${isZoomed ? 'scale-200' : 'scale-100'}`}
+              style={isZoomed ? {
+                transformOrigin: `${zoomPosition.x * 100}% ${zoomPosition.y * 100}%`,
+                transform: 'scale(2)'
+              } : {}}
+              priority
+            />
               {discount && (
                 <div className="absolute top-3 left-3 md:top-4 md:left-4 bg-red-600 text-white text-[10px] md:text-xs font-bold px-2.5 py-1 rounded-lg md:rounded-xl font-display">
                   -{discount}% OFF
