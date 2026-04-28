@@ -50,9 +50,9 @@ return updatedReview;
 delete: protectedProcedure
   .input(z.object({ id: z.string() }))
   .mutation(async ({ ctx, input }) => {
-    const review = await ctx.prisma.review.findUnique({ where: { id: input.id } });
+    const review = await ctx.prisma.review.findUnique({ where: { id: input.id } })
     if (!review || review.userId !== ctx.session.user.id) {
-      throw new Error('Unauthorized');
+      throw new Error('Unauthorized')
     }
     await ctx.prisma.review.delete({
       where: { id: input.id },

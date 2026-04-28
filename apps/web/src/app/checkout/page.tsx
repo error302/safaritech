@@ -3,21 +3,25 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ShoppingCart, CreditCard, Smartphone, Lock, ArrowLeft, Tag, X, CheckCircle } from 'lucide-react'
+import { ShoppingCart, CreditCard, Smartphone, Lock, ArrowLeft, Tag, X, CheckCircle, Loader2 } from 'lucide-react'
 import { useCartStore } from '@/app/stores/cartStore'
+import { trpc } from '@/utils/trpc'
+import { useSession } from 'next-auth/react'
 
 export default function Checkout() {
   const router = useRouter()
+  const { data: session } = useSession()
   const { items, total, clearCart } = useCartStore()
   const [loading, setLoading] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState<'mpesa' | 'card'>('mpesa')
   const [couponCode, setCouponCode] = useState('')
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number } | null>(null)
   const [couponError, setCouponError] = useState('')
+  const [error, setError] = useState('')
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
+    firstName: session?.user?.name?.split(' ')[0] || '',
+    lastName: session?.user?.name?.split(' ').slice(1).join(' ') || '',
+    email: session?.user?.email || '',
     phone: '',
     address: '',
     city: '',
@@ -30,35 +34,92 @@ export default function Checkout() {
   const discount = appliedCoupon ? appliedCoupon.discount : 0
   const finalTotal = cartTotal + shipping - discount
 
-  const handleApplyCoupon = () => {
+  const validateCoupon = trpc.coupon.validate.useQuery(
+    { code: couponCode.toUpperCase(), orderTotal: cartTotal },
+    { enabled: false }
+  )
+
+  const createOrder = trpc.order.create.useMutation({
+    onSuccess: (data) => {
+      clearCart()
+      if (paymentMethod === 'mpesa' && data.checkoutRequestId) {
+        // Redirect to M-Pesa payment page with order details
+        router.push(`/checkout/payment?orderId=${data.orderId}&checkoutRequestId=${data.checkoutRequestId}&total=${data.total}`)
+      } else if (paymentMethod === 'card') {
+        // Redirect to Stripe checkout
+        router.push(`/checkout/stripe?orderId=${data.orderId}&total=${data.total}`)
+      } else {
+        router.push(`/checkout/success?orderId=${data.orderId}`)
+      }
+    },
+    onError: (error) => {
+      setError(error.message || 'Failed to create order. Please try again.')
+      setLoading(false)
+    },
+  })
+
+  const handleApplyCoupon = async () => {
     setCouponError('')
     if (!couponCode.trim()) {
       setCouponError('Please enter a coupon code')
       return
     }
 
-    if (couponCode.toUpperCase() === 'WELCOME10') {
-      setAppliedCoupon({ code: 'WELCOME10', discount: Math.floor(cartTotal * 0.1) })
-    } else if (couponCode.toUpperCase() === 'FLAT500') {
-      setAppliedCoupon({ code: 'FLAT500', discount: 500 })
-    } else {
-      setCouponError('Invalid coupon code')
+    try {
+      const result = await validateCoupon.refetch()
+      if (result.data?.valid && result.data.discount !== undefined) {
+        setAppliedCoupon({ code: couponCode.toUpperCase(), discount: result.data.discount })
+      } else {
+        setCouponError(result.data?.error || 'Invalid coupon code')
+      }
+    } catch {
+      setCouponError('Failed to validate coupon')
     }
   }
 
   const handleRemoveCoupon = () => {
     setAppliedCoupon(null)
     setCouponCode('')
+    setCouponError('')
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setError('')
 
-    setTimeout(() => {
-      clearCart()
-      router.push('/checkout/success')
-    }, 2000)
+    if (items.length === 0) {
+      setError('Your cart is empty')
+      setLoading(false)
+      return
+    }
+
+    if (!session?.user) {
+      setError('Please sign in to place an order')
+      setLoading(false)
+      return
+    }
+
+    const orderItems = items.map(item => ({
+      productId: item.id,
+      quantity: item.quantity,
+      price: item.price,
+    }))
+
+    createOrder.mutate({
+      items: orderItems,
+      shippingAddress: {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+        city: formData.city,
+        county: formData.county,
+      },
+      paymentMethod,
+      couponCode: appliedCoupon?.code,
+    })
   }
 
   if (items.length === 0) {
@@ -84,6 +145,12 @@ export default function Checkout() {
         </Link>
 
         <h1 className="mb-6 md:mb-8 text-2xl md:text-3xl font-bold text-gray-900 md:text-white">Checkout</h1>
+
+        {error && (
+          <div className="mb-4 p-4 rounded-lg bg-red-50 md:bg-red-900/20 border border-red-200 md:border-red-800 text-red-700 md:text-red-400">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
           <div className="lg:col-span-2 space-y-4 md:space-y-6">
@@ -203,8 +270,8 @@ export default function Checkout() {
               <div className="space-y-3">
                 <label className={`flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-lg border cursor-pointer transition-colors ${
                   paymentMethod === 'mpesa'
-                    ? 'border-neon bg-neon/5 md:bg-neon/10'
-                    : 'border-gray-200 md:border-safariborder bg-white md:bg-safaridark hover:border-gray-300 md:hover:border-gray-600'
+                  ? 'border-neon bg-neon/5 md:bg-neon/10'
+                  : 'border-gray-200 md:border-safariborder bg-white md:bg-safaridark hover:border-gray-300 md:hover:border-gray-600'
                 }`}>
                   <input
                     type="radio"
@@ -221,8 +288,8 @@ export default function Checkout() {
                 </label>
                 <label className={`flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-lg border cursor-pointer transition-colors ${
                   paymentMethod === 'card'
-                    ? 'border-neon bg-neon/5 md:bg-neon/10'
-                    : 'border-gray-200 md:border-safariborder bg-white md:bg-safaridark hover:border-gray-300 md:hover:border-gray-600'
+                  ? 'border-neon bg-neon/5 md:bg-neon/10'
+                  : 'border-gray-200 md:border-safariborder bg-white md:bg-safaridark hover:border-gray-300 md:hover:border-gray-600'
                 }`}>
                   <input
                     type="radio"
@@ -290,15 +357,15 @@ export default function Checkout() {
                       <button
                         type="button"
                         onClick={handleApplyCoupon}
-                        className="flex items-center justify-center rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safarigray px-3 py-2 text-sm text-gray-700 md:text-gray-300 hover:bg-gray-100 md:hover:bg-safaridark transition-colors"
+                        disabled={validateCoupon.isFetching}
+                        className="flex items-center justify-center rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safarigray px-3 py-2 text-sm text-gray-700 md:text-gray-300 hover:bg-gray-100 md:hover:bg-safaridark transition-colors disabled:opacity-50"
                       >
-                        <Tag className="h-4 w-4" />
+                        {validateCoupon.isFetching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Tag className="h-4 w-4" />}
                       </button>
                     </div>
                     {couponError && (
                       <p className="text-xs md:text-sm text-red-500 md:text-red">{couponError}</p>
                     )}
-                    <p className="text-xs text-gray-400 md:text-gray-500">Try: WELCOME10 or FLAT500</p>
                   </div>
                 )}
               </div>
@@ -326,11 +393,26 @@ export default function Checkout() {
 
               <button
                 type="submit"
-                disabled={loading}
-                className="w-full mt-4 md:mt-6 py-3 bg-neon text-black font-bold rounded-lg hover:bg-neon/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                disabled={loading || createOrder.isPending || !session}
+                className="w-full mt-4 md:mt-6 py-3 bg-neon text-black font-bold rounded-lg hover:bg-neon/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
               >
-                {loading ? 'Processing...' : `Place Order — KSh ${finalTotal.toLocaleString()}`}
+                {createOrder.isPending ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Processing...
+                  </>
+                ) : !session ? (
+                  'Please Sign In'
+                ) : (
+                  `Place Order — KSh ${finalTotal.toLocaleString()}`
+                )}
               </button>
+
+              {!session && (
+                <p className="mt-2 text-xs text-center text-gray-500">
+                  <Link href="/login" className="text-neon hover:underline">Sign in</Link> to place your order
+                </p>
+              )}
             </div>
           </div>
         </form>

@@ -57,23 +57,27 @@ model Category {
 }
 
 model Order {
-  id                String      @id @default(uuid())
-  user              User        @relation(fields: [userId], references: [id])
-  userId            String
-  status            String      @default("PENDING")
-  total             Int
-  subtotal          Int
-  discount          Int         @default(0)
-  paymentStatus     String      @default("PENDING")
-  paymentMethod     String
-  stripeId          String?
-  mpesaRef          String?
-  couponId          String?
-  coupon            Coupon?     @relation(fields: [couponId], references: [id])
-  createdAt         DateTime    @default(now())
+  id String @id @default(uuid())
+  user User @relation(fields: [userId], references: [id])
+  userId String
+  status String @default("PENDING")
+  total Int
+  subtotal Int
+  shipping Int @default(0)
+  discount Int @default(0)
+  paymentStatus String @default("PENDING")
+  paymentMethod String
+  stripeId String?
+  stripeSessionId String?
+  mpesaRef String?
+  couponId String?
+  couponCode String?
+  coupon Coupon? @relation(fields: [couponId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  items             OrderItem[]
-  shippingAddress   Address?    @relation("ShippingAddress", fields: [shippingAddressId], references: [id])
+  items OrderItem[]
+  shippingAddress Address? @relation("ShippingAddress", fields: [shippingAddressId], references: [id])
   shippingAddressId String?
 }
 

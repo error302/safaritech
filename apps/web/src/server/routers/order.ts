@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { router, publicProcedure, protectedProcedure, adminProcedure } from './trpc'
+import { sendEmail, getOrderConfirmationEmail } from '@/lib/email'
 
 export const orderRouter = router({
   // Customer-facing procedures
@@ -20,10 +21,67 @@ export const orderRouter = router({
         county: z.string(),
       }),
       paymentMethod: z.enum(['mpesa', 'card']),
+      couponCode: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      const total = input.items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+      // Validate stock availability before creating order
+      const productIds = input.items.map(item => item.productId)
+      const products = await ctx.prisma.product.findMany({
+        where: { id: { in: productIds } },
+        select: { id: true, stock: true, name: true },
+      })
 
+      const productMap = new Map(products.map(p => [p.id, p]))
+
+      for (const item of input.items) {
+        const product = productMap.get(item.productId)
+        if (!product) {
+          throw new Error(`Product ${item.productId} not found`)
+        }
+        if (product.stock < item.quantity) {
+          throw new Error(`Insufficient stock for ${product.name}. Available: ${product.stock}, Requested: ${item.quantity}`)
+        }
+      }
+
+      // Calculate totals
+      const subtotal = input.items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+      let discount = 0
+
+      // Validate and apply coupon if provided
+      if (input.couponCode) {
+        const coupon = await ctx.prisma.coupon.findUnique({
+          where: { code: input.couponCode.toUpperCase() },
+        })
+
+        if (coupon && coupon.isActive) {
+          const now = new Date()
+          const isExpired = coupon.expiresAt && coupon.expiresAt < now
+          const isLimitReached = coupon.usageLimit && coupon.usedCount >= coupon.usageLimit
+          const meetsMinOrder = !coupon.minOrderValue || subtotal >= coupon.minOrderValue
+
+          if (!isExpired && !isLimitReached && meetsMinOrder) {
+            if (coupon.discountType === 'PERCENTAGE') {
+              discount = Math.floor(subtotal * (coupon.discountValue / 100))
+              if (coupon.maxDiscount && discount > coupon.maxDiscount) {
+                discount = coupon.maxDiscount
+              }
+            } else {
+              discount = coupon.discountValue
+            }
+
+            // Increment coupon usage
+            await ctx.prisma.coupon.update({
+              where: { id: coupon.id },
+              data: { usedCount: { increment: 1 } },
+            })
+          }
+        }
+      }
+
+      const shipping = subtotal > 10000 ? 0 : 500
+      const total = subtotal + shipping - discount
+
+      // Create shipping address
       const address = await ctx.prisma.address.create({
         data: {
           userId: ctx.session.user.id,
@@ -37,18 +95,23 @@ export const orderRouter = router({
         },
       })
 
+      // Create order
       const order = await ctx.prisma.order.create({
         data: {
           userId: ctx.session.user.id,
-          subtotal: total,
+          subtotal,
           total,
+          discount,
+          shipping,
           paymentMethod: input.paymentMethod,
           paymentStatus: 'PENDING',
           status: 'PENDING',
           shippingAddressId: address.id,
+          couponCode: input.couponCode?.toUpperCase() || null,
         },
       })
 
+      // Create order items and decrement stock
       for (const item of input.items) {
         await ctx.prisma.orderItem.create({
           data: {
@@ -58,8 +121,28 @@ export const orderRouter = router({
             unitPrice: item.price,
           },
         })
+
+        // Decrement product stock
+        await ctx.prisma.product.update({
+          where: { id: item.productId },
+          data: { stock: { decrement: item.quantity } },
+        })
       }
 
+      // Send order confirmation email
+      try {
+        const emailTemplate = getOrderConfirmationEmail(order.id, input.shippingAddress.firstName)
+        await sendEmail({
+          to: input.shippingAddress.email,
+          subject: emailTemplate.subject,
+          html: emailTemplate.html,
+        })
+      } catch (emailError) {
+        console.error('Failed to send order confirmation email:', emailError)
+        // Don't fail the order if email fails
+      }
+
+      // Initiate M-Pesa payment if selected
       if (input.paymentMethod === 'mpesa') {
         const { initiateSTKPush } = await import('@/lib/mpesa')
         const mpesaResult = await initiateSTKPush({
@@ -70,15 +153,16 @@ export const orderRouter = router({
           callbackUrl: `${process.env.NEXTAUTH_URL}/api/webhooks/mpesa`,
         })
 
-await ctx.prisma.order.update({
-      where: { id: order.id },
-      data: { mpesaRef: mpesaResult.CheckoutRequestID },
-    })
+        await ctx.prisma.order.update({
+          where: { id: order.id },
+          data: { mpesaRef: mpesaResult.CheckoutRequestID },
+        })
 
-        return { orderId: order.id, checkoutRequestId: mpesaResult.CheckoutRequestID }
+        return { orderId: order.id, checkoutRequestId: mpesaResult.CheckoutRequestID, total }
       }
 
-      return { orderId: order.id }
+      // For card payments, return order ID for Stripe checkout
+      return { orderId: order.id, total }
     }),
 
   getById: protectedProcedure

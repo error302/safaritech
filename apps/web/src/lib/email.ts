@@ -5,7 +5,42 @@ interface EmailOptions {
 }
 
 export async function sendEmail(options: EmailOptions) {
-  console.log(`[EMAIL] Sending to ${options.to}: ${options.subject}`)
+  // Try to send via Resend if API key is configured
+  const resendApiKey = process.env.RESEND_API_KEY
+
+  if (resendApiKey) {
+    try {
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${resendApiKey}`,
+        },
+        body: JSON.stringify({
+          from: 'Safaritech <orders@safaritech.co.ke>',
+          to: options.to,
+          subject: options.subject,
+          html: options.html,
+        }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        console.log(`[EMAIL] Sent to ${options.to}: ${options.subject} (ID: ${data.id})`)
+        return { success: true, id: data.id }
+      } else {
+        const error = await response.json()
+        console.error('[EMAIL] Resend API error:', error)
+      }
+    } catch (error) {
+      console.error('[EMAIL] Failed to send via Resend:', error)
+    }
+  }
+
+  // Fallback: log to console
+  console.log(`[EMAIL] Would send to ${options.to}: ${options.subject}`)
+  console.log('[EMAIL] To enable real emails, set RESEND_API_KEY in environment variables')
+  return { success: false, error: 'Email service not configured' }
 }
 
 export function getOrderConfirmationEmail(orderId: string, customerName: string) {
