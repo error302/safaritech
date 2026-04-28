@@ -1,44 +1,68 @@
+'use client'
+
 import Link from 'next/link'
+import { use } from 'react'
 import { ChevronLeft, Calendar, User, Share2, Facebook, Twitter } from 'lucide-react'
-// TODO: Install DOMPurify and sanitize HTML when blog becomes dynamic
-// import DOMPurify from 'dompurify'
+import { trpc } from '@/utils/trpc'
 
-const post = {
-  title: 'Best Smartphones to Buy in Kenya in 2024',
-  content: `
-    <p class="text-lg mb-6">Looking for a new smartphone? Kenya's smartphone market is more exciting than ever, with flagship devices and budget-friendly options that don't compromise on quality.</p>
-
-    <h2 class="text-2xl font-bold mb-4 mt-8">Flagship Phones (KSh 100,000+)</h2>
-    <p class="mb-4">If budget isn't a concern, these premium phones offer the best experience:</p>
-    <ul class="list-disc pl-6 mb-6 space-y-2">
-      <li><strong>iPhone 15 Pro Max</strong> - The ultimate iPhone experience with A17 Pro chip</li>
-      <li><strong>Samsung Galaxy S24 Ultra</strong> - Best Android phone with AI features</li>
-      <li><strong>Google Pixel 8 Pro</strong> - Pure Android with incredible cameras</li>
-    </ul>
-
-    <h2 class="text-2xl font-bold mb-4 mt-8">Mid-Range Phones (KSh 30,000-70,000)</h2>
-    <p class="mb-4">Great value without breaking the bank:</p>
-    <ul class="list-disc pl-6 mb-6 space-y-2">
-      <li><strong>Samsung Galaxy A54</strong> - Perfect balance of features and price</li>
-      <li><strong>Google Pixel 7a</strong> - Stock Android at a great price</li>
-      <li><strong>Xiaomi 13 Lite</strong> - Great camera and fast charging</li>
-    </ul>
-
-    <h2 class="text-2xl font-bold mb-4 mt-8">Budget Phones (Under KSh 30,000)</h2>
-    <p class="mb-4">Best phones for tight budgets:</p>
-    <ul class="list-disc pl-6 mb-6 space-y-2">
-      <li><strong>Samsung Galaxy A14</strong> - Samsung quality on a budget</li>
-      <li><strong>Redmi Note 12</strong> - Incredible specs for the price</li>
-      <li><strong>Tecno Camon 20</strong> - Great camera phone</li>
-    </ul>
-  `,
-  author: 'John Mwangi',
-  date: 'January 20, 2024',
-  category: 'Smartphones',
-  image: 'bg-gradient-to-br from-blue/20 to-electric/20',
+interface BlogPostPageProps {
+  params: Promise<{ slug: string }>
 }
 
-export default function BlogPost({ params }: { params: { slug: string } }) {
+export default function BlogPost({ params }: BlogPostPageProps) {
+  const { slug } = use(params)
+  const { data: post, isLoading, error } = trpc.blog.getBySlug.useQuery({ slug })
+
+  if (isLoading) {
+    return (
+      <div className="md:bg-safaridark bg-gray-50 min-h-screen py-8">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <div className="h-4 w-32 bg-gray-200 md:bg-safarigray rounded animate-pulse mb-6" />
+          <div className="space-y-4">
+            <div className="h-8 w-3/4 bg-gray-200 md:bg-safarigray rounded animate-pulse" />
+            <div className="flex gap-4">
+              <div className="h-4 w-32 bg-gray-200 md:bg-safarigray rounded animate-pulse" />
+              <div className="h-4 w-32 bg-gray-200 md:bg-safarigray rounded animate-pulse" />
+            </div>
+            <div className="aspect-video bg-gray-200 md:bg-safarigray rounded-xl animate-pulse" />
+            <div className="space-y-3">
+              <div className="h-4 w-full bg-gray-200 md:bg-safarigray rounded animate-pulse" />
+              <div className="h-4 w-full bg-gray-200 md:bg-safarigray rounded animate-pulse" />
+              <div className="h-4 w-2/3 bg-gray-200 md:bg-safarigray rounded animate-pulse" />
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !post) {
+    return (
+      <div className="md:bg-safaridark bg-gray-50 min-h-screen py-8">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <Link href="/blog" className="mb-6 inline-flex items-center text-sm text-gray-500 md:text-gray-400 hover:text-neon">
+            <ChevronLeft className="mr-2 h-4 w-4" />
+            Back to Blog
+          </Link>
+          <div className="text-center py-20">
+            <h1 className="text-2xl font-bold text-gray-900 md:text-white mb-4">
+              {error ? 'Error Loading Post' : 'Post Not Found'}
+            </h1>
+            <p className="text-gray-500 md:text-gray-400 mb-6">
+              {error ? 'Failed to load the blog post. Please try again later.' : 'The blog post you\'re looking for doesn\'t exist.'}
+            </p>
+            <Link
+              href="/blog"
+              className="bg-neon hover:bg-neon-dim text-black font-bold px-5 py-2.5 rounded-lg text-sm transition-all"
+            >
+              Back to Blog
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="md:bg-safaridark bg-gray-50 min-h-screen py-8">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
@@ -50,27 +74,31 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
         <article>
           <header className="mb-8">
             <span className="mb-4 inline-block text-sm font-medium text-neon">
-              {post.category}
+              {post.category || 'Tech'}
             </span>
             <h1 className="mb-4 text-4xl font-bold font-display leading-tight text-gray-900 md:text-white">{post.title}</h1>
             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 md:text-gray-400">
               <div className="flex items-center gap-1">
                 <User className="h-4 w-4" />
-                {post.author}
+                {post.author?.name || 'Unknown'}
               </div>
               <div className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
-                {post.date}
+                {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                }) : 'Draft'}
               </div>
             </div>
           </header>
 
-          <div className={`aspect-video rounded-xl ${post.image} mb-8 flex items-center justify-center`}>
+          <div className={`aspect-video rounded-xl ${post.featuredImage || 'bg-gradient-to-br from-blue/20 to-electric/20'} mb-8 flex items-center justify-center`}>
             <span className="text-gray-500 md:text-gray-400">Featured Image</span>
           </div>
 
           <div
-            className="prose prose-invert max-w-none"
+            className="prose prose-invert max-w-none text-gray-600 md:text-gray-300"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
 

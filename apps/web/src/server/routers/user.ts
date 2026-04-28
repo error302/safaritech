@@ -9,6 +9,7 @@ export const userRouter = router({
         id: true,
         name: true,
         email: true,
+        phone: true,
         role: true,
         createdAt: true,
         addresses: true,
@@ -84,4 +85,53 @@ export const userRouter = router({
     })
     return addresses
   }),
+
+  updateAddress: protectedProcedure
+    .input(z.object({
+      id: z.string(),
+      label: z.string().optional(),
+      line1: z.string().optional(),
+      line2: z.string().optional(),
+      city: z.string().optional(),
+      state: z.string().optional(),
+      postal: z.string().optional(),
+      country: z.string().optional(),
+      phone: z.string().optional(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...data } = input
+      
+      // First check if address belongs to current user
+      const existing = await ctx.prisma.address.findFirst({
+        where: { id, userId: ctx.session.user.id },
+      })
+      
+      if (!existing) {
+        throw new Error('Address not found or access denied')
+      }
+      
+      const address = await ctx.prisma.address.update({
+        where: { id },
+        data,
+      })
+      return address
+    }),
+
+  deleteAddress: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      // First check if address belongs to current user
+      const existing = await ctx.prisma.address.findFirst({
+        where: { id: input.id, userId: ctx.session.user.id },
+      })
+      
+      if (!existing) {
+        throw new Error('Address not found or access denied')
+      }
+      
+      await ctx.prisma.address.delete({
+        where: { id: input.id },
+      })
+      return { success: true }
+    }),
 })

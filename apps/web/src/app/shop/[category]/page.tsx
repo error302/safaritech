@@ -1,25 +1,40 @@
+'use client'
+
 import Link from 'next/link'
-import { ChevronRight } from 'lucide-react'
+import { useParams } from 'next/navigation'
+import { ChevronRight, Loader2 } from 'lucide-react'
+import { trpc } from '@/utils/trpc'
+import ProductCard from '@/components/ProductCard'
 
-const products = [
-  { id: '1', name: 'iPhone 15 Pro Max', price: 149999, stock: 15 },
-  { id: '4', name: 'Samsung Galaxy S24', price: 119999, stock: 20 },
-  { id: '9', name: 'Google Pixel 8', price: 99999, stock: 15 },
-]
+export default function ShopCategory() {
+  const params = useParams()
+  const slug = params.category as string
 
-const categoryNames: Record<string, string> = {
-  phones: 'Smartphones',
-  laptops: 'Laptops',
-  audio: 'Audio',
-  wearables: 'Wearables',
-  tablets: 'Tablets',
-  cameras: 'Cameras',
-  gaming: 'Gaming',
-  'smart-home': 'Smart Home',
-}
+  // Fetch category name from categories
+  const { data: categories, isLoading: isLoadingCategories } = trpc.product.adminGetCategories.useQuery()
+  const categoryName = categories?.find(c => c.slug === slug)?.name || slug
 
-export default function ShopCategory({ params }: { params: { category: string } }) {
-  const categoryName = categoryNames[params.category] || params.category
+  // Fetch products by category
+  const { data: productsData, isLoading: isLoadingProducts } = trpc.product.getAll.useQuery(
+    { category: slug },
+    { enabled: !!slug }
+  )
+
+  const products = productsData?.products || []
+  const isLoading = isLoadingCategories || isLoadingProducts
+
+  if (isLoading) {
+    return (
+      <div className="md:bg-safaridark bg-gray-50 min-h-screen py-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center justify-center py-24">
+            <Loader2 className="h-12 w-12 text-neon animate-spin mb-4" />
+            <p className="text-gray-500 md:text-gray-400">Loading products...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="md:bg-safaridark bg-gray-50 min-h-screen py-8">
@@ -35,25 +50,26 @@ export default function ShopCategory({ params }: { params: { category: string } 
           <p className="text-gray-500 md:text-gray-400">{products.length} products available</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
+        {products.length === 0 ? (
+          <div className="py-16 text-center">
+            <p className="text-lg text-gray-500 md:text-gray-400">No products found in this category.</p>
+            <p className="text-sm text-gray-500 md:text-gray-400 mt-2">
+              Check back later for new arrivals or browse other categories.
+            </p>
             <Link
-              key={product.id}
-              href={`/product/${product.id}`}
-              className="group rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray overflow-hidden transition-all hover:border-electric/50 hover:shadow-lg hover:shadow-electric/10"
+              href="/shop"
+              className="inline-block mt-6 px-6 py-2.5 bg-neon text-black font-semibold rounded-lg hover:bg-neon-dim transition-colors"
             >
-              <div className="aspect-square bg-gray-50 md:bg-safaridark relative">
-                <div className="absolute inset-0 flex items-center justify-center text-gray-500 md:text-gray-400">
-                  Product Image
-                </div>
-              </div>
-              <div className="p-4">
-                <h3 className="mb-2 font-semibold text-gray-900 md:text-white">{product.name}</h3>
-                <p className="text-lg font-bold text-neon">KSh {product.price.toLocaleString()}</p>
-              </div>
+              Browse All Categories
             </Link>
-          ))}
-        </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )
