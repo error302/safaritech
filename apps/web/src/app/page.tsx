@@ -91,7 +91,7 @@ priority
 <span className="inline-flex items-center gap-1 bg-neon text-black text-[10px] font-bold px-2.5 py-1 rounded-md mb-2">
 SAME-DAY DELIVERY
 </span>
-<h1 className="text-white font-display font-bold text-xl leading-tight mb-1">
+<h1 className="text-white font-display font-bold text-2xl leading-tight mb-1">
 Tech That Moves Kenya
 </h1>
 <p className="text-white/90 text-xs mb-3">

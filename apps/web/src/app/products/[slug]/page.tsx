@@ -97,8 +97,14 @@ export default function ProductPage({ params }: Props) {
       ) / product.reviews.length
     : 0;
 
-  const handleAddToCart = () => {
-    addToCart.mutate({ productId: product.id, quantity });
+const handleAddToCart = () => {
+    const productId = typeof product.id === "number" ? product.id.toString() : product.id;
+    addToCart.mutate({ productId, quantity });
+    
+    // Haptic feedback on mobile
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate(50);
+    }
   };
 
   return (

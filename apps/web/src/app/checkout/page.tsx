@@ -157,8 +157,8 @@ export default function Checkout() {
             {/* Contact Info */}
             <div className="rounded-lg md:rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-4 md:p-6">
               <h2 className="mb-3 md:mb-4 text-base md:text-lg font-semibold text-gray-900 md:text-white">Contact Information</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-                <div>
+<div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
+<div>
                   <label htmlFor="firstName" className="mb-1.5 block text-sm font-medium text-gray-700 md:text-gray-300">
                     First Name
                   </label>

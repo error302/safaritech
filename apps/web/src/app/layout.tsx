@@ -23,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <body className="font-body antialiased md:bg-safaridark md:text-white bg-gray-50 text-gray-900">
       <Providers>
         <Navbar />
-        <main className="min-h-screen pb-16 md:pb-0">
+        <main className="min-h-screen pb-20 md:pb-0">
           {children}
         </main>
         <MobileBottomNav />

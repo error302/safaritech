@@ -103,12 +103,16 @@ export default function ProductCard({ product }: { product: Product }) {
     ? Math.round(((getProductOriginalPrice(product)! - getProductPrice(product)) / getProductOriginalPrice(product)!) * 100)
     : null;
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
     const productId = typeof product.id === 'number' ? product.id.toString() : product.id;
     addToCart.mutate({ productId, quantity: 1 });
+    
+    // Haptic feedback on mobile
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate(50);
+    }
   };
 
   return (
@@ -172,14 +176,14 @@ KES {getProductPrice(product).toLocaleString()}
             )}
           </div>
 
-          <button
-            className="w-full bg-neon hover:bg-neon-dim active:scale-[0.98] text-black font-semibold text-xs md:text-sm py-2 md:py-2.5 rounded-lg transition-all duration-150 font-display disabled:opacity-40 flex items-center justify-center gap-1.5"
-            onClick={handleAddToCart}
-            disabled={addToCart.isPending || !getProductInStock(product)}
-          >
-            <ShoppingCart size={12} />
-            {addToCart.isPending ? 'Adding...' : getProductInStock(product) ? 'Add to Cart' : 'Out of Stock'}
-          </button>
+<button
+  className="w-full bg-neon hover:bg-neon-dim active:scale-[0.98] text-black font-semibold text-xs md:text-sm py-3 md:py-2.5 rounded-lg transition-all duration-150 font-display disabled:opacity-40 flex items-center justify-center gap-1.5 touch-target"
+  onClick={handleAddToCart}
+  disabled={addToCart.isPending || !getProductInStock(product)}
+>
+  <ShoppingCart size={12} />
+  {addToCart.isPending ? 'Adding...' : getProductInStock(product) ? 'Add to Cart' : 'Out of Stock'}
+</button>
         </div>
       </div>
     </Link>

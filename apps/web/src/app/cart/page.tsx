@@ -59,30 +59,30 @@ export default function Cart() {
                   <p className="text-neon font-bold font-display text-sm md:text-base mt-0.5">
                     KSh {item.price.toLocaleString()}
                   </p>
-                  <div className="mt-2 flex items-center gap-3 md:gap-4">
-                    <div className="flex items-center border border-gray-200 md:border-safariborder rounded-lg overflow-hidden">
-                      <button
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="px-2 md:px-3 py-1.5 md:py-2 bg-gray-50 md:bg-safaridark hover:bg-gray-100 md:hover:bg-safariborder transition-colors"
-                      >
-                        <Minus className="h-3.5 w-3.5 md:h-4 md:w-4 text-gray-600 md:text-gray-300" />
-                      </button>
-                      <span className="w-8 md:w-10 text-center text-sm md:text-base font-semibold font-body text-gray-900 md:text-white border-x border-gray-200 md:border-safariborder">
-                        {item.quantity}
-                      </span>
-                      <button
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="px-2 md:px-3 py-1.5 md:py-2 bg-gray-50 md:bg-safaridark hover:bg-gray-100 md:hover:bg-safariborder transition-colors"
-                      >
-                        <Plus className="h-3.5 w-3.5 md:h-4 md:w-4 text-gray-600 md:text-gray-300" />
-                      </button>
-                    </div>
-                    <button
-                      onClick={() => removeItem(item.id)}
-                      className="p-1.5 md:p-2 text-red-500 hover:bg-red-50 md:hover:bg-red-500/10 rounded-lg transition-colors"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+<div className="mt-2 flex items-center gap-3 md:gap-4">
+<div className="flex items-center border border-gray-200 md:border-safariborder rounded-lg overflow-hidden">
+<button
+onClick={() => updateQuantity(item.id, item.quantity - 1)}
+className="w-10 h-10 flex items-center justify-center bg-gray-50 md:bg-safaridark hover:bg-gray-100 md:hover:bg-safariborder transition-colors touch-target"
+>
+<Minus className="h-4 w-4 text-gray-600 md:text-gray-300" />
+</button>
+<span className="w-10 md:w-12 text-center text-sm md:text-base font-semibold font-body text-gray-900 md:text-white border-x border-gray-200 md:border-safariborder">
+{item.quantity}
+</span>
+<button
+onClick={() => updateQuantity(item.id, item.quantity + 1)}
+className="w-10 h-10 flex items-center justify-center bg-gray-50 md:bg-safaridark hover:bg-gray-100 md:hover:bg-safariborder transition-colors touch-target"
+>
+<Plus className="h-4 w-4 text-gray-600 md:text-gray-300" />
+</button>
+</div>
+<button
+onClick={() => removeItem(item.id)}
+className="w-10 h-10 flex items-center justify-center text-red-500 hover:bg-red-50 md:hover:bg-red-500/10 rounded-lg transition-colors touch-target"
+>
+<Trash2 className="h-5 w-5" />
+</button>
                   </div>
                 </div>
                 <div className="text-right self-center">

@@ -133,6 +133,24 @@ input[type="checkbox"] {
   animation: slide-up 0.25s ease-out;
 }
 
+/* Minimum touch target 44px for mobile accessibility */
+@media (max-width: 767px) {
+  button,
+  [role="button"],
+  input[type="submit"],
+  input[type="button"],
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Larger touch targets for important CTAs */
+  .touch-target-lg {
+    min-height: 48px;
+    min-width: 48px;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
