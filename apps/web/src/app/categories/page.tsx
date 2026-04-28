@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { Smartphone, Laptop, Headphones, Watch, Tablet, Camera, Gamepad2, Wifi } from 'lucide-react'
-import { trpc } from '@/lib/trpc'
+import { trpc } from '@/utils/trpc'
 
 // Map category slugs to icons and gradient backgrounds
 // This keeps the UI consistent even as categories change in the database

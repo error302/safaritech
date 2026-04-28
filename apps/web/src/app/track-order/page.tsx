@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useSession } from 'next/auth/react'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { Search, Package, Truck, CheckCircle, XCircle, Clock, Loader2 } from 'lucide-react'
 import { trpc } from '@/utils/trpc'

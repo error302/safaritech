@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Search as SearchIcon, X, Filter, Grid, List, Loader2 } from 'lucide-react'
 import { trpc } from '@/utils/trpc'
-import { ProductCard } from '@/components/ProductCard'
+import ProductCard from '@/components/ProductCard'
 
 const priceRanges = [
   { label: 'All Prices', min: 0, max: Infinity },

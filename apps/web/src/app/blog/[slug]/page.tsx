@@ -73,9 +73,9 @@ export default function BlogPost({ params }: BlogPostPageProps) {
 
         <article>
           <header className="mb-8">
-            <span className="mb-4 inline-block text-sm font-medium text-neon">
-              {post.category || 'Tech'}
-            </span>
+<span className="mb-4 inline-block text-sm font-medium text-neon">
+{post.seoDesc || 'Tech'}
+</span>
             <h1 className="mb-4 text-4xl font-bold font-display leading-tight text-gray-900 md:text-white">{post.title}</h1>
             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 md:text-gray-400">
               <div className="flex items-center gap-1">

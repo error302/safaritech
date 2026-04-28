@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Package, ChevronRight, Clock, Truck, CheckCircle } from 'lucide-react'
-import { trpc } from '@/lib/trpc/client'
+import { trpc } from '@/utils/trpc'
 import { formatDate } from '@/lib/utils'
 
 const statusConfig: Record<string, { label: string; icon: typeof Clock; color: string }> = {

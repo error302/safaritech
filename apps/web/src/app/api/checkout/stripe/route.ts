@@ -39,6 +39,9 @@ export async function POST(req: Request) {
       )
     }
 
+    // Get Stripe instance
+    const stripe = getStripe()
+
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
