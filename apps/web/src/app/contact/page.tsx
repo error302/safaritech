@@ -13,14 +13,31 @@ export default function Contact() {
   })
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
+  const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setTimeout(() => {
-      setSent(true)
+    setError('')
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+
+      if (response.ok) {
+        setSent(true)
+      } else {
+        const data = await response.json()
+        setError(data.error || 'Failed to send message')
+      }
+    } catch {
+      setError('Network error. Please try again.')
+    } finally {
       setLoading(false)
-    }, 1500)
+    }
   }
 
   if (sent) {
