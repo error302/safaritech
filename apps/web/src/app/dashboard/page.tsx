@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import { authOptions } from '@/server/auth'
+import { prisma } from '@/server/db'
 import Link from 'next/link'
 import { Package, Heart, Settings, CreditCard, MapPin } from 'lucide-react'
 
@@ -11,12 +12,28 @@ export default async function Dashboard() {
     redirect('/login')
   }
 
+  const userId = session.user.id
+
+  // Fetch real stats from database
+  const [totalOrders, wishlistItems, reviews] = await Promise.all([
+    prisma.order.count({ where: { userId } }),
+    prisma.wishlistItem.count({ where: { userId } }),
+    prisma.review.count({ where: { userId } }),
+  ])
+
   const menuItems = [
     { icon: Package, label: 'My Orders', href: '/orders' },
     { icon: Heart, label: 'Wishlist', href: '/wishlist' },
     { icon: MapPin, label: 'Addresses', href: '/settings' },
     { icon: CreditCard, label: 'Payment Methods', href: '/settings' },
     { icon: Settings, label: 'Account Settings', href: '/settings' },
+  ]
+
+  const stats = [
+    { label: 'Total Orders', value: totalOrders.toString() },
+    { label: 'Wishlist Items', value: wishlistItems.toString() },
+    { label: 'Reviews', value: reviews.toString() },
+    { label: 'Coupons', value: '0' }, // Hardcoded - no user coupons model yet
   ]
 
   return (
@@ -30,12 +47,7 @@ export default async function Dashboard() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
-          {[
-            { label: 'Total Orders', value: '0' },
-            { label: 'Wishlist Items', value: '0' },
-            { label: 'Reviews', value: '0' },
-            { label: 'Coupons', value: '0' },
-          ].map((stat) => (
+          {stats.map((stat) => (
             <div key={stat.label} className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-4 md:p-6">
               <p className="text-xs md:text-sm text-gray-500">{stat.label}</p>
               <p className="text-2xl md:text-3xl font-bold text-neon mt-1">{stat.value}</p>

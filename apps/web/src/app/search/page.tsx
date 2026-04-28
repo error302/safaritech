@@ -3,22 +3,10 @@
 import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { Search as SearchIcon, X, Filter, Grid, List } from 'lucide-react'
+import { Search as SearchIcon, X, Filter, Grid, List, Loader2 } from 'lucide-react'
+import { trpc } from '@/utils/trpc'
+import { ProductCard } from '@/components/ProductCard'
 
-const allProducts = [
-  { id: '1', name: 'iPhone 15 Pro Max', price: 149999, category: 'phones', stock: 15 },
-  { id: '2', name: 'MacBook Pro M3', price: 199999, category: 'laptops', stock: 8 },
-  { id: '3', name: 'Sony WH-1000XM5', price: 34999, category: 'audio', stock: 25 },
-  { id: '4', name: 'Samsung Galaxy S24', price: 119999, category: 'phones', stock: 20 },
-  { id: '5', name: 'Dell XPS 15', price: 159999, category: 'laptops', stock: 12 },
-  { id: '6', name: 'AirPods Pro 2', price: 24999, category: 'audio', stock: 50 },
-  { id: '7', name: 'Apple Watch Ultra 2', price: 89999, category: 'wearables', stock: 18 },
-  { id: '8', name: 'iPad Pro 12.9"', price: 139999, category: 'tablets', stock: 10 },
-  { id: '9', name: 'Google Pixel 8', price: 99999, category: 'phones', stock: 15 },
-  { id: '10', name: 'Samsung Galaxy Buds2', price: 14999, category: 'audio', stock: 30 },
-]
-
-const categories = ['All', 'phones', 'laptops', 'audio', 'wearables', 'tablets']
 const priceRanges = [
   { label: 'All Prices', min: 0, max: Infinity },
   { label: 'Under KSh 20,000', min: 0, max: 20000 },
@@ -31,26 +19,43 @@ const priceRanges = [
 function SearchContent() {
   const searchParams = useSearchParams()
   const initialQuery = searchParams.get('q') || ''
+  const initialCategory = searchParams.get('category') || ''
 
   const [query, setQuery] = useState(initialQuery)
   const [searchInput, setSearchInput] = useState(initialQuery)
-  const [category, setCategory] = useState('All')
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory)
   const [priceRange, setPriceRange] = useState(0)
   const [sortBy, setSortBy] = useState('relevance')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [showFilters, setShowFilters] = useState(false)
 
-  const filteredProducts = allProducts
+  // Fetch categories from backend
+  const { data: categories } = trpc.product.adminGetCategories.useQuery()
+
+  // Fetch products with search
+  const { data: productsData, isLoading } = trpc.product.getAll.useQuery(
+    {
+      search: query || undefined,
+      category: selectedCategory || undefined,
+      limit: 50,
+    },
+    {
+      enabled: true,
+    }
+  )
+
+  // Filter products by price range
+  const filteredProducts = (productsData?.products || [])
     .filter(p => {
-      const matchesSearch = p.name.toLowerCase().includes(query.toLowerCase())
-      const matchesCategory = category === 'All' || p.category === category
-      const matchesPrice = p.price >= priceRanges[priceRange].min && p.price < priceRanges[priceRange].max
-      return matchesSearch && matchesCategory && matchesPrice
+      const price = p.salePrice || p.price
+      return price >= priceRanges[priceRange].min && price < priceRanges[priceRange].max
     })
     .sort((a, b) => {
+      const priceA = a.salePrice || a.price
+      const priceB = b.salePrice || b.price
       switch (sortBy) {
-        case 'price-low': return a.price - b.price
-        case 'price-high': return b.price - a.price
+        case 'price-low': return priceA - priceB
+        case 'price-high': return priceB - priceA
         case 'name': return a.name.localeCompare(b.name)
         default: return 0
       }
@@ -59,6 +64,10 @@ function SearchContent() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     setQuery(searchInput)
+  }
+
+  const handleCategoryChange = (slug: string) => {
+    setSelectedCategory(slug === selectedCategory ? '' : slug)
   }
 
   return (
@@ -92,23 +101,35 @@ function SearchContent() {
           {/* Filters Sidebar */}
           <aside className={`lg:w-64 ${showFilters ? 'block' : 'hidden lg:block'}`}>
             <div className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-4 space-y-6">
-              <div>
-                <h3 className="mb-3 font-semibold text-gray-900 md:text-white">Category</h3>
-                <div className="space-y-2">
-                  {categories.map((cat) => (
-                    <label key={cat} className="flex items-center gap-2 cursor-pointer">
+              {categories && categories.length > 0 && (
+                <div>
+                  <h3 className="mb-3 font-semibold text-gray-900 md:text-white">Category</h3>
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2 cursor-pointer">
                       <input
                         type="radio"
                         name="category"
-                        checked={category === cat}
-                        onChange={() => setCategory(cat)}
+                        checked={!selectedCategory}
+                        onChange={() => setSelectedCategory('')}
                         className="text-neon focus:ring-neon"
                       />
-                      <span className="text-sm capitalize text-gray-900 md:text-white">{cat}</span>
+                      <span className="text-sm text-gray-900 md:text-white">All Categories</span>
                     </label>
-                  ))}
+                    {categories.map((cat) => (
+                      <label key={cat.id} className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="category"
+                          checked={selectedCategory === cat.slug}
+                          onChange={() => handleCategoryChange(cat.slug)}
+                          className="text-neon focus:ring-neon"
+                        />
+                        <span className="text-sm text-gray-900 md:text-white">{cat.name}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div>
                 <h3 className="mb-3 font-semibold text-gray-900 md:text-white">Price Range</h3>
@@ -129,7 +150,7 @@ function SearchContent() {
               </div>
 
               <button
-                onClick={() => { setCategory('All'); setPriceRange(0); setQuery(''); setSearchInput('') }}
+                onClick={() => { setSelectedCategory(''); setPriceRange(0); setQuery(''); setSearchInput('') }}
                 className="w-full text-sm text-neon hover:underline"
               >
                 Clear all filters
@@ -141,7 +162,7 @@ function SearchContent() {
           <div className="flex-1">
             <div className="mb-4 flex items-center justify-between">
               <p className="text-gray-500 md:text-gray-400">
-                {filteredProducts.length} results
+                {isLoading ? 'Loading...' : `${filteredProducts.length} results`}
                 {query && <span> for &quot;{query}&quot;</span>}
               </p>
 
@@ -181,25 +202,15 @@ function SearchContent() {
               </div>
             </div>
 
-            {filteredProducts.length > 0 ? (
+            {isLoading ? (
+              <div className="py-16 text-center">
+                <Loader2 className="mx-auto h-12 w-12 text-neon animate-spin mb-4" />
+                <p className="text-gray-500 md:text-gray-400">Searching products...</p>
+              </div>
+            ) : filteredProducts.length > 0 ? (
               <div className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-2 md:grid-cols-3' : 'grid-cols-1'}`}>
                 {filteredProducts.map((product) => (
-                  <Link
-                    key={product.id}
-                    href={`/product/${product.id}`}
-                    className="group rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray overflow-hidden transition-all hover:border-electric/50 hover:shadow-lg hover:shadow-electric/10"
-                  >
-                    <div className="aspect-square bg-gray-50 md:bg-safaridark relative">
-                      <div className="absolute inset-0 flex items-center justify-center text-gray-500 md:text-gray-400">
-                        Product Image
-                      </div>
-                    </div>
-                    <div className="p-4">
-                      <p className="mb-1 text-xs text-neon uppercase">{product.category}</p>
-                      <h3 className="mb-2 font-semibold text-gray-900 md:text-white">{product.name}</h3>
-                      <p className="text-lg font-bold text-neon">KSh {product.price.toLocaleString()}</p>
-                    </div>
-                  </Link>
+                  <ProductCard key={product.id} product={product} />
                 ))}
               </div>
             ) : (
@@ -220,7 +231,7 @@ export default function Search() {
   return (
     <Suspense fallback={
       <div className="md:bg-safaridark bg-gray-50 min-h-screen py-8 flex items-center justify-center">
-        <p className="text-gray-500 md:text-gray-400">Loading...</p>
+        <Loader2 className="h-8 w-8 text-neon animate-spin" />
       </div>
     }>
       <SearchContent />
