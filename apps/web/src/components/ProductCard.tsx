@@ -3,6 +3,8 @@ import Link from "next/link";
 import { Flame, Star, ShoppingCart } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 
+type ColorVariant = { name: string; hex: string; image?: string };
+
 type ProductFromServer = {
   id: string;
   name: string;
@@ -17,6 +19,7 @@ type ProductFromServer = {
   reviewCount: number;
   description: string;
   category: { id: string; name: string } | null;
+  colors?: string | null;
 };
 
 type ProductFromStatic = {
@@ -91,6 +94,16 @@ function getProductBrand(product: Product): string {
   return product.category?.name ?? '';
 }
 
+function getProductColors(product: Product): ColorVariant[] {
+  if ('colors' in product && product.colors) {
+    try {
+      const parsed = JSON.parse(product.colors as string);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch { return []; }
+  }
+  return [];
+}
+
 export default function ProductCard({ product }: { product: Product }) {
   const utils = trpc.useUtils();
   const addToCart = trpc.cart.addItem.useMutation({
@@ -102,6 +115,8 @@ export default function ProductCard({ product }: { product: Product }) {
   const discount = getProductOriginalPrice(product)
     ? Math.round(((getProductOriginalPrice(product)! - getProductPrice(product)) / getProductOriginalPrice(product)!) * 100)
     : null;
+
+  const colors = getProductColors(product);
 
 const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -117,13 +132,13 @@ const handleAddToCart = (e: React.MouseEvent) => {
 
   return (
     <Link href={`/products/${getProductSlug(product)}`} className="group block">
-<div className="bg-white md:bg-safarigray border border-gray-200 md:border-safariborder rounded-xl overflow-hidden hover:border-gray-300 md:hover:border-gray-500 hover:shadow-sm transition-all duration-200">
+<div className="bg-white md:bg-safarigray border border-gray-100 md:border-safariborder rounded-2xl overflow-hidden hover:border-gray-200 md:hover:border-gray-600 transition-all duration-300 hover:shadow-lg md:hover:shadow-2xl md:hover:shadow-black/30">
 <div className="relative aspect-square overflow-hidden bg-gray-50 md:bg-safaridark">
           <Image
             src={getProductImage(product)}
             alt={getProductName(product)}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
             sizes="(max-width: 768px) 50vw, 25vw"
           />
           <div className="absolute top-2 left-2 flex flex-col gap-1">
@@ -151,10 +166,27 @@ const handleAddToCart = (e: React.MouseEvent) => {
         </div>
 
 <div className="p-3 md:p-4">
-<div className="text-[10px] md:text-xs text-gray-400 font-medium mb-0.5">{getProductBrand(product)}</div>
+<div className="text-[10px] md:text-xs text-gray-400 font-medium mb-0.5 tracking-wide uppercase">{getProductBrand(product)}</div>
 <div className="font-medium text-xs md:text-sm text-gray-900 md:text-white line-clamp-2 leading-snug mb-1.5">
 {getProductName(product)}
 </div>
+
+{/* Color dots */}
+{colors.length > 0 && (
+  <div className="flex items-center gap-1 mb-2">
+    {colors.slice(0, 4).map((c, i) => (
+      <span
+        key={i}
+        className="w-3 h-3 rounded-full border border-gray-200 md:border-gray-600"
+        style={{ backgroundColor: c.hex }}
+        title={c.name}
+      />
+    ))}
+    {colors.length > 4 && (
+      <span className="text-[9px] text-gray-400">+{colors.length - 4}</span>
+    )}
+  </div>
+)}
 
 <div className="flex items-center gap-1 mb-2">
 <div className="flex">
@@ -165,8 +197,8 @@ const handleAddToCart = (e: React.MouseEvent) => {
 <span className="text-[10px] text-gray-400">({getProductReviews(product).toLocaleString()})</span>
 </div>
 
-<div className="flex items-baseline gap-1.5 mb-2.5">
-<span className="font-display font-bold text-sm md:text-lg text-gray-900 md:text-white">
+<div className="flex items-baseline gap-1.5 mb-3">
+<span className="font-display font-bold text-sm md:text-base text-gray-900 md:text-white">
 KES {getProductPrice(product).toLocaleString()}
 </span>
             {getProductOriginalPrice(product) && (
@@ -177,7 +209,7 @@ KES {getProductPrice(product).toLocaleString()}
           </div>
 
 <button
-  className="w-full bg-neon hover:bg-neon-dim active:scale-[0.98] text-black font-semibold text-xs md:text-sm py-3 md:py-2.5 rounded-lg transition-all duration-150 font-display disabled:opacity-40 flex items-center justify-center gap-1.5 touch-target"
+  className="w-full bg-gray-900 md:bg-neon hover:bg-gray-800 md:hover:bg-neon-dim active:scale-[0.97] text-white md:text-black font-semibold text-xs py-2.5 rounded-xl transition-all duration-200 font-display disabled:opacity-40 flex items-center justify-center gap-1.5"
   onClick={handleAddToCart}
   disabled={addToCart.isPending || !getProductInStock(product)}
 >

@@ -20,6 +20,7 @@ html {
 body {
   font-family: var(--font-dm-sans);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 @media (max-width: 767px) {
@@ -36,7 +37,7 @@ body {
   }
 }
 
-/* Scrollbar */
+/* ── Scrollbar ── */
 ::-webkit-scrollbar {
   width: 4px;
 }
@@ -44,14 +45,14 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #00FF9F44;
+  background: #00FF9F33;
   border-radius: 99px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #00FF9F88;
+  background: #00FF9F66;
 }
 
-/* Neon glow utilities */
+/* ── Glow utilities ── */
 .glow-neon {
   box-shadow: 0 0 20px #00FF9F33, 0 0 40px #00FF9F11;
 }
@@ -62,9 +63,9 @@ body {
   box-shadow: 0 0 20px #00B8FF33;
 }
 
-/* Product card hover - desktop only */
+/* ── Product card hover ── */
 .product-card {
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 @media (min-width: 768px) {
   .product-card:hover {
@@ -72,31 +73,16 @@ body {
     box-shadow: 0 20px 40px #00000088, 0 0 0 1px #00FF9F22;
   }
 }
-@media (max-width: 767px) {
-  .product-card:hover {
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-  }
-}
 
-/* Category card */
-.cat-card {
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-.cat-card:hover {
-  transform: scale(1.02);
-}
-
-/* Range input neon accent */
+/* ── Range input / checkbox accent ── */
 input[type="range"] {
   accent-color: #00FF9F;
 }
-
-/* Checkbox neon */
 input[type="checkbox"] {
   accent-color: #00FF9F;
 }
 
-/* Line clamp */
+/* ── Line clamp ── */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -104,7 +90,7 @@ input[type="checkbox"] {
   overflow: hidden;
 }
 
-/* Hide scrollbar for horizontal scroll */
+/* ── Hide scrollbar for horizontal scroll ── */
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
@@ -113,18 +99,12 @@ input[type="checkbox"] {
   scrollbar-width: none;
 }
 
-/* Safe area for bottom nav on notched phones */
+/* ── Safe area for bottom nav on notched phones ── */
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* Stagger animations */
-.stagger-1 { animation-delay: 0.1s; }
-.stagger-2 { animation-delay: 0.2s; }
-.stagger-3 { animation-delay: 0.3s; }
-.stagger-4 { animation-delay: 0.4s; }
-
-/* Slide up animation for bottom sheets */
+/* ── Slide up animation for bottom sheets ── */
 @keyframes slide-up {
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
@@ -133,7 +113,27 @@ input[type="checkbox"] {
   animation: slide-up 0.25s ease-out;
 }
 
-/* Minimum touch target 44px for mobile accessibility */
+/* ── Fade in animation ── */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out;
+}
+
+/* ── Shimmer loading skeleton ── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ── Minimum touch target 44px for mobile accessibility ── */
 @media (max-width: 767px) {
   button,
   [role="button"],
@@ -144,7 +144,6 @@ input[type="checkbox"] {
     min-width: 44px;
   }
   
-  /* Larger touch targets for important CTAs */
   .touch-target-lg {
     min-height: 48px;
     min-width: 48px;

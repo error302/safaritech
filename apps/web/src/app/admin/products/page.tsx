@@ -21,6 +21,7 @@ type ProductRow = {
   images: string;
   categoryId: string | null;
   category: { id: string; name: string } | null;
+  colors: string | null;
   createdAt: Date;
 };
 
@@ -86,6 +87,23 @@ export default function AdminProductsPage() {
           {row.stock}
         </span>
       ),
+    },
+    {
+      key: "colors",
+      label: "Colors",
+      render: (row: ProductRow) => {
+        let colorList: { name: string; hex: string }[] = [];
+        try { colorList = row.colors ? JSON.parse(row.colors) : []; } catch { colorList = []; }
+        if (colorList.length === 0) return <span className="text-gray-600 text-xs">—</span>;
+        return (
+          <div className="flex items-center gap-1">
+            {colorList.slice(0, 5).map((c, i) => (
+              <span key={i} className="w-4 h-4 rounded-full border border-white/10 shrink-0" style={{ backgroundColor: c.hex }} title={c.name} />
+            ))}
+            {colorList.length > 5 && <span className="text-xs text-gray-500">+{colorList.length - 5}</span>}
+          </div>
+        );
+      },
     },
     {
       key: "actions",

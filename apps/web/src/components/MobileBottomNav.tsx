@@ -11,7 +11,7 @@ const navItemsBase = [
   { label: "Shop", href: "/shop", icon: Package },
   { label: "Cart", href: "/cart", icon: ShoppingCart },
   { label: "Account", href: "/dashboard", icon: User },
-  { label: "Menu", href: "#menu", icon: Menu },
+  { label: "More", href: "#menu", icon: Menu },
 ];
 
 export default function MobileBottomNav() {
@@ -42,8 +42,8 @@ export default function MobileBottomNav() {
 
   return (
     <>
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 pb-safe">
-        <div className="flex items-center justify-around py-2">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-gray-100 pb-safe">
+        <div className="flex items-center justify-around py-1.5">
           {navItems.map((item) => {
             const active = item.href !== "#menu" && pathname === item.href;
             const Icon = item.icon;
@@ -57,19 +57,20 @@ export default function MobileBottomNav() {
                     handleNavClick(item);
                   }
                 }}
-                className="flex flex-col items-center gap-0.5 px-3 py-1.5 relative min-w-[60px]"
+                className="flex flex-col items-center gap-0.5 px-3 py-1.5 relative min-w-[56px]"
               >
                 <div className="relative">
-                  <Icon className={`w-6 h-6 ${active ? "text-black" : "text-gray-400"}`} strokeWidth={active ? 2.5 : 1.8} />
+                  <Icon className={`w-5 h-5 transition-colors ${active ? "text-gray-900" : "text-gray-400"}`} strokeWidth={active ? 2.5 : 1.8} />
                   {"badge" in item && item.badge && item.badge > 0 && (
-                    <span className="absolute -top-2 -right-2.5 bg-red-600 text-white text-[10px] font-bold min-w-[16px] h-4 rounded-full flex items-center justify-center border-2 border-white px-1">
+                    <span className="absolute -top-2 -right-2.5 bg-red-600 text-white text-[9px] font-bold min-w-[15px] h-[15px] rounded-full flex items-center justify-center border-2 border-white px-0.5">
                       {item.badge}
                     </span>
                   )}
                 </div>
-                <span className={`text-[10px] font-medium ${active ? "text-black" : "text-gray-400"}`}>
+                <span className={`text-[10px] font-medium transition-colors ${active ? "text-gray-900" : "text-gray-400"}`}>
                   {item.label}
                 </span>
+                {active && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-5 h-0.5 bg-gray-900 rounded-full" />}
               </Link>
             );
           })}
@@ -80,11 +81,11 @@ export default function MobileBottomNav() {
       {menuOpen && (
         <div className="md:hidden fixed inset-0 z-[60]">
           <div
-            className="absolute inset-0 bg-black/50"
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={() => setMenuOpen(false)}
           />
           <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[70vh] overflow-y-auto animate-slide-up">
-            <div className="sticky top-0 bg-white flex items-center justify-between px-5 py-4 border-b border-gray-100">
+            <div className="sticky top-0 bg-white flex items-center justify-between px-5 py-4 border-b border-gray-100 rounded-t-2xl">
               <h2 className="font-display font-bold text-lg text-gray-900">Menu</h2>
               <button
                 onClick={() => setMenuOpen(false)}
@@ -104,7 +105,7 @@ export default function MobileBottomNav() {
                     onClick={() => setMenuOpen(false)}
                     className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition-colors"
                   >
-                    <Icon className="w-5 h-5 text-gray-500" />
+                    <Icon className="w-5 h-5 text-gray-400" />
                     <span className="flex-1 text-sm font-medium text-gray-900">{link.label}</span>
                     <ChevronRight className="w-4 h-4 text-gray-300" />
                   </Link>

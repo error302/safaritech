@@ -72,6 +72,7 @@ if (search) {
       categoryId: z.string().optional(),
       images: z.string().optional(),
       specs: z.string().optional(),
+      colors: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       const product = await ctx.prisma.product.create({ data: input })
@@ -90,6 +91,7 @@ if (search) {
       categoryId: z.string().optional(),
       images: z.string().optional(),
       specs: z.string().optional(),
+      colors: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       const { id, ...data } = input

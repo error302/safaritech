@@ -37,6 +37,7 @@ model Product {
   stock       Int      @default(0)
   images      String   @default("")
   specs       String?  @default("{}")
+  colors      String?  @default("[]")
   category    Category? @relation(fields: [categoryId], references: [id])
   categoryId  String?
   createdAt   DateTime @default(now())
@@ -74,7 +75,7 @@ model Order {
   couponCode        String?
   coupon            Coupon?  @relation(fields: [couponId], references: [id])
   createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  updatedAt         DateTime @default(now()) @updatedAt
 
   items              OrderItem[]
   shippingAddress    Address? @relation("ShippingAddress", fields: [shippingAddressId], references: [id])
@@ -87,8 +88,9 @@ model OrderItem {
   orderId   String
   product   Product @relation(fields: [productId], references: [id])
   productId String
-  quantity  Int
-  unitPrice Int
+  quantity      Int
+  unitPrice     Int
+  selectedColor String?
 }
 
 model Address {
@@ -123,6 +125,7 @@ model CartItem {
   product   Product  @relation(fields: [productId], references: [id])
   productId String
   quantity  Int      @default(1)
+  selectedColor String?
   createdAt DateTime @default(now())
 }
 

@@ -16,6 +16,7 @@ export const cartRouter = router({
       items: items.map(item => ({
         id: item.id,
         quantity: item.quantity,
+        selectedColor: item.selectedColor,
         product: {
           id: item.product.id,
           name: item.product.name,
@@ -32,6 +33,7 @@ export const cartRouter = router({
     .input(z.object({
       productId: z.string(),
       quantity: z.number().min(1),
+      selectedColor: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       if (!ctx.session?.user) {
@@ -42,6 +44,7 @@ export const cartRouter = router({
         where: {
           userId: ctx.session.user.id,
           productId: input.productId,
+          selectedColor: input.selectedColor || null,
         },
       })
 
@@ -58,6 +61,7 @@ export const cartRouter = router({
           userId: ctx.session.user.id,
           productId: input.productId,
           quantity: input.quantity,
+          selectedColor: input.selectedColor || null,
         },
       })
       return { success: true, item }
