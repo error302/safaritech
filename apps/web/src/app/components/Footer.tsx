@@ -3,16 +3,15 @@ import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from 'luci
 
 const footerLinks = {
   shop: [
-    { label: 'Smartphones', href: '/shop?category=phones' },
-    { label: 'Laptops', href: '/shop?category=laptops' },
-    { label: 'Audio', href: '/shop?category=audio' },
-    { label: 'Wearables', href: '/shop?category=wearables' },
-    { label: 'Tablets', href: '/shop?category=tablets' },
+    { label: 'Smartphones', href: '/shop/phones' },
+    { label: 'Laptops', href: '/shop/laptops' },
+    { label: 'Audio', href: '/shop/audio' },
+    { label: 'Wearables', href: '/shop/wearables' },
+    { label: 'Tablets', href: '/shop/tablets' },
   ],
   company: [
     { label: 'About Us', href: '/about' },
     { label: 'Contact', href: '/contact' },
-    { label: 'Careers', href: '/careers' },
     { label: 'Press', href: '/press' },
   ],
   support: [
