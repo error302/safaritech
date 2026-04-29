@@ -84,9 +84,9 @@ export default function Blog() {
                     <span className="text-gray-500 md:text-gray-400">Blog Image</span>
                   </div>
                   <div className="p-6">
-                    <span className="mb-3 inline-block text-xs font-medium text-neon">
-                      {post.category || 'Tech'}
-                    </span>
+<span className="mb-3 inline-block text-xs font-medium text-neon">
+{post.seoTitle || 'Tech'}
+</span>
                     <h2 className="mb-3 text-xl font-bold group-hover:text-neon transition-colors text-gray-900 md:text-white">
                       {post.title}
                     </h2>

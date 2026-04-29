@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { Package, ChevronRight, Clock, Truck, CheckCircle } from 'lucide-react'
 import { trpc } from '@/utils/trpc'

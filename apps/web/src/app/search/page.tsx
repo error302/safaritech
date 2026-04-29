@@ -209,9 +209,34 @@ function SearchContent() {
               </div>
             ) : filteredProducts.length > 0 ? (
               <div className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-2 md:grid-cols-3' : 'grid-cols-1'}`}>
-                {filteredProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
+{filteredProducts.map((product) => {
+                const productData: any = product;
+                const images = productData.images
+                  ? (Array.isArray(productData.images) ? productData.images : [String(productData.images)])
+                  : null;
+                return (
+                  <ProductCard
+                    key={product.id}
+                    product={{
+                      id: product.id,
+                      name: product.name,
+                      slug: product.slug,
+                      price: product.price,
+                      originalPrice: (productData as any).salePrice ?? null,
+                      images: images,
+                      inStock: true,
+                      isHot: productData.isHot ?? null,
+                      badge: productData.badge ?? null,
+                      rating: 0,
+                      reviewCount: 0,
+                      description: product.description,
+                      category: productData.category
+                        ? { id: productData.category.id, name: productData.category.name }
+                        : null,
+                    }}
+                  />
+                );
+              })}
               </div>
             ) : (
               <div className="py-16 text-center">

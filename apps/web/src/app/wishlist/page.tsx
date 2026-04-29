@@ -53,9 +53,30 @@ export default function Wishlist() {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-            {wishlistItems.map((item) => (
+{wishlistItems.map((item) => {
+            const p: any = item.product;
+            const images = p.images
+              ? (Array.isArray(p.images) ? p.images : [String(p.images)])
+              : null;
+            return (
               <div key={item.id} className="relative">
-                <ProductCard product={item.product} />
+                <ProductCard
+                  product={{
+                    id: p.id,
+                    name: p.name,
+                    slug: p.slug,
+                    price: p.price,
+                    originalPrice: p.salePrice ?? null,
+                    images: images,
+                    inStock: p.stock > 0,
+                    isHot: p.isHot ?? null,
+                    badge: p.badge ?? null,
+                    rating: 0,
+                    reviewCount: 0,
+                    description: p.description,
+                    category: p.category ? { id: p.category.id, name: p.category.name } : null,
+                  }}
+                />
                 <button
                   onClick={() => handleRemove(item.productId)}
                   disabled={removeFromWishlist.isPending}
@@ -69,7 +90,8 @@ export default function Wishlist() {
                   )}
                 </button>
               </div>
-            ))}
+            );
+          })}
           </div>
         )}
       </div>

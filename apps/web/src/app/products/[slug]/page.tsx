@@ -100,7 +100,7 @@ export default function ProductPage({ params }: Props) {
     : 0;
 
 const handleAddToCart = () => {
-    const productId = typeof product.id === "number" ? product.id.toString() : product.id;
+    const productId = String(product.id);
     addToCart.mutate({ productId, quantity });
     
     // Haptic feedback on mobile

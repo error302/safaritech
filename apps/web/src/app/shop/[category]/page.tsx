@@ -64,11 +64,36 @@ export default function ShopCategory() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {products.map((product) => {
+                const productData: any = product;
+                const images = productData.images
+                  ? (Array.isArray(productData.images) ? productData.images : [String(productData.images)])
+                  : null;
+                return (
+                  <ProductCard
+                    key={product.id}
+                    product={{
+                      id: product.id,
+                      name: product.name,
+                      slug: product.slug,
+                      price: product.price,
+                      originalPrice: productData.salePrice ?? null,
+                      images: images,
+                      inStock: product.stock > 0,
+                      isHot: productData.isHot ?? null,
+                      badge: productData.badge ?? null,
+                      rating: 0,
+                      reviewCount: 0,
+                      description: product.description,
+                      category: productData.category
+                        ? { id: productData.category.id, name: productData.category.name }
+                        : null,
+                    }}
+                  />
+                );
+              })}
+            </div>
         )}
       </div>
     </div>
