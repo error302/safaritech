@@ -13,7 +13,7 @@ export default function Checkout() {
   const { data: session } = useSession()
   const { items, total, clearCart } = useCartStore()
   const [loading, setLoading] = useState(false)
-  const [paymentMethod, setPaymentMethod] = useState<'mpesa' | 'card'>('mpesa')
+  const [paymentMethod, setPaymentMethod] = useState<'mpesa' | 'card' | 'paypal'>('mpesa')
   const [couponCode, setCouponCode] = useState('')
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number } | null>(null)
   const [couponError, setCouponError] = useState('')
@@ -48,6 +48,9 @@ export default function Checkout() {
       } else if (paymentMethod === 'card') {
         // Redirect to Stripe checkout
         router.push(`/checkout/stripe?orderId=${data.orderId}&total=${data.total}`)
+      } else if (paymentMethod === 'paypal') {
+        // Redirect to PayPal checkout
+        router.push(`/checkout/paypal?orderId=${data.orderId}&total=${data.total}`)
       } else {
         router.push(`/checkout/success?orderId=${data.orderId}`)
       }
@@ -302,6 +305,28 @@ export default function Checkout() {
                   <div className="flex-1">
                     <p className="font-medium text-gray-900 md:text-white">Card Payment</p>
                     <p className="text-xs md:text-sm text-gray-500">Visa, Mastercard</p>
+                  </div>
+                </label>
+                <label className={`flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-lg border cursor-pointer transition-colors ${
+                  paymentMethod === 'paypal'
+                  ? 'border-neon bg-neon/5 md:bg-neon/10'
+                  : 'border-gray-200 md:border-safariborder bg-white md:bg-safaridark hover:border-gray-300 md:hover:border-gray-600'
+                }`}>
+                  <input
+                    type="radio"
+                    name="payment"
+                    checked={paymentMethod === 'paypal'}
+                    onChange={() => setPaymentMethod('paypal')}
+                    className="text-neon accent-neon"
+                  />
+                  <div className="flex h-5 w-5 md:h-6 md:w-6 items-center justify-center text-blue-400">
+                    <svg viewBox="0 0 24 24" className="h-5 w-5 md:h-6 md:w-6 fill-current" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20.007 6.467c-.201-.192-.472-.341-.812-.444-.34-.104-.766-.156-1.278-.156H9.72c-.229 0-.441.139-.533.348l-3.32 7.574a.591.591 0 0 0 .533.824h2.518c.28 0 .532-.178.625-.443l.89-2.544a1.18 1.18 0 0 1 1.12-.788h1.996c1.393 0 2.47-.367 3.232-1.101.762-.734 1.143-1.789 1.143-3.167 0-.319-.047-.639-.14-.959a4.832 4.832 0 0 0-.46-1.147M16.592 12.3c-.63.535-1.503.803-2.617.803h-2.146a.592.592 0 0 0-.563.411l-.816 2.502c-.093.284.118.577.416.577h2.09c.307 0 .584-.195.684-.486l.668-1.928a.593.593 0 0 1 .564-.397h.655c1.472 0 2.613-.393 3.424-1.18.81-.787 1.215-1.912 1.215-3.376 0-.323-.024-.627-.07-.912a7.1 7.1 0 0 1-.58 2.057c-.452 1.344-1.26 2.394-2.424 3.03z"/>
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900 md:text-white">PayPal</p>
+                    <p className="text-xs md:text-sm text-gray-500">Pay with PayPal balance or card</p>
                   </div>
                 </label>
               </div>

@@ -20,7 +20,7 @@ export const orderRouter = router({
         city: z.string(),
         county: z.string(),
       }),
-      paymentMethod: z.enum(['mpesa', 'card']),
+      paymentMethod: z.enum(['mpesa', 'card', 'paypal']),
       couponCode: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
