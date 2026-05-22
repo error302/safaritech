@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-type Column<T> = {
+export type Column<T> = {
   key: string;
   label: string;
   render?: (row: T) => React.ReactNode;
 };
 
-type Props<T> = {
+export type DataTableProps<T> = {
   data: T[];
   columns: Column<T>[];
   rowKey: keyof T;
@@ -17,7 +17,13 @@ type Props<T> = {
   pageSize?: number;
 };
 
-export default function DataTable<T extends Record<string, unknown>>({ data, columns, rowKey, emptyMessage = "No data found", pageSize = 10 }: Props<T>) {
+export default function DataTable<T extends Record<string, unknown>>({
+  data,
+  columns,
+  rowKey,
+  emptyMessage = "No data found",
+  pageSize = 10,
+}: DataTableProps<T>) {
   const [page, setPage] = useState(1);
   const totalPages = Math.ceil(data.length / pageSize);
   const paginatedData = data.slice((page - 1) * pageSize, page * pageSize);
@@ -48,7 +54,7 @@ export default function DataTable<T extends Record<string, unknown>>({ data, col
               <tr key={String(row[rowKey]) || i} className="hover:bg-safaridark/50 transition-colors">
                 {columns.map((col) => (
                   <td key={col.key} className="px-4 py-4 text-sm text-white">
-                    {col.render ? col.render(row) : String(row[col.key] ?? "")}
+                    {col.render ? col.render(row as any) : String(row[col.key as keyof T] ?? "")}
                   </td>
                 ))}
               </tr>
@@ -60,13 +66,14 @@ export default function DataTable<T extends Record<string, unknown>>({ data, col
       {totalPages > 1 && (
         <div className="flex items-center justify-between px-4 py-3 border-t border-safariborder">
           <p className="text-xs text-gray-500">
-            Showing {(page - 1) * pageSize + 1}-{Math.min(page * pageSize, data.length)} of {data.length}
+            Showing {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, data.length)} of {data.length}
           </p>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setPage(p => Math.max(1, p - 1))}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
               className="p-1.5 rounded-lg hover:bg-safaridark border border-safariborder disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              aria-label="Previous page"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -74,9 +81,10 @@ export default function DataTable<T extends Record<string, unknown>>({ data, col
               {page} / {totalPages}
             </span>
             <button
-              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
               className="p-1.5 rounded-lg hover:bg-safaridark border border-safariborder disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              aria-label="Next page"
             >
               <ChevronRight className="w-4 h-4" />
             </button>

@@ -43,11 +43,11 @@ export function Navbar() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <Link href="/search" className="p-2 text-gray-500 md:text-gray-400 hover:text-neon transition-colors">
-              <Search className="h-5 w-5" />
+            <Link href="/search" className="p-2 text-gray-500 md:text-gray-400 hover:text-neon transition-colors" aria-label="Search">
+              <Search className="h-5 w-5" aria-hidden="true" />
             </Link>
-            <Link href="/cart" className="relative p-2 text-gray-500 md:text-gray-400 hover:text-neon transition-colors">
-              <ShoppingCart className="h-5 w-5" />
+            <Link href="/cart" className="relative p-2 text-gray-500 md:text-gray-400 hover:text-neon transition-colors" aria-label="Cart">
+              <ShoppingCart className="h-5 w-5" aria-hidden="true" />
               {cartItemsCount > 0 && (
                 <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-electric text-xs font-bold text-charcoal">
                   {cartItemsCount}
@@ -56,8 +56,8 @@ export function Navbar() {
             </Link>
             {session ? (
               <>
-                <Link href="/dashboard" className="p-2 text-gray-500 md:text-gray-400 hover:text-neon transition-colors">
-                  <User className="h-5 w-5" />
+                <Link href="/dashboard" className="p-2 text-gray-500 md:text-gray-400 hover:text-neon transition-colors" aria-label="Dashboard">
+                  <User className="h-5 w-5" aria-hidden="true" />
                 </Link>
                 <button
                   onClick={() => signOut({ callbackUrl: '/' })}
@@ -88,8 +88,9 @@ export function Navbar() {
         <button
           className="md:hidden p-2 text-gray-500 md:text-gray-400 hover:text-neon"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         >
-          {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {isMenuOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
         </button>
       </div>
 

@@ -43,6 +43,10 @@ model Product {
   images      String   @default("")
   specs       String?  @default("{}")
   colors      String?  @default("[]")
+  brand       String?  @default("")
+  isFeatured  Boolean  @default(false)
+  isHot       Boolean  @default(false)
+  badge       String?
   category    Category? @relation(fields: [categoryId], references: [id])
   categoryId  String?
   createdAt   DateTime @default(now())

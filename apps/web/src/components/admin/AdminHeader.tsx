@@ -26,8 +26,8 @@ export default function AdminHeader({ title, description, addNewHref, addNewLabe
             className="bg-safarigray border border-safariborder rounded-xl pl-9 pr-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-neon w-48 md:w-64 transition-all"
           />
         </div>
-        <button className="p-2 rounded-xl hover:bg-safarigray text-gray-400 hover:text-white border border-safariborder transition-all">
-          <Bell className="w-5 h-5" />
+        <button className="p-2 rounded-xl hover:bg-safarigray text-gray-400 hover:text-white border border-safariborder transition-all" aria-label="Notifications">
+          <Bell className="w-5 h-5" aria-hidden="true" />
         </button>
         {(addNewHref || onAddNew) && (
           <button

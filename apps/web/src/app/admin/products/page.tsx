@@ -22,6 +22,7 @@ type ProductRow = {
   categoryId: string | null;
   category: { id: string; name: string } | null;
   colors: string | null;
+  brand: string | null;
   createdAt: Date;
 };
 
@@ -48,7 +49,7 @@ export default function AdminProductsPage() {
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg overflow-hidden bg-safaridark shrink-0">
             {row.images ? (
-              <img src={row.images.split(",")[0]} alt="" className="w-full h-full object-cover" />
+              <img src={row.images.split(",")[0]} alt="Product" className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">No img</div>
             )}
@@ -65,6 +66,13 @@ export default function AdminProductsPage() {
       label: "Category",
       render: (row: ProductRow) => (
         <span className="text-gray-400">{row.category?.name || "Uncategorized"}</span>
+      ),
+    },
+    {
+      key: "brand",
+      label: "Brand",
+      render: (row: ProductRow) => (
+        <span className="text-gray-400 font-medium">{row.brand || "—"}</span>
       ),
     },
     {
@@ -138,7 +146,7 @@ export default function AdminProductsPage() {
 
       {/* Table */}
       <DataTable
-        data={(products ?? []) as unknown as Record<string, unknown>[]}
+        data={(products ?? []) as any}
         columns={columns as any}
         rowKey="id"
         emptyMessage="No products yet. Add your first product!"
@@ -161,6 +169,7 @@ export default function AdminProductsPage() {
           }}
         />
       </Modal>
+
 
       {/* Delete Confirmation */}
       <Modal

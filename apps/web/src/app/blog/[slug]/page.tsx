@@ -1,16 +1,15 @@
 'use client'
 
 import Link from 'next/link'
-import { use } from 'react'
 import { ChevronLeft, Calendar, User, Share2, Facebook, Twitter } from 'lucide-react'
 import { trpc } from '@/utils/trpc'
 
 interface BlogPostPageProps {
-  params: Promise<{ slug: string }>
+  params: { slug: string }
 }
 
 export default function BlogPost({ params }: BlogPostPageProps) {
-  const { slug } = use(params)
+  const { slug } = params
   const { data: post, isLoading, error } = trpc.blog.getBySlug.useQuery({ slug })
 
   if (isLoading) {

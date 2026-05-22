@@ -1,14 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, Filter } from "lucide-react";
+import { Eye } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import AdminHeader from "@/components/admin/AdminHeader";
-import DataTable from "@/components/admin/DataTable";
+import DataTable, { Column } from "@/components/admin/DataTable";
 import Modal from "@/components/admin/Modal";
 
 const ORDER_STATUSES = ["PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"] as const;
+type OrderStatus = typeof ORDER_STATUSES[number];
+
 const PAYMENT_STATUSES = ["PENDING", "PAID", "FAILED", "REFUNDED"] as const;
+type PaymentStatus = typeof PAYMENT_STATUSES[number];
 
 const statusColors: Record<string, string> = {
   PENDING: "text-yellow bg-yellow/10 border-yellow/20",
@@ -25,8 +28,8 @@ type OrderRow = {
   id: string;
   total: number;
   subtotal: number;
-  status: string;
-  paymentStatus: string;
+  status: OrderStatus;
+  paymentStatus: PaymentStatus;
   paymentMethod: string;
   createdAt: Date;
   user: { name: string | null; email: string } | null;
@@ -34,14 +37,14 @@ type OrderRow = {
 };
 
 export default function AdminOrdersPage() {
-  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<OrderStatus | "">("");
   const [selectedOrder, setSelectedOrder] = useState<OrderRow | null>(null);
   const [viewOrder, setViewOrder] = useState(false);
 
   const utils = trpc.useUtils();
 
   const { data, isLoading, refetch } = trpc.order.adminGetAll.useQuery({
-    status: statusFilter || undefined,
+    status: (statusFilter || undefined) as any,
   });
 
   const orders = (data?.orders ?? []) as unknown as OrderRow[];
@@ -54,18 +57,18 @@ export default function AdminOrdersPage() {
     },
   });
 
-  const columns = [
+  const columns: Column<OrderRow>[] = [
     {
       key: "id",
       label: "Order ID",
-      render: (row: OrderRow) => (
+      render: (row) => (
         <span className="font-mono text-sm text-white">{row.id.slice(0, 8)}</span>
       ),
     },
     {
       key: "user",
       label: "Customer",
-      render: (row: OrderRow) => (
+      render: (row) => (
         <div>
           <p className="text-white font-medium">{row.user?.name || "Guest"}</p>
           <p className="text-xs text-gray-500">{row.user?.email}</p>
@@ -75,14 +78,14 @@ export default function AdminOrdersPage() {
     {
       key: "total",
       label: "Total",
-      render: (row: OrderRow) => (
+      render: (row) => (
         <span className="text-white font-medium">KSh {row.total.toLocaleString()}</span>
       ),
     },
     {
       key: "status",
       label: "Status",
-      render: (row: OrderRow) => (
+      render: (row) => (
         <span className={`px-2 py-1 rounded-full text-xs font-semibold border capitalize ${statusColors[row.status]}`}>
           {row.status.toLowerCase()}
         </span>
@@ -91,7 +94,7 @@ export default function AdminOrdersPage() {
     {
       key: "payment",
       label: "Payment",
-      render: (row: OrderRow) => (
+      render: (row) => (
         <span className={`px-2 py-1 rounded-full text-xs font-semibold border capitalize ${statusColors[row.paymentStatus]}`}>
           {row.paymentStatus.toLowerCase()}
         </span>
@@ -100,7 +103,7 @@ export default function AdminOrdersPage() {
     {
       key: "createdAt",
       label: "Date",
-      render: (row: OrderRow) => (
+      render: (row) => (
         <span className="text-gray-500 text-sm">
           {new Date(row.createdAt).toLocaleDateString("en-KE")}
         </span>
@@ -109,7 +112,7 @@ export default function AdminOrdersPage() {
     {
       key: "actions",
       label: "",
-      render: (row: OrderRow) => (
+      render: (row) => (
         <button
           onClick={() => { setSelectedOrder(row); setViewOrder(true); }}
           className="p-2 rounded-lg hover:bg-safaridark text-gray-400 hover:text-neon transition-all"
@@ -155,9 +158,9 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Table */}
-      <DataTable
-        data={orders as unknown as Record<string, unknown>[]}
-        columns={columns as any}
+      <DataTable<OrderRow>
+        data={orders}
+        columns={columns}
         rowKey="id"
         emptyMessage="No orders found"
       />
@@ -177,7 +180,7 @@ export default function AdminOrdersPage() {
                 <label className="block text-sm font-medium text-white mb-2">Order Status</label>
                 <select
                   value={selectedOrder.status}
-                  onChange={(e) => setSelectedOrder({ ...selectedOrder, status: e.target.value })}
+                  onChange={(e) => setSelectedOrder({ ...selectedOrder, status: e.target.value as OrderStatus })}
                   className="w-full bg-safaridark border border-safariborder rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-neon"
                 >
                   {ORDER_STATUSES.map((s) => (
@@ -189,7 +192,7 @@ export default function AdminOrdersPage() {
                 <label className="block text-sm font-medium text-white mb-2">Payment Status</label>
                 <select
                   value={selectedOrder.paymentStatus}
-                  onChange={(e) => setSelectedOrder({ ...selectedOrder, paymentStatus: e.target.value })}
+                  onChange={(e) => setSelectedOrder({ ...selectedOrder, paymentStatus: e.target.value as PaymentStatus })}
                   className="w-full bg-safaridark border border-safariborder rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-neon"
                 >
                   {PAYMENT_STATUSES.map((s) => (
@@ -211,7 +214,7 @@ export default function AdminOrdersPage() {
             <div className="bg-safaridark border border-safariborder rounded-xl p-4 space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Subtotal</span>
-                <span className="text-white">KSh {selectedOrder.subtotal.toLocaleString()}</span>
+                <span className="text-white font-medium">KSh {selectedOrder.subtotal.toLocaleString()}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Total</span>
@@ -232,8 +235,8 @@ export default function AdminOrdersPage() {
               onClick={() => {
                 updateStatus.mutate({
                   orderId: selectedOrder.id,
-                  status: selectedOrder.status as any,
-                  paymentStatus: selectedOrder.paymentStatus as any,
+                  status: selectedOrder.status,
+                  paymentStatus: selectedOrder.paymentStatus,
                 });
               }}
               disabled={updateStatus.isPending}

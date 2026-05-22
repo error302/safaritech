@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { use, useState } from "react";
+import { useState } from "react";
 import { trpc } from "@/utils/trpc";
 import ProductCard from "@/components/ProductCard";
 import {
@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 
 type ColorVariant = { name: string; hex: string; image?: string };
-type Props = { params: Promise<{ slug: string }> };
+type Props = { params: { slug: string } };
 
 function parseColors(colorsStr: string | null | undefined): ColorVariant[] {
   if (!colorsStr) return [];
@@ -32,7 +32,7 @@ function parseColors(colorsStr: string | null | undefined): ColorVariant[] {
 }
 
 export default function ProductPage({ params }: Props) {
-  const { slug } = use(params);
+  const { slug } = params;
   const { data: product, isLoading } = trpc.product.getBySlug.useQuery({ slug });
   const { data: allProducts } = trpc.product.getAll.useQuery({ limit: 50 });
   const [quantity, setQuantity] = useState(1);
@@ -224,7 +224,7 @@ const handleAddToCart = () => {
                         : "border-gray-200 md:border-safariborder hover:border-neon/50")
                     }
                   >
-                    <Image src={img || "/placeholder.jpg"} alt="" fill className="object-cover" />
+                    <Image src={img || "/placeholder.jpg"} alt={product.name} fill className="object-cover" />
                   </button>
                 ))}
               </div>

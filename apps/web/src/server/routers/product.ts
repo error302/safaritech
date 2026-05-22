@@ -5,27 +5,36 @@ export const productRouter = router({
   getAll: publicProcedure
     .input(z.object({
       category: z.string().optional(),
+      brand: z.string().optional(),
       search: z.string().optional(),
       limit: z.number().min(1).max(100).default(20),
       cursor: z.string().optional(),
+      sortBy: z.enum(['newest', 'price_asc', 'price_desc', 'popular']).optional(),
     }).optional())
     .query(async ({ ctx, input }) => {
-      const { category, search, limit = 20, cursor } = input || {}
+      const { category, brand, search, limit = 20, cursor, sortBy = 'newest' } = input || {}
       const where: Record<string, unknown> = {}
 
       if (category) where.category = { slug: category }
-if (search) {
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-      ]
-    }
+      if (brand) where.brand = { equals: brand, mode: 'insensitive' }
+      if (search) {
+        where.OR = [
+          { name: { contains: search, mode: 'insensitive' } },
+          { description: { contains: search, mode: 'insensitive' } },
+          { brand: { contains: search, mode: 'insensitive' } },
+        ]
+      }
+
+      const orderBy: Record<string, string> =
+        sortBy === 'price_asc'  ? { price: 'asc' } :
+        sortBy === 'price_desc' ? { price: 'desc' } :
+        { createdAt: 'desc' }
 
       const products = await ctx.prisma.product.findMany({
         where,
         take: limit + 1,
         cursor: cursor ? { id: cursor } : undefined,
-        orderBy: { createdAt: 'desc' },
+        orderBy,
         include: { category: true },
       })
 
@@ -61,6 +70,26 @@ if (search) {
     return products
   }),
 
+  getHot: publicProcedure.query(async ({ ctx }) => {
+    const products = await ctx.prisma.product.findMany({
+      where: { isHot: true, stock: { gt: 0 } },
+      take: 8,
+      orderBy: { createdAt: 'desc' },
+      include: { category: true },
+    })
+    return products
+  }),
+
+  getBrands: publicProcedure.query(async ({ ctx }) => {
+    const result = await ctx.prisma.product.findMany({
+      where: { brand: { not: '' } },
+      select: { brand: true },
+      distinct: ['brand'],
+      orderBy: { brand: 'asc' },
+    })
+    return result.map(r => r.brand).filter(Boolean) as string[]
+  }),
+
   create: adminProcedure
     .input(z.object({
       name: z.string().min(1),
@@ -73,6 +102,10 @@ if (search) {
       images: z.string().optional(),
       specs: z.string().optional(),
       colors: z.string().optional(),
+      brand: z.string().optional(),
+      isFeatured: z.boolean().optional(),
+      isHot: z.boolean().optional(),
+      badge: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       const product = await ctx.prisma.product.create({ data: input })
@@ -92,6 +125,10 @@ if (search) {
       images: z.string().optional(),
       specs: z.string().optional(),
       colors: z.string().optional(),
+      brand: z.string().optional(),
+      isFeatured: z.boolean().optional(),
+      isHot: z.boolean().optional(),
+      badge: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       const { id, ...data } = input
@@ -111,18 +148,21 @@ if (search) {
     .input(z.object({
       search: z.string().optional(),
       categoryId: z.string().optional(),
+      brand: z.string().optional(),
       limit: z.number().default(50),
     }).optional())
     .query(async ({ ctx, input }) => {
       const where: Record<string, unknown> = {}
 
-if (input?.search) {
-      where.OR = [
-        { name: { contains: input.search, mode: 'insensitive' } },
-        { description: { contains: input.search, mode: 'insensitive' } },
-      ]
-    }
+      if (input?.search) {
+        where.OR = [
+          { name: { contains: input.search, mode: 'insensitive' } },
+          { description: { contains: input.search, mode: 'insensitive' } },
+          { brand: { contains: input.search, mode: 'insensitive' } },
+        ]
+      }
       if (input?.categoryId) where.categoryId = input.categoryId
+      if (input?.brand) where.brand = input.brand
 
       const products = await ctx.prisma.product.findMany({
         where,

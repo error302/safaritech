@@ -103,13 +103,14 @@ export default function ImageUploader({ value, onChange, multiple = false, uploa
         <div className="flex flex-wrap gap-2">
           {existingUrls.map((url, i) => (
             <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden border border-safariborder group">
-              <img src={url} alt="" className="w-full h-full object-cover" />
+              <img src={url} alt="Uploaded image" className="w-full h-full object-cover" />
               <button
                 type="button"
                 onClick={() => removeImage(url)}
                 className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/70 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                aria-label={`Remove uploaded image ${i + 1}`}
               >
-                <X className="w-3 h-3" />
+                <X className="w-3 h-3" aria-hidden="true" />
               </button>
             </div>
           ))}

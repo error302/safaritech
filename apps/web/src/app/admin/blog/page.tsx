@@ -25,9 +25,10 @@ export default function AdminBlog() {
             <h1 className="text-3xl font-bold">Blog Posts</h1>
             <p className="text-muted">Manage your blog content</p>
           </div>
-          <button className="btn btn-primary">
-            <Plus className="mr-2 h-4 w-4" /> New Post
-          </button>
+           <button className="btn btn-primary" aria-label="Create New Post">
+             <Plus className="mr-2 h-4 w-4" /> New Post
+           </button>
+
         </div>
 
         {/* Filters */}
@@ -47,14 +48,17 @@ export default function AdminBlog() {
               </button>
             ))}
           </div>
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted" />
-            <input
-              type="text"
-              placeholder="Search posts..."
-              className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 pl-10 text-text placeholder:text-muted focus:border-electric focus:outline-none"
-            />
-          </div>
+           <div className="relative flex-1 max-w-md">
+             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true" />
+             <label htmlFor="blog-search" className="sr-only">Search posts</label>
+             <input
+               id="blog-search"
+               type="text"
+               placeholder="Search posts..."
+               className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 pl-10 text-text placeholder:text-muted focus:border-electric focus:outline-none"
+             />
+           </div>
+
         </div>
 
         {/* Table */}
@@ -83,17 +87,18 @@ export default function AdminBlog() {
                   </td>
                   <td className="px-4 py-3 text-muted">{post.date}</td>
                   <td className="px-4 py-3 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button className="p-2 text-muted hover:text-electric">
-                        <Eye className="h-4 w-4" />
-                      </button>
-                      <button className="p-2 text-muted hover:text-electric">
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      <button className="p-2 text-muted hover:text-red">
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
+                     <div className="flex items-center justify-end gap-2">
+                       <button className="p-2 text-muted hover:text-electric" aria-label="View Post">
+                         <Eye className="h-4 w-4" />
+                       </button>
+                       <button className="p-2 text-muted hover:text-electric" aria-label="Edit Post">
+                         <Edit className="h-4 w-4" />
+                       </button>
+                       <button className="p-2 text-muted hover:text-red" aria-label="Delete Post">
+                         <Trash2 className="h-4 w-4" />
+                       </button>
+                     </div>
+
                   </td>
                 </tr>
               ))}

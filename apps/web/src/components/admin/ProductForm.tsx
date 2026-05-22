@@ -17,6 +17,7 @@ type Product = {
   images: string;
   categoryId: string | null;
   colors?: string | null;
+  brand?: string | null;
 };
 
 type ColorVariant = {
@@ -58,6 +59,7 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
   const [stock, setStock] = useState(String(product?.stock ?? "0"));
   const [images, setImages] = useState(product?.images ?? "");
   const [categoryId, setCategoryId] = useState(product?.categoryId ?? "");
+  const [brand, setBrand] = useState(product?.brand ?? "");
   const [colors, setColors] = useState<ColorVariant[]>(parseColors(product?.colors));
   const [error, setError] = useState("");
 
@@ -123,6 +125,7 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
       stock: parseInt(stock) || 0,
       images: images.trim() || undefined,
       categoryId: categoryId || undefined,
+      brand: brand.trim() || undefined,
       colors: colors.length > 0 ? JSON.stringify(colors) : undefined,
     };
 
@@ -200,7 +203,7 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         <div>
           <label className="block text-sm font-medium text-white mb-2">Stock</label>
           <input
@@ -224,6 +227,16 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
               <option key={cat.id} value={cat.id}>{cat.name}</option>
             ))}
           </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-white mb-2">Brand</label>
+          <input
+            type="text"
+            value={brand}
+            onChange={(e) => setBrand(e.target.value)}
+            placeholder="e.g. Apple, Samsung"
+            className="w-full bg-safaridark border border-safariborder rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-neon"
+          />
         </div>
       </div>
 

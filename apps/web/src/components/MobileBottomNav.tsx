@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { trpc } from "@/utils/trpc";
 import { Home, ShoppingCart, User, Menu, Package, X, ChevronRight, Heart, MapPin, HelpCircle, LogOut } from "lucide-react";
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import { signOut } from "next-auth/react";
 
 const navItemsBase = [
@@ -42,7 +42,7 @@ export default function MobileBottomNav() {
 
   return (
     <>
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-gray-100 pb-safe">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-gray-100 pb-safe" aria-label="Mobile navigation">
         <div className="flex items-center justify-around py-1.5">
           {navItems.map((item) => {
             const active = item.href !== "#menu" && pathname === item.href;
@@ -51,16 +51,17 @@ export default function MobileBottomNav() {
               <Link
                 key={item.label}
                 href={item.href === "#menu" ? "#" : item.href}
-                onClick={(e) => {
+                onClick={(e: MouseEvent<HTMLAnchorElement>) => {
                   if (item.href === "#menu") {
                     e.preventDefault();
                     handleNavClick(item);
                   }
                 }}
                 className="flex flex-col items-center gap-0.5 px-3 py-1.5 relative min-w-[56px]"
+                aria-label={item.label}
               >
                 <div className="relative">
-                  <Icon className={`w-5 h-5 transition-colors ${active ? "text-gray-900" : "text-gray-400"}`} strokeWidth={active ? 2.5 : 1.8} />
+                  <Icon className={`w-5 h-5 transition-colors ${active ? "text-gray-900" : "text-gray-400"}`} strokeWidth={active ? 2.5 : 1.8} aria-hidden="true" />
                   {"badge" in item && item.badge && item.badge > 0 && (
                     <span className="absolute -top-2 -right-2.5 bg-red-600 text-white text-[9px] font-bold min-w-[15px] h-[15px] rounded-full flex items-center justify-center border-2 border-white px-0.5">
                       {item.badge}
@@ -77,12 +78,12 @@ export default function MobileBottomNav() {
         </div>
       </nav>
 
-      {/* Menu Sheet */}
       {menuOpen && (
-        <div className="md:hidden fixed inset-0 z-[60]">
+        <div className="md:hidden fixed inset-0 z-[60]" role="dialog" aria-modal="true" aria-label="More menu">
           <div
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={() => setMenuOpen(false)}
+            aria-hidden="true"
           />
           <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[70vh] overflow-y-auto animate-slide-up">
             <div className="sticky top-0 bg-white flex items-center justify-between px-5 py-4 border-b border-gray-100 rounded-t-2xl">
@@ -90,8 +91,9 @@ export default function MobileBottomNav() {
               <button
                 onClick={() => setMenuOpen(false)}
                 className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+                aria-label="Close Menu"
               >
-                <X className="w-5 h-5 text-gray-500" />
+                <X className="w-5 h-5 text-gray-500" aria-hidden="true" />
               </button>
             </div>
 
@@ -104,10 +106,11 @@ export default function MobileBottomNav() {
                     href={link.href}
                     onClick={() => setMenuOpen(false)}
                     className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition-colors"
+                    aria-label={link.label}
                   >
-                    <Icon className="w-5 h-5 text-gray-400" />
+                    <Icon className="w-5 h-5 text-gray-400" aria-hidden="true" />
                     <span className="flex-1 text-sm font-medium text-gray-900">{link.label}</span>
-                    <ChevronRight className="w-4 h-4 text-gray-300" />
+                    <ChevronRight className="w-4 h-4 text-gray-300" aria-hidden="true" />
                   </Link>
                 );
               })}
@@ -121,7 +124,7 @@ export default function MobileBottomNav() {
                 }}
                 className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-50 transition-colors w-full"
               >
-                <LogOut className="w-5 h-5 text-red-500" />
+                <LogOut className="w-5 h-5 text-red-500" aria-hidden="true" />
                 <span className="text-sm font-medium text-red-600">Sign Out</span>
               </button>
             </div>
