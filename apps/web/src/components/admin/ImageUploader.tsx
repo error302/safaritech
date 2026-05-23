@@ -10,7 +10,7 @@ type Props = {
   uploadTo?: "cloudinary" | "local";
 };
 
-export default function ImageUploader({ value, onChange, multiple = false, uploadTo: initialUploadTo = "cloudinary" }: Props) {
+export default function ImageUploader({ value, onChange, multiple = false, uploadTo: initialUploadTo = "local" }: Props) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [dragOver, setDragOver] = useState(false);

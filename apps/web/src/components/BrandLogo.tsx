@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { type Brand } from "@/lib/brands";
 
@@ -11,7 +12,28 @@ type Props = {
 };
 
 export default function BrandLogo({ brand, size = 32, className }: Props) {
-  const isRemote = brand.isRemote || brand.logoSrc.startsWith("http");
+  const [imgError, setImgError] = useState(false);
+
+  // Fallback: show brand initial with iconColor background
+  if (imgError) {
+    return (
+      <span
+        className={cn(
+          "flex items-center justify-center rounded-lg font-bold text-white",
+          className
+        )}
+        style={{
+          width: size,
+          height: size,
+          backgroundColor: `#${brand.iconColor || "00FF9F"}20`,
+          fontSize: size * 0.4,
+          color: `#${brand.iconColor || "00FF9F"}`,
+        }}
+      >
+        {brand.name.charAt(0)}
+      </span>
+    );
+  }
 
   return (
     <span
@@ -27,7 +49,7 @@ export default function BrandLogo({ brand, size = 32, className }: Props) {
         width={size}
         height={size}
         className="object-contain max-h-full max-w-full"
-        unoptimized={isRemote}
+        onError={() => setImgError(true)}
       />
     </span>
   );

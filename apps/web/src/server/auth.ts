@@ -13,28 +13,33 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error('Email and password are required')
+          return null
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        })
+        try {
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email },
+          })
 
-        if (!user || !user.passwordHash) {
-          throw new Error('Invalid email or password')
-        }
+          if (!user || !user.passwordHash) {
+            return null
+          }
 
-        const isValid = await bcrypt.compare(credentials.password, user.passwordHash)
+          const isValid = await bcrypt.compare(credentials.password, user.passwordHash)
 
-        if (!isValid) {
-          throw new Error('Invalid email or password')
-        }
+          if (!isValid) {
+            return null
+          }
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          }
+        } catch (error) {
+          console.error('Auth error:', error)
+          return null
         }
       },
     }),
@@ -62,4 +67,5 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
   secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === 'development',
 }

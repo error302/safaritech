@@ -29,7 +29,7 @@ export default function BrandShowcase() {
           </Link>
         </div>
 
-        {/* Mobile: horizontal snap scroll — optimized for narrow phones (e.g. S22) */}
+        {/* Mobile: horizontal snap scroll */}
         <div className="md:hidden -mx-4 px-4">
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory">
             {BRANDS.map((brand) => (
@@ -38,8 +38,8 @@ export default function BrandShowcase() {
                 href={`/shop?brand=${encodeURIComponent(brand.name)}`}
                 className="snap-start shrink-0 w-[108px] flex flex-col items-center gap-3 p-4 rounded-2xl border border-safariborder bg-safarigray/80 backdrop-blur-sm active:scale-[0.98] transition-transform"
               >
-                <div className="w-14 h-14 rounded-xl bg-safaridark border border-safariborder/80 flex items-center justify-center p-2.5">
-                  <BrandLogo brand={brand} size={40} />
+                <div className="w-16 h-16 rounded-xl bg-safaridark/60 border border-safariborder/50 flex items-center justify-center p-3">
+                  <BrandLogo brand={brand} size={48} />
                 </div>
                 <span className="text-xs font-semibold text-gray-200 text-center leading-tight">
                   {brand.name}
@@ -60,10 +60,10 @@ export default function BrandShowcase() {
             <Link
               key={brand.name}
               href={`/shop?brand=${encodeURIComponent(brand.name)}`}
-              className="group flex flex-col items-center gap-3 p-5 rounded-2xl border border-safariborder bg-safarigray hover:border-neon/30 hover:shadow-[0_0_30px_-12px_rgba(0,255,159,0.35)] transition-all duration-300"
+              className="group flex flex-col items-center gap-4 p-6 rounded-2xl border border-safariborder bg-safarigray hover:border-neon/30 hover:shadow-[0_0_30px_-12px_rgba(0,255,159,0.35)] transition-all duration-300"
             >
-              <div className="w-16 h-16 rounded-xl bg-safaridark border border-safariborder flex items-center justify-center p-3 group-hover:scale-105 transition-transform">
-                <BrandLogo brand={brand} size={48} />
+              <div className="w-20 h-20 rounded-xl bg-safaridark/40 border border-safariborder/50 flex items-center justify-center p-4 group-hover:scale-110 transition-transform">
+                <BrandLogo brand={brand} size={64} />
               </div>
               <span className="text-sm font-semibold text-gray-300 group-hover:text-white transition-colors text-center">
                 {brand.name}

@@ -2,11 +2,11 @@
 
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Eye, EyeOff } from 'lucide-react'
 
-export default function Login() {
+function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
@@ -20,7 +20,7 @@ export default function Login() {
   const errorMessages: Record<string, string> = {
     CredentialsSignin: 'Invalid email or password. Please check your credentials and try again.',
     SessionRequired: 'Please sign in to access this page.',
-    Configuration: 'Authentication configuration error. Please contact support.',
+    Configuration: 'Authentication configuration error. Please try again later.',
     AccessDenied: 'Access denied. You may not have permission to sign in.',
     Verification: 'The verification link may have expired. Please try again.',
     Default: 'Something went wrong. Please try again.',
@@ -39,10 +39,10 @@ export default function Login() {
       })
 
       if (result?.error) {
-        // Provide specific error messages for different NextAuth error types
         const errorMessages: Record<string, string> = {
           CredentialsSignin: 'Invalid email or password. Please check your credentials and try again.',
           SessionRequired: 'Please sign in to access this page.',
+          Configuration: 'Authentication configuration error. Please try again later.',
           Default: 'Something went wrong. Please try again.',
         }
         setError(errorMessages[result.error] || errorMessages.Default)
@@ -171,5 +171,17 @@ export default function Login() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-safaridark">
+        <div className="w-5 h-5 border-2 border-neon border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   )
 }
