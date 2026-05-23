@@ -10,14 +10,18 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-// Determine the correct datasource URL for Prisma Accelerate
+// Determine the correct datasource URL
+// Use non-pooled URL for CLI/seed operations, pooled for runtime
 function getDatasourceUrl(): string | undefined {
+  // For seed scripts, prefer the direct (non-pooled) connection
+  const dbUrl = process.env.DATABASE_URL;
+  if (dbUrl) return dbUrl;
+  // Fall back to pooled URL
+  const pooledUrl = process.env.DATABASE_URL_POOLED;
+  if (pooledUrl) return pooledUrl;
+  // Support legacy Accelerate URLs
   const accelerateUrl = process.env.DATABASE_URL_ACCELERATE;
   if (accelerateUrl) return accelerateUrl;
-  const dbUrl = process.env.DATABASE_URL;
-  if (dbUrl && (dbUrl.startsWith("prisma://") || dbUrl.startsWith("prisma+postgres://"))) {
-    return dbUrl;
-  }
   return undefined;
 }
 

@@ -4,19 +4,16 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
-// Prisma Accelerate: the prisma+postgres:// connection string in DATABASE_URL
-// is automatically handled by Prisma Client v5+ which detects the protocol
-// and uses the DataProxyEngine (Accelerate) instead of the LibraryEngine.
-//
-// We use datasourceUrl to explicitly pass the Accelerate URL so that
-// it takes precedence over any system-level DATABASE_URL that might
-// be set by other projects in the same environment.
+// Use the pooled connection for runtime queries (better for serverless/Vercel)
+// Fall back to DATABASE_URL if DATABASE_URL_POOLED is not set
 function getDatasourceUrl(): string | undefined {
-  // Prefer the explicit Accelerate URL variable if set
+  const pooledUrl = process.env.DATABASE_URL_POOLED
+  if (pooledUrl) return pooledUrl
+
+  // Also support legacy Accelerate URLs
   const accelerateUrl = process.env.DATABASE_URL_ACCELERATE
   if (accelerateUrl) return accelerateUrl
 
-  // Check if DATABASE_URL is a Prisma Accelerate URL
   const dbUrl = process.env.DATABASE_URL
   if (dbUrl && (dbUrl.startsWith('prisma://') || dbUrl.startsWith('prisma+postgres://'))) {
     return dbUrl
