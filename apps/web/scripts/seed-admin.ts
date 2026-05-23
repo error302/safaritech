@@ -10,7 +10,21 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+// Determine the correct datasource URL for Prisma Accelerate
+function getDatasourceUrl(): string | undefined {
+  const accelerateUrl = process.env.DATABASE_URL_ACCELERATE;
+  if (accelerateUrl) return accelerateUrl;
+  const dbUrl = process.env.DATABASE_URL;
+  if (dbUrl && (dbUrl.startsWith("prisma://") || dbUrl.startsWith("prisma+postgres://"))) {
+    return dbUrl;
+  }
+  return undefined;
+}
+
+const datasourceUrl = getDatasourceUrl();
+const prisma = new PrismaClient({
+  ...(datasourceUrl ? { datasourceUrl } : {}),
+});
 
 async function main() {
   const email = "admin@safaritech.co.ke";
