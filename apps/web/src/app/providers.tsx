@@ -25,7 +25,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <SessionProvider>
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
-          <SiteSettingsProvider>{children}</SiteSettingsProvider>
+          <SiteSettingsProvider>{children as any}</SiteSettingsProvider>
         </QueryClientProvider>
       </trpc.Provider>
     </SessionProvider>

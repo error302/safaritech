@@ -39,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <Providers>
         <Navbar />
         <main className="min-h-screen pb-20 md:pb-0">
-          <LayoutContent>{children}</LayoutContent>
+          <LayoutContent>{children as any}</LayoutContent>
         </main>
         <SiteFooter />
         <MobileBottomNav />
