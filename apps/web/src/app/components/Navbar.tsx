@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import { ShoppingCart, Search, User, Menu, X } from 'lucide-react'
@@ -21,8 +22,11 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-safariborder bg-charcoal/95 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2 text-2xl font-black bg-gradient-to-r from-electric to-blue bg-clip-text text-transparent transition-all hover:scale-105">
-          <span className="text-3xl">⚡</span>Safaritech
+        <Link href="/" className="flex items-center gap-2.5 transition-all hover:scale-105">
+          <Image src="/brands/safaritech-icon.svg" alt="Safaritech" width={28} height={28} className="rounded-lg object-contain" />
+          <span className="font-display font-bold text-2xl tracking-tight text-white">
+            Safari<span className="text-neon">tech</span>
+          </span>
         </Link>
 
         <div className="hidden md:flex items-center gap-8">
