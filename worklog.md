@@ -122,3 +122,29 @@ Stage Summary:
 - Cart badge uses floating neon glow effect
 - 13 bug fixes pushed in one commit
 - Key design principles from awesome-design-md applied: pill buttons for CTAs, surface hierarchy for dark theme
+
+---
+Task ID: 4
+Agent: Main Agent
+Task: Continued fixes - sign-in indicator, cart badge, search page, empty states
+
+Work Log:
+- Cleared all mock data from production database (DELETE on CartItem, WishlistItem, OrderItem, Review, BlogPost, Coupon, Order, Address, Product, Category, non-admin Users)
+- Updated prisma/seed.ts to only seed admin user (no mock products, categories, test users)
+- Rewrote Navbar.tsx completely: added UserMenu component with avatar initials dropdown, CartButton component with neon glow badge, session-aware mobile menu with Sign In/Sign Out
+- Cart badge now uses: shadow-[0_0_8px_rgba(0,255,159,0.4)] for neon glow, 99+ overflow, min-w-[18px] sizing
+- Rewrote MobileBottomNav.tsx: shows "Login" instead of "Account" when not signed in, green dot indicator when signed in, user info section in More menu, admin link for admins, proper Sign In/Sign Out buttons
+- Rewrote search/page.tsx: added Suspense boundary (required by Next.js 14 for useSearchParams), fixed accent-neon for radio/checkbox styling, fixed inStock mapping, added "Browse All Products" link in empty state
+- Rewrote shop/page.tsx: added Suspense boundary, fixed brand colors reference, cleaned up mobile filter overlay colors
+- Updated homepage: added "Coming Soon" empty state when no products exist with PackageOpen icon, fixed getHot query reference
+- Resolved git rebase conflicts and force-pushed to GitHub
+- Vercel deployment verified: SUCCESS
+
+Stage Summary:
+- All mock data removed from database and seed file
+- Navbar: UserMenu dropdown with avatar, dashboard/admin links, sign out
+- Cart badge: clean floating neon glow badge with 99+ overflow
+- MobileBottomNav: session-aware with login state indicator
+- Search/Shop pages: Suspense boundaries added
+- Homepage: empty state when no products
+- Deployed to https://safaritech-web.vercel.app
