@@ -15,6 +15,17 @@ export default function Login() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // Check for error from NextAuth redirect (e.g., ?error=CredentialsSignin)
+  const urlError = searchParams.get('error')
+  const errorMessages: Record<string, string> = {
+    CredentialsSignin: 'Invalid email or password. Please check your credentials and try again.',
+    SessionRequired: 'Please sign in to access this page.',
+    Configuration: 'Authentication configuration error. Please contact support.',
+    AccessDenied: 'Access denied. You may not have permission to sign in.',
+    Verification: 'The verification link may have expired. Please try again.',
+    Default: 'Something went wrong. Please try again.',
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
@@ -28,7 +39,13 @@ export default function Login() {
       })
 
       if (result?.error) {
-        setError('Invalid email or password')
+        // Provide specific error messages for different NextAuth error types
+        const errorMessages: Record<string, string> = {
+          CredentialsSignin: 'Invalid email or password. Please check your credentials and try again.',
+          SessionRequired: 'Please sign in to access this page.',
+          Default: 'Something went wrong. Please try again.',
+        }
+        setError(errorMessages[result.error] || errorMessages.Default)
       } else {
         const callback = searchParams.get('callback')
         if (callback === 'admin' || email.includes('admin')) {
@@ -58,9 +75,9 @@ export default function Login() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
+            {(error || urlError) && (
               <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600 md:border-red/20 md:bg-red/10 md:text-red">
-                {error}
+                {error || errorMessages[urlError!] || errorMessages.Default}
               </div>
             )}
 

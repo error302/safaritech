@@ -22,10 +22,6 @@ function formatKES(amount: number) {
   return `KSh ${(amount / 100).toLocaleString()}`;
 }
 
-function formatKESDecimal(amount: number) {
-  return `KSh ${amount.toLocaleString()}`;
-}
-
 // ─── Custom Tooltip for Revenue Chart ────────────────────────────────────────
 function RevenueTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: string }) {
   if (!active || !payload?.length) return null;
@@ -33,7 +29,7 @@ function RevenueTooltip({ active, payload, label }: { active?: boolean; payload?
     <div className="bg-safaridark border border-safariborder rounded-lg px-3 py-2 shadow-xl">
       <p className="text-xs text-gray-400 mb-1">{label}</p>
       <p className="text-sm font-display font-bold text-neon">
-        {formatKESDecimal(payload[0].value)}
+        {formatKES(payload[0].value)}
       </p>
     </div>
   );

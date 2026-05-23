@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { DollarSign, ShoppingCart, Package, Users, ArrowUpRight, ArrowDownRight, Clock } from "lucide-react";
+import { DollarSign, ShoppingCart, Package, Users } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { AdminStatCard } from "@/components/admin/AdminStatCard";
 
@@ -111,7 +111,7 @@ export default function AdminDashboardPage() {
                   </div>
                   <div className="text-right shrink-0">
                     <p className="text-sm font-bold text-white">
-                      KSh {order.total.toLocaleString()}
+                      {formatKES(order.total)}
                     </p>
                     <p className="text-xs text-gray-500">{order.paymentMethod}</p>
                   </div>

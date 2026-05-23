@@ -332,13 +332,15 @@ export default function AdminBlogPage() {
             </a>
           )}
           {!row.published && (
-            <button
-              onClick={() => {}}
+            <a
+              href={`/blog/${row.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="p-2 rounded-lg hover:bg-safaridark text-gray-400 hover:text-neon transition-all"
               aria-label="Preview post"
             >
               <Eye className="w-4 h-4" />
-            </button>
+            </a>
           )}
           <button
             onClick={() => togglePublish(row)}
