@@ -27,9 +27,9 @@ const prisma = new PrismaClient({
 });
 
 async function main() {
-  const email = "admin@safaritech.co.ke";
-  const password = "Admin@2024";
-  const name = "Safaritech Admin";
+  const email = process.env.ADMIN_EMAIL || "mohameddosho20@gmail.com";
+  const password = process.env.ADMIN_PASSWORD || "Admin@2024";
+  const name = process.env.ADMIN_NAME || "Safaritech Admin";
 
   console.log(`Seeding admin user: ${email}`);
 

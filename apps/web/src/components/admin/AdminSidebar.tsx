@@ -39,7 +39,7 @@ export default function AdminSidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const userName = session?.user?.name || "Admin";
-  const userEmail = session?.user?.email || "admin@safaritech.co.ke";
+  const userEmail = session?.user?.email || "";
   const userInitial = userName.charAt(0).toUpperCase();
 
   const sidebarContent = (

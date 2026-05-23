@@ -1,8 +1,7 @@
 {
-  "buildCommand": "cd apps/web && npm run build",
   "installCommand": "npm install --legacy-peer-deps",
+  "buildCommand": "npm run build",
   "outputDirectory": "apps/web/.next",
-  "rootDirectory": "apps/web",
   "env": {
     "NEXTAUTH_URL": "https://safaritech.vercel.app"
   }
