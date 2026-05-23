@@ -39,3 +39,6 @@ next-env.d.ts
 
 # Database
 *.db
+
+# User-uploaded product images (local storage)
+apps/web/public/uploads/
