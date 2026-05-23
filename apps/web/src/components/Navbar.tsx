@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { trpc } from "@/utils/trpc";
 import {
   Search,
@@ -15,14 +16,30 @@ import {
   Gamepad2,
   Headphones,
   Flame,
-  MapPin,
-  ChevronDown,
   ChevronRight,
   Package,
 } from "lucide-react";
 
+const categoryLinks = [
+  { label: "All Products", href: "/shop", icon: Package },
+  { label: "Phones", href: "/shop?cat=smartphones", icon: Smartphone },
+  { label: "Laptops", href: "/shop?cat=laptops", icon: Laptop },
+  { label: "Gaming", href: "/shop?cat=gaming", icon: Gamepad2 },
+  { label: "Accessories", href: "/shop?cat=accessories", icon: Headphones },
+  { label: "Deals", href: "/deals", icon: Flame },
+] as const;
+
 export default function Navbar() {
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e: FormEvent) => {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    router.push(q ? `/search?q=${encodeURIComponent(q)}` : "/search");
+    setMobileOpen(false);
+  };
 
   const { data: cart } = trpc.cart.getCart.useQuery();
   const cartCount = cart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
@@ -40,16 +57,18 @@ export default function Navbar() {
               </span>
             </Link>
 
-            <div className="flex-1 max-w-lg mx-4">
+            <form className="flex-1 max-w-lg mx-4" onSubmit={handleSearch}>
               <div className="relative w-full group">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4 group-focus-within:text-gray-400 transition-colors" />
                 <input
-                  type="text"
+                  type="search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search phones, laptops, gaming gear..."
                   className="w-full bg-safarigray border border-safariborder rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-all"
                 />
               </div>
-            </div>
+            </form>
 
              <div className="flex items-center gap-1 shrink-0">
                <Link href="/cart" className="relative p-2.5 rounded-xl hover:bg-safarigray transition-colors text-gray-400 hover:text-white" aria-label="Shopping Cart">
@@ -68,14 +87,7 @@ export default function Navbar() {
  
            {/* Category bar */}
            <div className="flex items-center gap-1 py-2 border-t border-safariborder/50 text-sm">
-             {[
-               { label: "All Products", href: "/shop" },
-               { label: "Phones", href: "/shop?cat=phones", icon: Smartphone },
-               { label: "Laptops", href: "/shop?cat=laptops", icon: Laptop },
-               { label: "Gaming", href: "/shop?cat=gaming", icon: Gamepad2 },
-               { label: "Accessories", href: "/shop?cat=accessories", icon: Headphones },
-               { label: "Deals", href: "/shop?filter=deals", icon: Flame },
-             ].map((item) => (
+             {categoryLinks.map((item) => (
                <Link
                  key={item.label}
                  href={item.href}
@@ -120,30 +132,25 @@ export default function Navbar() {
            </div>
  
            {/* Search bar */}
-           <div className="pb-3">
+           <form className="pb-3" onSubmit={handleSearch}>
              <div className="relative">
                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" aria-hidden="true" />
                <input
-                 type="text"
+                 type="search"
+                 value={searchQuery}
+                 onChange={(e) => setSearchQuery(e.target.value)}
                  placeholder="Search Safaritech..."
                  className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-300 focus:ring-2 focus:ring-gray-100"
                />
              </div>
-           </div>
+           </form>
          </div>
  
          {/* Mobile menu */}
          {mobileOpen && (
            <div className="border-t border-gray-100 bg-white animate-fade-in">
              <div className="px-4 py-3 flex flex-col gap-0.5">
-               {[
-                 { label: "All Products", href: "/shop", icon: Package },
-                 { label: "Phones", href: "/shop?cat=phones", icon: Smartphone },
-                 { label: "Laptops & PCs", href: "/shop?cat=laptops", icon: Laptop },
-                 { label: "Gaming", href: "/shop?cat=gaming", icon: Gamepad2 },
-                 { label: "Accessories", href: "/shop?cat=accessories", icon: Headphones },
-                 { label: "Deals", href: "/shop?filter=deals", icon: Flame },
-               ].map((item) => (
+               {categoryLinks.map((item) => (
                  <Link
                    key={item.label}
                    href={item.href}

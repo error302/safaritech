@@ -4,12 +4,14 @@ import Link from 'next/link'
 import { Package, ChevronRight, Clock, Truck, CheckCircle } from 'lucide-react'
 import { trpc } from '@/utils/trpc'
 import { formatDate } from '@/lib/utils'
+import { formatPrice } from '@/lib/validation'
 
 const statusConfig: Record<string, { label: string; icon: typeof Clock; color: string }> = {
-  pending: { label: 'Pending', icon: Clock, color: 'text-amber-600 md:text-yellow' },
-  processing: { label: 'Processing', icon: Package, color: 'text-blue-600 md:text-blue' },
-  shipped: { label: 'Shipped', icon: Truck, color: 'text-purple-600 md:text-purple' },
-  delivered: { label: 'Delivered', icon: CheckCircle, color: 'text-green-600 md:text-neon' },
+  PENDING: { label: 'Pending', icon: Clock, color: 'text-amber-600 md:text-yellow' },
+  PROCESSING: { label: 'Processing', icon: Package, color: 'text-blue-600 md:text-blue' },
+  SHIPPED: { label: 'Shipped', icon: Truck, color: 'text-purple-600 md:text-purple' },
+  DELIVERED: { label: 'Delivered', icon: CheckCircle, color: 'text-green-600 md:text-neon' },
+  CANCELLED: { label: 'Cancelled', icon: Clock, color: 'text-red-600 md:text-red' },
 }
 
 export default function Orders() {
@@ -41,7 +43,7 @@ export default function Orders() {
         ) : (
           <div className="space-y-4">
             {orders.map((order) => {
-              const status = statusConfig[order.status] || statusConfig.pending
+              const status = statusConfig[order.status] || statusConfig.PENDING
               const StatusIcon = status.icon
 
               return (
@@ -70,7 +72,7 @@ export default function Orders() {
                     </div>
                     <div className="flex items-center gap-4">
                       <span className="font-bold text-gray-900 md:text-white">
-                        ${order.total.toFixed(2)}
+                        {formatPrice(order.total)}
                       </span>
                       <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-neon transition-colors" />
                     </div>

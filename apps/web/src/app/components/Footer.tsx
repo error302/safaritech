@@ -3,7 +3,7 @@ import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from 'luci
 
 const footerLinks = {
   shop: [
-    { label: 'Smartphones', href: '/shop/phones' },
+    { label: 'Smartphones', href: '/shop/smartphones' },
     { label: 'Laptops', href: '/shop/laptops' },
     { label: 'Audio', href: '/shop/audio' },
     { label: 'Wearables', href: '/shop/wearables' },

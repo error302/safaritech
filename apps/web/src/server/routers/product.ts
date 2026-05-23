@@ -1,6 +1,14 @@
 import { z } from 'zod'
 import { router, publicProcedure, adminProcedure } from './trpc'
 
+const CATEGORY_ALIASES: Record<string, string> = {
+  phones: 'smartphones',
+}
+
+function resolveCategorySlug(slug: string) {
+  return CATEGORY_ALIASES[slug] ?? slug
+}
+
 export const productRouter = router({
   getAll: publicProcedure
     .input(z.object({
@@ -15,7 +23,7 @@ export const productRouter = router({
       const { category, brand, search, limit = 20, cursor, sortBy = 'newest' } = input || {}
       const where: Record<string, unknown> = {}
 
-      if (category) where.category = { slug: category }
+      if (category) where.category = { slug: resolveCategorySlug(category) }
       if (brand) where.brand = { equals: brand, mode: 'insensitive' }
       if (search) {
         where.OR = [

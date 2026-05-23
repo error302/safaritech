@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import MobileBottomNav from "@/components/MobileBottomNav";
+import SiteFooter from "@/components/SiteFooter";
 import { Providers } from "./providers";
 import LayoutContent from "@/components/LayoutContent";
 
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main className="min-h-screen pb-20 md:pb-0">
           <LayoutContent>{children}</LayoutContent>
         </main>
+        <SiteFooter />
         <MobileBottomNav />
       </Providers>
       </body>

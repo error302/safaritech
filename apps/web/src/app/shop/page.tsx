@@ -47,8 +47,9 @@ const brandColors: Record<string, string> = {
 
 export default function ShopPage() {
   const searchParams = useSearchParams();
-  const initCat   = searchParams.get("cat")   || "all";
+  const initCat   = searchParams.get("cat") || searchParams.get("category") || "all";
   const initBrand = searchParams.get("brand") || "";
+  const dealsOnly = searchParams.get("filter") === "deals";
 
   const [selectedCat,    setSelectedCat]    = useState(initCat);
   const [selectedBrands, setSelectedBrands] = useState<string[]>(initBrand ? [initBrand] : []);
@@ -74,6 +75,9 @@ export default function ShopPage() {
 
   const filtered = useMemo(() => {
     let list = products as any[];
+    if (dealsOnly) {
+      list = list.filter((p) => p.salePrice && p.salePrice < p.price);
+    }
     if (selectedBrands.length > 0) {
       list = list.filter((p) => selectedBrands.includes(p.brand || ""));
     }
@@ -92,12 +96,12 @@ export default function ShopPage() {
     if (sortBy === "price-desc") list = [...list].sort((a, b) => b.price - a.price);
     if (sortBy === "hot")        list = [...list].sort((a, b) => (b.isHot ? 1 : 0) - (a.isHot ? 1 : 0));
     return list;
-  }, [products, selectedBrands, maxPrice, inStockOnly, sortBy, searchQuery]);
+  }, [products, dealsOnly, selectedBrands, maxPrice, inStockOnly, sortBy, searchQuery]);
 
   useEffect(() => {
-    const cat   = searchParams.get("cat");
+    const cat = searchParams.get("cat") || searchParams.get("category");
     const brand = searchParams.get("brand");
-    if (cat)   setSelectedCat(cat);
+    if (cat) setSelectedCat(cat);
     if (brand) setSelectedBrands([brand]);
   }, [searchParams]);
 

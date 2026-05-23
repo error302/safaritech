@@ -7,7 +7,12 @@ import { trpc } from '@/utils/trpc'
 // Map category slugs to icons and gradient backgrounds
 // This keeps the UI consistent even as categories change in the database
 const categoryMetadata: Record<string, { icon: React.ElementType; gradient: string; description: string }> = {
-  'phones': {
+  phones: {
+    icon: Smartphone,
+    gradient: 'bg-gradient-to-br from-blue-500/20 to-cyan-500/20',
+    description: 'Latest smartphones from Apple, Samsung, Google & more',
+  },
+  smartphones: {
     icon: Smartphone,
     gradient: 'bg-gradient-to-br from-blue-500/20 to-cyan-500/20',
     description: 'Latest smartphones from Apple, Samsung, Google & more',
@@ -83,7 +88,7 @@ export default function Categories() {
               return (
                 <Link
                   key={category.id}
-                  href={`/shop?category=${category.slug}`}
+                  href={`/shop?cat=${category.slug}`}
                   className="group relative overflow-hidden rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-6 transition-all hover:border-electric/50 hover:shadow-lg hover:shadow-electric/10"
                 >
                   <div className={`absolute inset-0 ${metadata.gradient} opacity-0 transition-opacity group-hover:opacity-100`} />

@@ -7,6 +7,7 @@ import { trpc } from '@/utils/trpc'
 import ProductCard from '@/components/ProductCard'
 
 const categoryNames: Record<string, string> = {
+  smartphones: 'Smartphones',
   phones: 'Smartphones',
   laptops: 'Laptops & PCs',
   audio: 'Audio',
@@ -18,10 +19,11 @@ const categoryNames: Record<string, string> = {
 
 export default function ShopCategory() {
   const params = useParams()
-  const slug = params.category as string
+  const rawSlug = params.category as string
+  const slug = rawSlug === 'phones' ? 'smartphones' : rawSlug
 
   const { data: categories, isLoading: isLoadingCategories } = trpc.product.adminGetCategories.useQuery()
-  const categoryName = categories?.find(c => c.slug === slug)?.name || categoryNames[slug] || slug
+  const categoryName = categories?.find(c => c.slug === slug)?.name || categoryNames[rawSlug] || categoryNames[slug] || slug
 
   const { data: productsData, isLoading: isLoadingProducts } = trpc.product.getAll.useQuery(
     { category: slug },
