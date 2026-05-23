@@ -75,3 +75,23 @@ Stage Summary:
 - Admin credentials: mohameddosho20@gmail.com / Admin@2024
 - Health check available at /api/health
 - Key fix: NextAuth v4 requires authorize() to return null (not throw) for invalid credentials
+---
+Task ID: 2
+Agent: Main Agent
+Task: Fix account registration not working on Safaritech website
+
+Work Log:
+- Read registration page (register/page.tsx) and API route (api/auth/register/route.ts)
+- Tested registration API directly on live site - API worked fine, issue was on client side
+- Identified problems: no password requirement hints shown, no Suspense boundary, auto-login result not checked, generic error messages
+- Rewrote register/page.tsx: added Suspense boundary, password requirement checklist with green checkmarks, disabled submit until requirements met, proper auto-login with fallback redirect to login page, success message display
+- Improved api/auth/register/route.ts: added Prisma P2002 unique constraint error handling, better error messages ("An account with this email already exists. Please sign in instead."), detailed console logging
+- Updated login/page.tsx: added support for ?message= query param (green banner for "Account created. Please sign in.")
+- Build tested successfully, committed and pushed to GitHub
+- Verified on live site: registration API returns 200, login with new credentials works, session shows correct role
+
+Stage Summary:
+- Registration now fully working at https://safaritech-web.vercel.app/register
+- Password requirements clearly shown: 8+ chars, uppercase, lowercase, number
+- After registration, auto-login attempts; if it fails, redirects to login with success message
+- Duplicate email error properly handled with user-friendly message
