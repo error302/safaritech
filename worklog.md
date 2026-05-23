@@ -51,3 +51,27 @@ Stage Summary:
 - Brand images fixed: all local SVGs, proper fills, fallbacks, bigger sizes
 - Upload fixed: local storage default, Cloudinary optional
 - Vercel deployment pending - user must set env vars in dashboard
+---
+Task ID: 1
+Agent: Main Agent
+Task: Fix login "internal server error" on Safaritech website
+
+Work Log:
+- Read auth.ts, db.ts, middleware.ts, login page, and NextAuth route handler
+- Identified root cause: auth.ts authorize() was throwing errors instead of returning null, which NextAuth v4 treats as internal server errors
+- Fixed auth.ts: Changed all throw new Error() to return null in authorize(), added try-catch for database errors, added console logging for debugging, added NEXTAUTH_SECRET fallback
+- Fixed middleware.ts: Added NEXTAUTH_SECRET fallback, improved redirect to include callback=admin param
+- Fixed login/page.tsx: Added Suspense boundary, improved error handling with getErrorMessage helper, added result?.ok check, added session establishment delay
+- Added health check endpoint at /api/health for production debugging
+- Fixed TypeScript build error: auth.ts callbacks used incorrect type casting for user.role - changed to use proper type declarations
+- Seeded admin user in production database (mohameddosho20@gmail.com / Admin@2024)
+- Pushed two commits to GitHub and waited for Vercel deployment
+- Verified health endpoint: all env vars set, database connected, admin user exists
+- Verified login API: successful authentication with session token returned
+- Verified admin dashboard: HTTP 200 for authenticated users, HTTP 307 redirect for unauthenticated
+
+Stage Summary:
+- Login is now fully working on https://safaritech-web.vercel.app
+- Admin credentials: mohameddosho20@gmail.com / Admin@2024
+- Health check available at /api/health
+- Key fix: NextAuth v4 requires authorize() to return null (not throw) for invalid credentials
