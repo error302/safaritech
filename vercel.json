@@ -1,7 +1,8 @@
 {
+  "rootDirectory": "apps/web",
   "installCommand": "npm install --legacy-peer-deps",
-  "buildCommand": "npm run build",
-  "outputDirectory": "apps/web/.next",
+  "buildCommand": "npx prisma generate --schema=../../prisma/schema.prisma && next build",
+  "outputDirectory": ".next",
   "env": {
     "NEXTAUTH_URL": "https://safaritech.vercel.app"
   }
