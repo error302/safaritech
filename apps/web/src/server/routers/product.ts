@@ -188,4 +188,11 @@ export const productRouter = router({
     })
     return categories
   }),
+
+  getCategories: publicProcedure.query(async ({ ctx }) => {
+    const categories = await ctx.prisma.category.findMany({
+      orderBy: { name: 'asc' },
+    })
+    return categories
+  }),
 })

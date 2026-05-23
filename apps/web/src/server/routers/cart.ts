@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { TRPCError } from '@trpc/server'
 import { router, publicProcedure, protectedProcedure } from './trpc'
 
 export const cartRouter = router({
@@ -37,7 +38,7 @@ export const cartRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       if (!ctx.session?.user) {
-        return { success: false, message: 'Please login to add to cart' }
+        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Please login to add to cart' })
       }
 
       const existing = await ctx.prisma.cartItem.findFirst({

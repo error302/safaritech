@@ -123,6 +123,12 @@ export default function ProductCard({ product }: { product: Product }) {
     onSuccess: () => {
       utils.cart.getCart.invalidate();
     },
+    onError: (error) => {
+      if (error.data?.code === 'UNAUTHORIZED') {
+        // Redirect to login if not authenticated
+        window.location.href = '/login?message=Please+sign+in+to+add+items+to+cart';
+      }
+    },
   });
 
   const discount = getProductOriginalPrice(product)

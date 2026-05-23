@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import { trpc } from "@/utils/trpc";
-import { Home, ShoppingCart, User, Menu, Package, X, ChevronRight, Heart, MapPin, HelpCircle, LogOut } from "lucide-react";
+import { Home, ShoppingCart, User, Menu, Package, X, ChevronRight, Heart, MapPin, HelpCircle, LogOut, LogIn } from "lucide-react";
 import { useState, type MouseEvent } from "react";
-import { signOut } from "next-auth/react";
 
 const navItemsBase = [
   { label: "Home", href: "/", icon: Home },
@@ -14,8 +14,18 @@ const navItemsBase = [
   { label: "More", href: "#menu", icon: Menu },
 ];
 
+function CartBadge({ count }: { count: number }) {
+  if (count === 0) return null;
+  return (
+    <span className="absolute -top-1.5 -right-2 bg-neon text-black text-[9px] font-bold leading-none min-w-[16px] h-[16px] rounded-full flex items-center justify-center px-0.5 shadow-[0_2px_6px_rgba(0,255,136,0.35)]">
+      {count > 99 ? "99+" : count}
+    </span>
+  );
+}
+
 export default function MobileBottomNav() {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const { data: cart } = trpc.cart.getCart.useQuery();
   const cartCount = cart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
   const [menuOpen, setMenuOpen] = useState(false);
@@ -70,9 +80,7 @@ export default function MobileBottomNav() {
                     aria-hidden="true"
                   />
                   {"badge" in item && item.badge && item.badge > 0 && (
-                    <span className="absolute -top-2 -right-2.5 bg-neon text-black text-[9px] font-bold min-w-[16px] h-[16px] rounded-full flex items-center justify-center px-0.5">
-                      {item.badge}
-                    </span>
+                    <CartBadge count={item.badge} />
                   )}
                 </div>
                 <span
@@ -95,7 +103,20 @@ export default function MobileBottomNav() {
           />
           <div className="absolute bottom-0 left-0 right-0 bg-safarigray border-t border-safariborder rounded-t-2xl max-h-[70vh] overflow-y-auto animate-slide-up pb-safe">
             <div className="sticky top-0 bg-safarigray flex items-center justify-between px-5 py-4 border-b border-safariborder rounded-t-2xl">
-              <h2 className="font-display font-bold text-lg text-white">Menu</h2>
+              {/* Show user info if logged in */}
+              {session ? (
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-neon/15 text-neon text-sm font-bold flex items-center justify-center ring-1 ring-neon/30">
+                    {(session.user?.name || session.user?.email || "U")[0].toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-white">{session.user?.name || "User"}</p>
+                    <p className="text-xs text-gray-500">{session.user?.email}</p>
+                  </div>
+                </div>
+              ) : (
+                <h2 className="font-display font-bold text-lg text-white">Menu</h2>
+              )}
               <button
                 onClick={() => setMenuOpen(false)}
                 className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-safaridark text-gray-400"
@@ -106,35 +127,56 @@ export default function MobileBottomNav() {
             </div>
 
             <div className="p-4 space-y-1">
-              {menuLinks.map((link) => {
-                const Icon = link.icon;
-                return (
+              {session ? (
+                // Logged in menu
+                <>
+                  {menuLinks.map((link) => {
+                    const Icon = link.icon;
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        onClick={() => setMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3.5 rounded-xl hover:bg-safaridark transition-colors min-h-[48px]"
+                        aria-label={link.label}
+                      >
+                        <Icon className="w-5 h-5 text-neon" aria-hidden="true" />
+                        <span className="flex-1 text-sm font-medium text-white">{link.label}</span>
+                        <ChevronRight className="w-4 h-4 text-gray-600" aria-hidden="true" />
+                      </Link>
+                    );
+                  })}
+                  <div className="border-t border-safariborder mt-2 pt-2">
+                    <button
+                      onClick={() => { setMenuOpen(false); signOut({ callbackUrl: "/" }); }}
+                      className="flex items-center gap-3 px-4 py-3.5 rounded-xl hover:bg-red-950/30 transition-colors w-full min-h-[48px]"
+                    >
+                      <LogOut className="w-5 h-5 text-red-400" aria-hidden="true" />
+                      <span className="text-sm font-medium text-red-400">Sign Out</span>
+                    </button>
+                  </div>
+                </>
+              ) : (
+                // Guest menu
+                <>
                   <Link
-                    key={link.href}
-                    href={link.href}
+                    href="/login"
                     onClick={() => setMenuOpen(false)}
                     className="flex items-center gap-3 px-4 py-3.5 rounded-xl hover:bg-safaridark transition-colors min-h-[48px]"
-                    aria-label={link.label}
                   >
-                    <Icon className="w-5 h-5 text-neon" aria-hidden="true" />
-                    <span className="flex-1 text-sm font-medium text-white">{link.label}</span>
+                    <LogIn className="w-5 h-5 text-neon" aria-hidden="true" />
+                    <span className="flex-1 text-sm font-medium text-white">Sign In</span>
                     <ChevronRight className="w-4 h-4 text-gray-600" aria-hidden="true" />
                   </Link>
-                );
-              })}
-            </div>
-
-            <div className="px-4 pb-6 pt-2 border-t border-safariborder">
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                  signOut({ callbackUrl: "/" });
-                }}
-                className="flex items-center gap-3 px-4 py-3.5 rounded-xl hover:bg-red-950/30 transition-colors w-full min-h-[48px]"
-              >
-                <LogOut className="w-5 h-5 text-red-400" aria-hidden="true" />
-                <span className="text-sm font-medium text-red-400">Sign Out</span>
-              </button>
+                  <Link
+                    href="/register"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-neon text-black font-bold transition-all min-h-[48px] mt-1"
+                  >
+                    Create Account
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

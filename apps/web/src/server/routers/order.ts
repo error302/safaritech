@@ -321,7 +321,7 @@ export const orderRouter = router({
       const rev = monthlyOrders
         .filter(o => o.createdAt >= monthStart && o.createdAt < monthEnd)
         .reduce((sum, o) => sum + o.total, 0)
-      monthlyRevenue.push({ month: monthStr, revenue: rev / 100 })
+      monthlyRevenue.push({ month: monthStr, revenue: rev })
     }
 
     return {

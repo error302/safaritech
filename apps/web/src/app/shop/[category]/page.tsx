@@ -22,7 +22,7 @@ export default function ShopCategory() {
   const rawSlug = params.category as string
   const slug = rawSlug === 'phones' ? 'smartphones' : rawSlug
 
-  const { data: categories, isLoading: isLoadingCategories } = trpc.product.adminGetCategories.useQuery()
+  const { data: categories, isLoading: isLoadingCategories } = trpc.product.getCategories.useQuery()
   const categoryName = categories?.find(c => c.slug === slug)?.name || categoryNames[rawSlug] || categoryNames[slug] || slug
 
   const { data: productsData, isLoading: isLoadingProducts } = trpc.product.getAll.useQuery(

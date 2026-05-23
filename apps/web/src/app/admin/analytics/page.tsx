@@ -19,7 +19,7 @@ import { trpc } from "@/utils/trpc";
 import { AdminStatCard } from "@/components/admin/AdminStatCard";
 
 function formatKES(amount: number) {
-  return `KSh ${(amount / 100).toLocaleString()}`;
+  return `KSh ${amount.toLocaleString()}`;
 }
 
 // ─── Custom Tooltip for Revenue Chart ────────────────────────────────────────

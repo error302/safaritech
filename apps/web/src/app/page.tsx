@@ -42,7 +42,7 @@ function parseImages(raw: unknown): string[] | null {
   try {
     return JSON.parse(raw as string);
   } catch {
-    return [raw as string];
+    return (raw as string).split(',').filter(Boolean);
   }
 }
 
@@ -159,8 +159,8 @@ export default function HomePage() {
                     id: p.id as string,
                     name: p.name as string,
                     slug: p.slug as string,
-                    price: p.price as number,
-                    originalPrice: (p.salePrice as number) ?? null,
+                    price: (p.salePrice || p.price) as number,
+                    originalPrice: p.price as number,
                     images: parseImages(p.images),
                     inStock: (p.stock as number) > 0,
                     isHot: true,
@@ -248,6 +248,10 @@ export default function HomePage() {
                 <div key={i} className="aspect-[3/4] rounded-2xl skeleton-shimmer" />
               ))}
             </div>
+          ) : newArrivals.length === 0 ? (
+            <div className="py-16 text-center">
+              <p className="text-gray-500 text-sm">No products yet</p>
+            </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
               {newArrivals.map((p: Record<string, unknown>) => (
@@ -257,8 +261,8 @@ export default function HomePage() {
                     id: p.id as string,
                     name: p.name as string,
                     slug: p.slug as string,
-                    price: p.price as number,
-                    originalPrice: (p.salePrice as number) ?? null,
+                    price: (p.salePrice || p.price) as number,
+                    originalPrice: p.price as number,
                     images: parseImages(p.images),
                     inStock: (p.stock as number) > 0,
                     isHot: (p.isHot as boolean) ?? null,

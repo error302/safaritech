@@ -382,7 +382,7 @@ export default function ShopPage() {
                         : JSON.parse(p.images)
                       : null;
                   } catch {
-                    images = p.images ? [p.images] : null;
+                    images = p.images ? (p.images as string).split(',').filter(Boolean) : null;
                   }
                   return (
                     <ProductCard
@@ -391,8 +391,8 @@ export default function ShopPage() {
                         id: p.id,
                         name: p.name,
                         slug: p.slug,
-                        price: p.price,
-                        originalPrice: p.salePrice ?? null,
+                        price: p.salePrice || p.price,
+                        originalPrice: p.price,
                         images,
                         inStock: p.stock > 0,
                         isHot: p.isHot ?? null,

@@ -30,7 +30,7 @@ function SearchContent() {
   const [showFilters, setShowFilters] = useState(false)
 
   // Fetch categories from backend
-  const { data: categories } = trpc.product.adminGetCategories.useQuery()
+  const { data: categories } = trpc.product.getCategories.useQuery()
 
   // Fetch products with search
   const { data: productsData, isLoading } = trpc.product.getAll.useQuery(
