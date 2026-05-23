@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 60" role="img" aria-label="Safaritech">
+  <!-- Lightning bolt icon -->
+  <polygon fill="#00FF9F" points="2,0 24,0 14,24 30,24 6,58 16,30 0,30"/>
+  <!-- Safaritech text -->
+  <text x="38" y="42" fill="#FFFFFF" font-family="'Segoe UI', Arial, Helvetica, sans-serif" font-size="32" font-weight="700" letter-spacing="0.5">Safaritech</text>
+</svg>

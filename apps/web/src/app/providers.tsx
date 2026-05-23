@@ -6,6 +6,7 @@ import superjson from 'superjson'
 import { trpc } from '@/utils/trpc'
 import { useState } from 'react'
 import { SessionProvider } from 'next-auth/react'
+import SiteSettingsProvider from '@/components/SiteSettingsProvider'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient())
@@ -23,7 +24,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        <QueryClientProvider client={queryClient}>
+          <SiteSettingsProvider>{children}</SiteSettingsProvider>
+        </QueryClientProvider>
       </trpc.Provider>
     </SessionProvider>
   )

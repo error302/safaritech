@@ -1,21 +1,28 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Search, Home } from 'lucide-react'
 
 export default function NotFound() {
   return (
     <div className="bg-safaridark min-h-screen flex items-center justify-center py-16 px-4">
       <div className="text-center max-w-md">
+        <div className="flex items-center justify-center gap-2 mb-6">
+          <Image src="/brands/safaritech-icon.svg" alt="Safaritech" width={40} height={40} className="rounded-lg object-contain" />
+          <span className="font-display font-bold text-xl text-white">
+            Safari<span className="text-neon">tech</span>
+          </span>
+        </div>
         <p className="mb-4 text-8xl font-bold font-display text-neon">404</p>
         <h1 className="mb-4 text-3xl font-bold font-display text-white">Page Not Found</h1>
         <p className="text-gray-500 md:text-gray-400 mb-8">
-          The page you're looking for doesn't exist or has been moved.
+          The page you&apos;re looking for doesn&apos;t exist or has been moved.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/search" className="bg-neon hover:bg-neon-dim text-black font-bold px-5 py-2.5 rounded-lg text-sm transition-all">
+          <Link href="/search" className="bg-neon hover:bg-neon-dim text-black font-bold px-5 py-2.5 rounded-lg text-sm transition-all inline-flex items-center justify-center">
             <Search className="mr-2 h-5 w-5" />
             Search Products
           </Link>
-          <Link href="/" className="border border-safariborder text-gray-700 md:text-gray-300 px-5 py-2.5 rounded-lg text-sm font-medium transition-all hover:border-neon hover:text-neon">
+          <Link href="/" className="border border-safariborder text-gray-700 md:text-gray-300 px-5 py-2.5 rounded-lg text-sm font-medium transition-all hover:border-neon hover:text-neon inline-flex items-center justify-center">
             <Home className="mr-2 h-5 w-5" />
             Go Home
           </Link>

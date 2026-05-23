@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { type Brand, getBrandIconUrl } from "@/lib/brands";
+import { type Brand } from "@/lib/brands";
 
 type Props = {
   brand: Brand;
@@ -11,24 +11,6 @@ type Props = {
 };
 
 export default function BrandLogo({ brand, size = 32, className }: Props) {
-  const src = getBrandIconUrl(brand);
-
-  if (!src) {
-    return (
-      <span
-        className={cn(
-          "flex items-center justify-center rounded-lg bg-safaridark text-[10px] font-bold text-gray-300",
-          className
-        )}
-        style={{ width: size, height: size }}
-      >
-        {brand.name.slice(0, 2).toUpperCase()}
-      </span>
-    );
-  }
-
-  const isLocal = src.startsWith("/");
-
   return (
     <span
       className={cn(
@@ -38,12 +20,11 @@ export default function BrandLogo({ brand, size = 32, className }: Props) {
       style={{ width: size, height: size }}
     >
       <Image
-        src={src}
+        src={brand.logoSrc}
         alt={`${brand.name} logo`}
         width={size}
         height={size}
         className="object-contain max-h-full max-w-full"
-        unoptimized={!isLocal}
       />
     </span>
   );

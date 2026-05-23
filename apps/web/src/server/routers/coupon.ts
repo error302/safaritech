@@ -96,6 +96,35 @@ export const couponRouter = router({
       return coupon
     }),
 
+  update: adminProcedure
+    .input(z.object({
+      id: z.string(),
+      code: z.string().optional(),
+      description: z.string().optional(),
+      discountType: z.enum(['PERCENTAGE', 'FIXED']).optional(),
+      discountValue: z.number().optional(),
+      minOrderValue: z.number().optional(),
+      maxDiscount: z.number().optional(),
+      usageLimit: z.number().optional(),
+      expiresAt: z.string().optional(),
+      isActive: z.boolean().optional(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...data } = input
+      const updateData: Record<string, unknown> = { ...data }
+      if (data.code) {
+        updateData.code = data.code.toUpperCase()
+      }
+      if (data.expiresAt) {
+        updateData.expiresAt = new Date(data.expiresAt)
+      }
+      const coupon = await ctx.prisma.coupon.update({
+        where: { id },
+        data: updateData,
+      })
+      return coupon
+    }),
+
   use: protectedProcedure
     .input(z.object({ couponId: z.string() }))
     .mutation(async ({ ctx, input }) => {

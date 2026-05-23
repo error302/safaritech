@@ -257,7 +257,7 @@ export const orderRouter = router({
     ])
 
     const recentOrders = await ctx.prisma.order.findMany({
-      take: 5,
+      take: 10,
       orderBy: { createdAt: 'desc' },
       include: {
         user: { select: { name: true, email: true } },
@@ -281,6 +281,49 @@ export const orderRouter = router({
       select: { id: true, name: true },
     })
 
+    // Order counts by status
+    const statusCounts = await ctx.prisma.order.groupBy({
+      by: ['status'],
+      _count: { status: true },
+    })
+    const ordersByStatus: Record<string, number> = {}
+    for (const s of statusCounts) {
+      ordersByStatus[s.status] = s._count.status
+    }
+
+    // Order counts by payment method
+    const paymentCounts = await ctx.prisma.order.groupBy({
+      by: ['paymentMethod'],
+      _count: { paymentMethod: true },
+    })
+    const ordersByPaymentMethod: Record<string, number> = {}
+    for (const p of paymentCounts) {
+      ordersByPaymentMethod[p.paymentMethod] = p._count.paymentMethod
+    }
+
+    // Monthly revenue for the last 6 months
+    const now = new Date()
+    const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1)
+    const monthlyOrders = await ctx.prisma.order.findMany({
+      where: {
+        paymentStatus: 'PAID',
+        createdAt: { gte: sixMonthsAgo },
+      },
+      select: { total: true, createdAt: true },
+    })
+
+    const monthlyRevenue: { month: string; revenue: number }[] = []
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+      const monthStr = d.toLocaleString('default', { month: 'short' })
+      const monthStart = new Date(d.getFullYear(), d.getMonth(), 1)
+      const monthEnd = new Date(d.getFullYear(), d.getMonth() + 1, 1)
+      const rev = monthlyOrders
+        .filter(o => o.createdAt >= monthStart && o.createdAt < monthEnd)
+        .reduce((sum, o) => sum + o.total, 0)
+      monthlyRevenue.push({ month: monthStr, revenue: rev / 100 })
+    }
+
     return {
       totalOrders,
       totalRevenue: totalRevenue._sum.total ?? 0,
@@ -289,6 +332,9 @@ export const orderRouter = router({
       totalUsers,
       recentOrders,
       topProducts: products.map(p => ({ ...p, orderCount: productsMap[p.id] })),
+      ordersByStatus,
+      ordersByPaymentMethod,
+      monthlyRevenue,
     }
   }),
 })

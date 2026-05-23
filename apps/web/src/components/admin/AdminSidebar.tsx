@@ -1,30 +1,51 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Package, ShoppingCart, Users, BarChart3, Settings, LogOut, ChevronRight } from "lucide-react";
+import {
+  Package,
+  ShoppingCart,
+  Users,
+  BarChart3,
+  Settings,
+  LogOut,
+  FileText,
+  Tag,
+  MessageSquare,
+  Menu,
+  X,
+} from "lucide-react";
+import { useState } from "react";
 
 const navItems = [
   { icon: BarChart3, label: "Overview", href: "/admin" },
   { icon: Package, label: "Products", href: "/admin/products" },
   { icon: ShoppingCart, label: "Orders", href: "/admin/orders" },
   { icon: Users, label: "Users", href: "/admin/users" },
+  { icon: FileText, label: "Blog", href: "/admin/blog" },
+  { icon: Tag, label: "Coupons", href: "/admin/coupons" },
+  { icon: MessageSquare, label: "Messages", href: "/admin/messages" },
   { icon: BarChart3, label: "Analytics", href: "/admin/analytics" },
   { icon: Settings, label: "Settings", href: "/admin/settings" },
 ];
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  return (
-    <aside className="fixed left-0 top-0 bottom-0 w-64 bg-safaridark border-r border-safariborder z-40 flex flex-col">
+  const sidebarContent = (
+    <>
       {/* Logo */}
       <div className="p-6 border-b border-safariborder">
-        <Link href="/" className="flex items-center gap-2">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <ellipse cx="14" cy="11" rx="7" ry="10" stroke="#00FF9F" strokeWidth="1.5" fill="none" transform="rotate(-15 14 11)"/>
-            <line x1="14" y1="3" x2="14" y2="26" stroke="#00FF9F" strokeWidth="1.5" strokeLinecap="round"/>
-          </svg>
+        <Link href="/" className="flex items-center gap-2.5">
+          <Image
+            src="/brands/safaritech-icon.svg"
+            alt="Safaritech"
+            width={28}
+            height={28}
+            className="rounded-lg object-contain"
+          />
           <span className="font-display font-bold text-lg text-white">
             Safari<span className="text-neon">tech</span>
           </span>
@@ -39,6 +60,7 @@ export default function AdminSidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => setMobileOpen(false)}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                 isActive
                   ? "bg-neon/10 text-neon border border-neon/20"
@@ -71,6 +93,41 @@ export default function AdminSidebar() {
           Back to Store
         </Link>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile toggle button */}
+      <button
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-xl bg-safaridark border border-safariborder text-white"
+        onClick={() => setMobileOpen(!mobileOpen)}
+        aria-label="Toggle sidebar"
+      >
+        {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+      </button>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/60 z-40"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* Mobile sidebar */}
+      <aside
+        className={`lg:hidden fixed left-0 top-0 bottom-0 w-64 bg-safaridark border-r border-safariborder z-40 flex flex-col transition-transform duration-300 ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        {sidebarContent}
+      </aside>
+
+      {/* Desktop sidebar */}
+      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-64 bg-safaridark border-r border-safariborder z-40 flex-col">
+        {sidebarContent}
+      </aside>
+    </>
   );
 }

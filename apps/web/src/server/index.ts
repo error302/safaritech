@@ -8,6 +8,8 @@ import { reviewRouter } from './routers/review'
 import { couponRouter } from './routers/coupon'
 import { wishlistRouter } from './routers/wishlist'
 import { blogRouter } from './routers/blog'
+import { siteSettingRouter } from './routers/siteSetting'
+import { contactRouter } from './routers/contact'
 
 export const appRouter = router({
   product: productRouter,
@@ -19,6 +21,8 @@ export const appRouter = router({
   coupon: couponRouter,
   wishlist: wishlistRouter,
   blog: blogRouter,
+  siteSetting: siteSettingRouter,
+  contact: contactRouter,
 })
 
 export type AppRouter = typeof appRouter

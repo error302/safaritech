@@ -196,6 +196,12 @@ model Contact {
   createdAt DateTime @default(now())
 }
 
+model SiteSetting {
+  id    String @id @default(uuid())
+  key   String @unique
+  value String @default("")
+}
+
 // ---------------------------------------------------------
 // LMS (LEARNING MANAGEMENT SYSTEM) MODELS
 // ---------------------------------------------------------

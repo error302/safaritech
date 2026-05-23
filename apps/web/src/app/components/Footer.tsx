@@ -1,13 +1,14 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from 'lucide-react'
 
 const footerLinks = {
   shop: [
-    { label: 'Smartphones', href: '/shop/smartphones' },
-    { label: 'Laptops', href: '/shop/laptops' },
-    { label: 'Audio', href: '/shop/audio' },
-    { label: 'Wearables', href: '/shop/wearables' },
-    { label: 'Tablets', href: '/shop/tablets' },
+    { label: 'Smartphones', href: '/shop?cat=smartphones' },
+    { label: 'Laptops', href: '/shop?cat=laptops' },
+    { label: 'Audio', href: '/shop?cat=audio' },
+    { label: 'Wearables', href: '/shop?cat=wearables' },
+    { label: 'Tablets', href: '/shop?cat=tablets' },
   ],
   company: [
     { label: 'About Us', href: '/about' },
@@ -34,10 +35,10 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2 text-2xl font-black mb-4">
-              <span className="text-3xl">⚡</span>
-              <span className="bg-gradient-to-r from-electric to-blue bg-clip-text text-transparent">
-                Safaritech
+            <Link href="/" className="flex items-center gap-2.5 mb-4">
+              <Image src="/brands/safaritech-icon.svg" alt="Safaritech" width={32} height={32} className="rounded-lg object-contain" />
+              <span className="font-display font-bold text-2xl tracking-tight text-white">
+                Safari<span className="text-neon">tech</span>
               </span>
             </Link>
             <p className="text-gray-400 mb-6 max-w-sm">

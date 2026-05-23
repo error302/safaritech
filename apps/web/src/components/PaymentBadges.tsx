@@ -2,9 +2,9 @@ import Image from "next/image";
 
 const payments = [
   { name: "M-Pesa", src: "/brands/mpesa.svg", w: 88, h: 28 },
-  { name: "PayPal", icon: "https://cdn.simpleicons.org/paypal/00457C", w: 72, h: 28 },
-  { name: "Visa", icon: "https://cdn.simpleicons.org/visa/1A1F71", w: 56, h: 28 },
-  { name: "Mastercard", icon: "https://cdn.simpleicons.org/mastercard/EB001B", w: 48, h: 28 },
+  { name: "PayPal", src: "/brands/paypal.svg", w: 72, h: 28 },
+  { name: "Visa", src: "/brands/visa.svg", w: 56, h: 28 },
+  { name: "Mastercard", src: "/brands/mastercard.svg", w: 48, h: 28 },
 ];
 
 export default function PaymentBadges() {
@@ -21,12 +21,11 @@ export default function PaymentBadges() {
               className="flex items-center justify-center h-11 px-4 rounded-xl bg-safarigray border border-safariborder"
             >
               <Image
-                src={p.src ?? p.icon!}
+                src={p.src}
                 alt={p.name}
                 width={p.w}
                 height={p.h}
                 className="object-contain h-6 w-auto"
-                unoptimized={!p.src}
               />
             </div>
           ))}
