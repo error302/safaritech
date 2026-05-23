@@ -22,3 +22,32 @@ Stage Summary:
 - Key fixes: removed workspace config, added apps/web/package-lock.json, simplified vercel.json
 - User needs to verify Vercel dashboard settings (Root Directory = apps/web, environment variables set)
 - Required env vars: DATABASE_URL, DATABASE_URL_POOLED, NEXTAUTH_SECRET, NEXTAUTH_URL
+
+---
+Task ID: 2
+Agent: Main Agent
+Task: Fix login auth error, brand images, upload functionality
+
+Work Log:
+- Analyzed user screenshots: login shows "Server error - There is a problem with the server configuration"
+- Analyzed brand images: CDN-based logos failing (403 Forbidden), too small on dark background
+- Root cause of login error: authorize() was throwing errors instead of returning null, plus NEXTAUTH_SECRET missing in Vercel env
+- Fixed auth.ts: authorize() now returns null on failure (NextAuth standard), wraps prisma calls in try/catch
+- Fixed login/page.tsx: added Suspense boundary around useSearchParams (Next.js 14 requirement)
+- Fixed brands.ts: switched all 10 CDN URLs (cdn.simpleicons.org) to local SVGs (/brands/*.svg)
+- Fixed Infinix SVG: added fill="#FFFFFF" (was invisible on dark bg - default fill is black)
+- Fixed Tecno SVG: replaced CSS class-based fill with inline fill attribute (CSP sandbox was stripping style tags)
+- Fixed BrandLogo.tsx: added onError fallback that shows brand initial with accent color
+- Fixed BrandShowcase.tsx: increased logo sizes from 40/48px to 48/64px, made containers less opaque
+- Fixed next.config.js: removed bare "sandbox;" from CSP (was breaking SVG style elements)
+- Fixed upload route: default to local storage, lazy-load Cloudinary, fallback on failure
+- Fixed ImageUploader: default to "local" instead of "cloudinary"
+- Created public/uploads/.gitkeep for upload directory
+- Build verified passing locally
+- All changes pushed to GitHub
+
+Stage Summary:
+- Login auth fixed: returns null instead of throwing, Suspense boundary added
+- Brand images fixed: all local SVGs, proper fills, fallbacks, bigger sizes
+- Upload fixed: local storage default, Cloudinary optional
+- Vercel deployment pending - user must set env vars in dashboard
