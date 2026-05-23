@@ -47,10 +47,10 @@ export default function StripeCheckout() {
   }, [orderId, total, router])
 
   return (
-    <div className="md:bg-safaridark bg-gray-50 min-h-screen flex items-center justify-center">
+    <div className="bg-safaridark min-h-screen flex items-center justify-center">
       <div className="text-center">
         <Loader2 className="mx-auto h-12 w-12 text-neon animate-spin mb-4" />
-        <h1 className="text-xl font-bold text-gray-900 md:text-white mb-2">Redirecting to Stripe...</h1>
+        <h1 className="text-xl font-bold text-white mb-2">Redirecting to Stripe...</h1>
         <p className="text-gray-500 md:text-gray-400">Please wait while we set up your secure payment.</p>
       </div>
     </div>

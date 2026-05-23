@@ -101,28 +101,28 @@ export default function Navbar() {
          </div>
        </nav>
  
-       {/* Mobile Navbar — clean & minimal */}
-       <nav className="md:hidden bg-white/95 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
+       {/* Mobile — premium dark, matches desktop */}
+       <nav className="md:hidden bg-safaridark/95 backdrop-blur-md border-b border-safariborder sticky top-0 z-50">
          <div className="px-4">
            <div className="flex items-center justify-between h-14 gap-3">
              <Link href="/" className="flex items-center gap-2 shrink-0">
                <Image src="/logo.jpg" alt="Safaritech" width={28} height={28} className="rounded-lg object-cover" />
-               <span className="font-display font-bold text-lg tracking-tight text-gray-900">
-                 Safari<span className="text-neon-dim">tech</span>
+               <span className="font-display font-bold text-lg tracking-tight text-white">
+                 Safari<span className="text-neon">tech</span>
                </span>
              </Link>
- 
+
              <div className="flex items-center gap-1 shrink-0">
-               <Link href="/cart" className="relative p-2 rounded-lg text-gray-600" aria-label="Shopping Cart">
+               <Link href="/cart" className="relative p-2.5 rounded-xl text-gray-400 hover:text-white" aria-label="Shopping Cart">
                  <ShoppingCart className="w-5 h-5" />
                  {cartCount > 0 && (
-                   <span className="absolute -top-0.5 -right-0.5 bg-red-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-white">
+                   <span className="absolute -top-0.5 -right-0.5 bg-neon text-black text-[10px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center px-0.5">
                      {cartCount}
                    </span>
                  )}
                </Link>
                <button
-                 className="p-2 rounded-lg text-gray-600"
+                 className="p-2.5 rounded-xl text-gray-400 hover:text-white"
                  onClick={() => setMobileOpen(!mobileOpen)}
                  aria-label={mobileOpen ? "Close Menu" : "Open Menu"}
                >
@@ -130,38 +130,36 @@ export default function Navbar() {
                </button>
              </div>
            </div>
- 
-           {/* Search bar */}
+
            <form className="pb-3" onSubmit={handleSearch}>
              <div className="relative">
-               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" aria-hidden="true" />
+               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" aria-hidden="true" />
                <input
                  type="search"
                  value={searchQuery}
                  onChange={(e) => setSearchQuery(e.target.value)}
                  placeholder="Search Safaritech..."
-                 className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-300 focus:ring-2 focus:ring-gray-100"
+                 className="w-full bg-safarigray border border-safariborder rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-neon/40"
                />
              </div>
            </form>
          </div>
- 
-         {/* Mobile menu */}
+
          {mobileOpen && (
-           <div className="border-t border-gray-100 bg-white animate-fade-in">
-             <div className="px-4 py-3 flex flex-col gap-0.5">
+           <div className="border-t border-safariborder bg-safarigray animate-fade-in">
+             <div className="px-4 py-3 flex flex-col gap-0.5 max-h-[60vh] overflow-y-auto">
                {categoryLinks.map((item) => (
                  <Link
                    key={item.label}
                    href={item.href}
-                   className="flex items-center justify-between py-3 px-3 rounded-xl text-gray-700 hover:bg-gray-50 transition-all"
+                   className="flex items-center justify-between py-3.5 px-3 rounded-xl text-gray-200 hover:bg-safaridark transition-all min-h-[48px]"
                    onClick={() => setMobileOpen(false)}
                  >
                    <span className="flex items-center gap-3">
-                     {item.icon && <item.icon className="w-4 h-4 text-gray-400" aria-hidden="true" />}
+                     {item.icon && <item.icon className="w-4 h-4 text-neon" aria-hidden="true" />}
                      {item.label}
                    </span>
-                   <ChevronRight className="w-4 h-4 text-gray-300" aria-hidden="true" />
+                   <ChevronRight className="w-4 h-4 text-gray-600" aria-hidden="true" />
                  </Link>
                ))}
              </div>

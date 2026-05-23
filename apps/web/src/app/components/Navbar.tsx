@@ -19,7 +19,7 @@ export function Navbar() {
   const cartItemsCount = useCartStore((state) => state.items.reduce((sum, item) => sum + item.quantity, 0))
 
   return (
-    <header className="sticky top-0 z-50 border-b border-gray-200 md:border-safariborder bg-charcoal/95 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-safariborder bg-charcoal/95 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2 text-2xl font-black bg-gradient-to-r from-electric to-blue bg-clip-text text-transparent transition-all hover:scale-105">
           <span className="text-3xl">⚡</span>Safaritech
@@ -70,7 +70,7 @@ export function Navbar() {
               <>
                 <Link
                   href="/login"
-                  className="border border-gray-200 md:border-safariborder text-gray-700 md:text-gray-300 px-5 py-2.5 rounded-lg text-sm font-medium transition-all hover:border-neon hover:text-neon text-sm px-4 py-2 h-auto"
+                  className="border border-safariborder text-gray-700 md:text-gray-300 px-5 py-2.5 rounded-lg text-sm font-medium transition-all hover:border-neon hover:text-neon text-sm px-4 py-2 h-auto"
                 >
                   Login
                 </Link>

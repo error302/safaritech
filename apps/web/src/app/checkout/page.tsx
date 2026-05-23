@@ -127,10 +127,10 @@ export default function Checkout() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen py-16 flex items-center justify-center bg-white md:bg-safaridark">
+      <div className="min-h-screen py-16 flex items-center justify-center bg-safaridark">
         <div className="text-center">
           <ShoppingCart className="mx-auto h-16 w-16 text-gray-400 md:text-gray-500 mb-4" />
-          <h1 className="mb-4 text-2xl font-bold text-gray-900 md:text-white">Your cart is empty</h1>
+          <h1 className="mb-4 text-2xl font-bold text-white">Your cart is empty</h1>
           <Link href="/shop" className="inline-block bg-neon text-black font-bold rounded-lg px-6 py-3 hover:bg-neon/90 transition-colors">
             Continue Shopping
           </Link>
@@ -140,14 +140,14 @@ export default function Checkout() {
   }
 
   return (
-    <div className="min-h-screen py-4 md:py-8 bg-white md:bg-safaridark">
+    <div className="min-h-screen py-4 md:py-8 bg-safaridark">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Link href="/cart" className="mb-4 md:mb-6 inline-flex items-center text-sm text-gray-500 md:text-gray-400 hover:text-neon transition-colors">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Cart
         </Link>
 
-        <h1 className="mb-6 md:mb-8 text-2xl md:text-3xl font-bold text-gray-900 md:text-white">Checkout</h1>
+        <h1 className="mb-6 md:mb-8 text-2xl md:text-3xl font-bold text-white">Checkout</h1>
 
         {error && (
           <div className="mb-4 p-4 rounded-lg bg-red-50 md:bg-red-900/20 border border-red-200 md:border-red-800 text-red-700 md:text-red-400">
@@ -158,8 +158,8 @@ export default function Checkout() {
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
           <div className="lg:col-span-2 space-y-4 md:space-y-6">
             {/* Contact Info */}
-            <div className="rounded-lg md:rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-4 md:p-6">
-              <h2 className="mb-3 md:mb-4 text-base md:text-lg font-semibold text-gray-900 md:text-white">Contact Information</h2>
+            <div className="rounded-lg md:rounded-xl border border-safariborder bg-safarigray p-4 md:p-6">
+              <h2 className="mb-3 md:mb-4 text-base md:text-lg font-semibold text-white">Contact Information</h2>
 <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
 <div>
                   <label htmlFor="firstName" className="mb-1.5 block text-sm font-medium text-gray-700 md:text-gray-300">
@@ -171,7 +171,7 @@ export default function Checkout() {
                     value={formData.firstName}
                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                     required
-                    className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-gray-900 md:text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors"
+                    className="w-full rounded-lg border border-safariborder bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors"
                   />
                 </div>
                 <div>
@@ -184,7 +184,7 @@ export default function Checkout() {
                     value={formData.lastName}
                     onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                     required
-                    className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-gray-900 md:text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors"
+                    className="w-full rounded-lg border border-safariborder bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors"
                   />
                 </div>
               </div>
@@ -199,7 +199,7 @@ export default function Checkout() {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
-                    className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-gray-900 md:text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors"
+                    className="w-full rounded-lg border border-safariborder bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors"
                   />
                 </div>
                 <div>
@@ -213,15 +213,15 @@ export default function Checkout() {
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     required
                     placeholder="+254 7XX XXX XXX"
-                    className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-gray-900 md:text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors"
+                    className="w-full rounded-lg border border-safariborder bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors"
                   />
                 </div>
               </div>
             </div>
 
             {/* Shipping */}
-            <div className="rounded-lg md:rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-4 md:p-6">
-              <h2 className="mb-3 md:mb-4 text-base md:text-lg font-semibold text-gray-900 md:text-white">Shipping Address</h2>
+            <div className="rounded-lg md:rounded-xl border border-safariborder bg-safarigray p-4 md:p-6">
+              <h2 className="mb-3 md:mb-4 text-base md:text-lg font-semibold text-white">Shipping Address</h2>
               <div className="space-y-3 md:space-y-4">
                 <div>
                   <label htmlFor="address" className="mb-1.5 block text-sm font-medium text-gray-700 md:text-gray-300">
@@ -233,7 +233,7 @@ export default function Checkout() {
                     value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                     required
-                    className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-gray-900 md:text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors"
+                    className="w-full rounded-lg border border-safariborder bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors"
                   />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
@@ -247,7 +247,7 @@ export default function Checkout() {
                       value={formData.city}
                       onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                       required
-                      className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-gray-900 md:text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors"
+                      className="w-full rounded-lg border border-safariborder bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors"
                     />
                   </div>
                   <div>
@@ -260,7 +260,7 @@ export default function Checkout() {
                       value={formData.county}
                       onChange={(e) => setFormData({ ...formData, county: e.target.value })}
                       required
-                      className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-gray-900 md:text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors"
+                      className="w-full rounded-lg border border-safariborder bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors"
                     />
                   </div>
                 </div>
@@ -268,13 +268,13 @@ export default function Checkout() {
             </div>
 
             {/* Payment */}
-            <div className="rounded-lg md:rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-4 md:p-6">
-              <h2 className="mb-3 md:mb-4 text-base md:text-lg font-semibold text-gray-900 md:text-white">Payment Method</h2>
+            <div className="rounded-lg md:rounded-xl border border-safariborder bg-safarigray p-4 md:p-6">
+              <h2 className="mb-3 md:mb-4 text-base md:text-lg font-semibold text-white">Payment Method</h2>
               <div className="space-y-3">
                 <label className={`flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-lg border cursor-pointer transition-colors ${
                   paymentMethod === 'mpesa'
                   ? 'border-neon bg-neon/5 md:bg-neon/10'
-                  : 'border-gray-200 md:border-safariborder bg-white md:bg-safaridark hover:border-gray-300 md:hover:border-gray-600'
+                  : 'border-safariborder bg-safaridark hover:border-gray-300 md:hover:border-gray-600'
                 }`}>
                   <input
                     type="radio"
@@ -285,14 +285,14 @@ export default function Checkout() {
                   />
                   <Smartphone className="h-5 w-5 md:h-6 md:w-6 text-green-500" />
                   <div className="flex-1">
-                    <p className="font-medium text-gray-900 md:text-white">M-Pesa</p>
+                    <p className="font-medium text-white">M-Pesa</p>
                     <p className="text-xs md:text-sm text-gray-500">Pay with M-Pesa STK Push</p>
                   </div>
                 </label>
                 <label className={`flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-lg border cursor-pointer transition-colors ${
                   paymentMethod === 'card'
                   ? 'border-neon bg-neon/5 md:bg-neon/10'
-                  : 'border-gray-200 md:border-safariborder bg-white md:bg-safaridark hover:border-gray-300 md:hover:border-gray-600'
+                  : 'border-safariborder bg-safaridark hover:border-gray-300 md:hover:border-gray-600'
                 }`}>
                   <input
                     type="radio"
@@ -303,14 +303,14 @@ export default function Checkout() {
                   />
                   <CreditCard className="h-5 w-5 md:h-6 md:w-6 text-blue-500" />
                   <div className="flex-1">
-                    <p className="font-medium text-gray-900 md:text-white">Card Payment</p>
+                    <p className="font-medium text-white">Card Payment</p>
                     <p className="text-xs md:text-sm text-gray-500">Visa, Mastercard</p>
                   </div>
                 </label>
                 <label className={`flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-lg border cursor-pointer transition-colors ${
                   paymentMethod === 'paypal'
                   ? 'border-neon bg-neon/5 md:bg-neon/10'
-                  : 'border-gray-200 md:border-safariborder bg-white md:bg-safaridark hover:border-gray-300 md:hover:border-gray-600'
+                  : 'border-safariborder bg-safaridark hover:border-gray-300 md:hover:border-gray-600'
                 }`}>
                   <input
                     type="radio"
@@ -325,7 +325,7 @@ export default function Checkout() {
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium text-gray-900 md:text-white">PayPal</p>
+                    <p className="font-medium text-white">PayPal</p>
                     <p className="text-xs md:text-sm text-gray-500">Pay with PayPal balance or card</p>
                   </div>
                 </label>
@@ -340,20 +340,20 @@ export default function Checkout() {
 
           {/* Summary */}
           <div className="lg:col-span-1">
-            <div className="rounded-lg md:rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-4 md:p-6 sticky top-24">
-              <h2 className="mb-3 md:mb-4 text-base md:text-lg font-semibold text-gray-900 md:text-white">Order Summary</h2>
+            <div className="rounded-lg md:rounded-xl border border-safariborder bg-safarigray p-4 md:p-6 sticky top-24">
+              <h2 className="mb-3 md:mb-4 text-base md:text-lg font-semibold text-white">Order Summary</h2>
 
               <div className="space-y-2 md:space-y-3 mb-4 md:mb-6 max-h-48 md:max-h-60 overflow-y-auto">
                 {items.map((item) => (
                   <div key={item.id} className="flex justify-between text-sm">
                     <span className="text-gray-500">{item.name} x{item.quantity}</span>
-                    <span className="text-gray-900 md:text-white">KSh {(item.price * item.quantity).toLocaleString()}</span>
+                    <span className="text-white">KSh {(item.price * item.quantity).toLocaleString()}</span>
                   </div>
                 ))}
               </div>
 
               {/* Coupon */}
-              <div className="border-t border-gray-200 md:border-safariborder pt-3 md:pt-4 mb-3 md:mb-4">
+              <div className="border-t border-safariborder pt-3 md:pt-4 mb-3 md:mb-4">
                 <label className="mb-1.5 md:mb-2 block text-sm font-medium text-gray-700 md:text-gray-300">Coupon Code</label>
                 {appliedCoupon ? (
                   <div className="flex items-center justify-between rounded-lg bg-green-50 md:bg-green/10 border border-green-200 md:border-green/20 p-3">
@@ -377,13 +377,13 @@ export default function Checkout() {
                         value={couponCode}
                         onChange={(e) => setCouponCode(e.target.value)}
                         placeholder="Enter code"
-                        className="flex-1 rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safarigray px-3 py-2 text-sm text-gray-900 md:text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors"
+                        className="flex-1 rounded-lg border border-safariborder bg-safarigray px-3 py-2 text-sm text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors"
                       />
                       <button
                         type="button"
                         onClick={handleApplyCoupon}
                         disabled={validateCoupon.isFetching}
-                        className="flex items-center justify-center rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safarigray px-3 py-2 text-sm text-gray-700 md:text-gray-300 hover:bg-gray-100 md:hover:bg-safaridark transition-colors disabled:opacity-50"
+                        className="flex items-center justify-center rounded-lg border border-safariborder bg-safarigray px-3 py-2 text-sm text-gray-700 md:text-gray-300 hover:bg-gray-100 md:hover:bg-safaridark transition-colors disabled:opacity-50"
                       >
                         {validateCoupon.isFetching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Tag className="h-4 w-4" />}
                       </button>
@@ -395,10 +395,10 @@ export default function Checkout() {
                 )}
               </div>
 
-              <div className="border-t border-gray-200 md:border-safariborder pt-3 md:pt-4 space-y-2">
+              <div className="border-t border-safariborder pt-3 md:pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Subtotal</span>
-                  <span className="text-gray-900 md:text-white">KSh {cartTotal.toLocaleString()}</span>
+                  <span className="text-white">KSh {cartTotal.toLocaleString()}</span>
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-green-600 md:text-green text-sm">
@@ -408,10 +408,10 @@ export default function Checkout() {
                 )}
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Shipping</span>
-                  <span className="text-gray-900 md:text-white">{shipping === 0 ? 'FREE' : `KSh ${shipping.toLocaleString()}`}</span>
+                  <span className="text-white">{shipping === 0 ? 'FREE' : `KSh ${shipping.toLocaleString()}`}</span>
                 </div>
-                <div className="border-t border-gray-200 md:border-safariborder pt-2 flex justify-between text-lg font-bold">
-                  <span className="text-gray-900 md:text-white">Total</span>
+                <div className="border-t border-safariborder pt-2 flex justify-between text-lg font-bold">
+                  <span className="text-white">Total</span>
                   <span className="text-neon">KSh {finalTotal.toLocaleString()}</span>
                 </div>
               </div>

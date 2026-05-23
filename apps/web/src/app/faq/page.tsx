@@ -115,10 +115,10 @@ export default function FAQ() {
     : faqs
 
   return (
-    <div className="md:bg-safaridark bg-gray-50 min-h-screen py-16">
+    <div className="bg-safaridark min-h-screen py-16">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h1 className="mb-4 text-4xl font-bold font-display text-gray-900 md:text-white">Frequently Asked Questions</h1>
+          <h1 className="mb-4 text-4xl font-bold font-display text-white">Frequently Asked Questions</h1>
           <p className="text-gray-500 md:text-gray-400">
             Can&apos;t find what you&apos;re looking for? Contact our support team.
           </p>
@@ -132,7 +132,7 @@ export default function FAQ() {
             placeholder="Search for answers..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray py-3 pl-12 pr-4 text-gray-900 md:text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-neon focus:outline-none"
+            className="w-full rounded-xl border border-safariborder bg-safarigray py-3 pl-12 pr-4 text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-neon focus:outline-none"
           />
         </div>
 
@@ -147,7 +147,7 @@ export default function FAQ() {
                   return (
                     <div
                       key={id}
-                      className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray overflow-hidden"
+                      className="rounded-xl border border-safariborder bg-safarigray overflow-hidden"
                     >
                       <button
                         onClick={() => toggleFaq(id)}
@@ -161,7 +161,7 @@ export default function FAQ() {
                         />
                       </button>
                       {openFaqs[id] && (
-                        <div className="border-t border-gray-200 md:border-safariborder p-4 text-gray-500 md:text-gray-400">
+                        <div className="border-t border-safariborder p-4 text-gray-500 md:text-gray-400">
                           {item.a}
                         </div>
                       )}
@@ -174,7 +174,7 @@ export default function FAQ() {
         </div>
 
         {/* Contact CTA */}
-        <div className="mt-16 rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-8 text-center">
+        <div className="mt-16 rounded-xl border border-safariborder bg-safarigray p-8 text-center">
           <h3 className="mb-2 text-xl font-semibold">Still have questions?</h3>
           <p className="text-gray-500 md:text-gray-400 mb-6">
             Can&apos;t find the answer you&apos;re looking for? Our team is here to help.
@@ -183,7 +183,7 @@ export default function FAQ() {
             <a href="https://wa.me/254700000000" className="bg-neon hover:bg-neon-dim text-black font-bold px-5 py-2.5 rounded-lg text-sm transition-all">
               Chat on WhatsApp
             </a>
-            <a href="/contact" className="border border-gray-200 md:border-safariborder text-gray-700 md:text-gray-300 px-5 py-2.5 rounded-lg text-sm font-medium transition-all hover:border-neon hover:text-neon">
+            <a href="/contact" className="border border-safariborder text-gray-700 md:text-gray-300 px-5 py-2.5 rounded-lg text-sm font-medium transition-all hover:border-neon hover:text-neon">
               Contact Us
             </a>
           </div>

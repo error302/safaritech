@@ -38,15 +38,15 @@ export default function ForgotPassword() {
 
   if (sent) {
     return (
-      <div className="md:bg-safaridark bg-gray-50 min-h-screen flex min-h-[calc(100vh-4rem)] items-center justify-center py-12 px-4">
+      <div className="bg-safaridark min-h-screen flex min-h-[calc(100vh-4rem)] items-center justify-center py-12 px-4">
         <div className="w-full max-w-md">
-          <div className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-8 text-center">
+          <div className="rounded-xl border border-safariborder bg-safarigray p-8 text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green/10">
               <Mail className="h-8 w-8 text-green" />
             </div>
-            <h1 className="mb-2 text-2xl font-bold font-display text-gray-900 md:text-white">Check your email</h1>
+            <h1 className="mb-2 text-2xl font-bold font-display text-white">Check your email</h1>
             <p className="mb-6 text-gray-500 md:text-gray-400">
-              We&apos;ve sent password reset instructions to <span className="text-gray-900 md:text-white font-medium">{email}</span>
+              We&apos;ve sent password reset instructions to <span className="text-white font-medium">{email}</span>
             </p>
             <Link href="/login" className="bg-neon hover:bg-neon-dim text-black font-bold px-5 py-2.5 rounded-lg text-sm transition-all w-full block text-center">
               Back to Login
@@ -58,16 +58,16 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="md:bg-safaridark bg-gray-50 min-h-screen flex min-h-[calc(100vh-4rem)] items-center justify-center py-12 px-4">
+    <div className="bg-safaridark min-h-screen flex min-h-[calc(100vh-4rem)] items-center justify-center py-12 px-4">
       <div className="w-full max-w-md">
-        <div className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-8">
+        <div className="rounded-xl border border-safariborder bg-safarigray p-8">
           <Link href="/login" className="mb-6 inline-flex items-center text-sm text-gray-500 md:text-gray-400 hover:text-neon">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to login
           </Link>
 
           <div className="mb-8">
-            <h1 className="mb-2 text-3xl font-bold font-display text-gray-900 md:text-white">Forgot password?</h1>
+            <h1 className="mb-2 text-3xl font-bold font-display text-white">Forgot password?</h1>
             <p className="text-gray-500 md:text-gray-400">No worries, we&apos;ll send you reset instructions.</p>
           </div>
 
@@ -88,7 +88,7 @@ export default function ForgotPassword() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-gray-900 md:text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-electric focus:outline-none"
+                className="w-full rounded-lg border border-safariborder bg-safaridark px-4 py-2.5 text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-electric focus:outline-none"
                 placeholder="you@example.com"
               />
             </div>

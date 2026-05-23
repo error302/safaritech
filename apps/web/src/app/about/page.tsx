@@ -24,13 +24,13 @@ const values = [
 
 export default function About() {
   return (
-    <div className="md:bg-safaridark bg-gray-50 min-h-screen">
+    <div className="bg-safaridark min-h-screen">
       {/* Hero */}
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue/20 via-transparent to-electric/10" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <h1 className="mb-6 text-5xl font-bold font-display text-gray-900 md:text-white">
+            <h1 className="mb-6 text-5xl font-bold font-display text-white">
               Empowering Kenya&apos;s
               <span className="bg-gradient-to-r from-neon to-blue bg-clip-text text-transparent"> Tech Future</span>
             </h1>
@@ -43,7 +43,7 @@ export default function About() {
       </section>
 
       {/* Stats */}
-      <section className="py-12 border-y border-gray-200 md:border-safariborder">
+      <section className="py-12 border-y border-safariborder">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat) => (
@@ -51,7 +51,7 @@ export default function About() {
                 <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-neon/10 text-neon">
                   <stat.icon className="h-6 w-6" />
                 </div>
-                <p className="text-3xl font-bold font-display text-gray-900 md:text-white">{stat.value}</p>
+                <p className="text-3xl font-bold font-display text-white">{stat.value}</p>
                 <p className="text-sm text-gray-500 md:text-gray-400">{stat.label}</p>
               </div>
             ))}
@@ -64,7 +64,7 @@ export default function About() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="mb-6 text-3xl font-bold font-display text-gray-900 md:text-white">Our Story</h2>
+              <h2 className="mb-6 text-3xl font-bold font-display text-white">Our Story</h2>
               <div className="space-y-4 text-gray-500 md:text-gray-400">
                 <p>
                   Founded in 2019, Safaritech started with a simple vision: to bring the world&apos;s
@@ -95,12 +95,12 @@ export default function About() {
       </section>
 
       {/* Values */}
-      <section className="py-16 border-t border-gray-200 md:border-safariborder">
+      <section className="py-16 border-t border-safariborder">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="mb-12 text-center text-3xl font-bold font-display text-gray-900 md:text-white">Our Values</h2>
+          <h2 className="mb-12 text-center text-3xl font-bold font-display text-white">Our Values</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {values.map((value) => (
-              <div key={value.title} className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-6">
+              <div key={value.title} className="rounded-xl border border-safariborder bg-safarigray p-6">
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-neon/10 text-neon">
                   <value.icon className="h-6 w-6" />
                 </div>
@@ -113,12 +113,12 @@ export default function About() {
       </section>
 
       {/* Team */}
-      <section className="py-16 border-t border-gray-200 md:border-safariborder">
+      <section className="py-16 border-t border-safariborder">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="mb-12 text-center text-3xl font-bold font-display text-gray-900 md:text-white">Meet Our Team</h2>
+          <h2 className="mb-12 text-center text-3xl font-bold font-display text-white">Meet Our Team</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {team.map((member) => (
-              <div key={member.name} className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-6 text-center">
+              <div key={member.name} className="rounded-xl border border-safariborder bg-safarigray p-6 text-center">
                 <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-neon/10 text-neon text-2xl font-bold">
                   {member.image}
                 </div>
@@ -131,9 +131,9 @@ export default function About() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 border-t border-gray-200 md:border-safariborder">
+      <section className="py-16 border-t border-safariborder">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="mb-4 text-3xl font-bold font-display text-gray-900 md:text-white">Ready to Shop?</h2>
+          <h2 className="mb-4 text-3xl font-bold font-display text-white">Ready to Shop?</h2>
           <p className="mb-8 text-gray-500 md:text-gray-400 max-w-2xl mx-auto">
             Explore our wide range of electronics and experience the Safaritech difference.
           </p>
@@ -141,7 +141,7 @@ export default function About() {
             <Link href="/shop" className="bg-neon hover:bg-neon-dim text-black font-bold px-5 py-2.5 rounded-lg text-sm transition-all">
               Browse Products
             </Link>
-            <Link href="/contact" className="border border-gray-200 md:border-safariborder text-gray-700 md:text-gray-300 px-5 py-2.5 rounded-lg text-sm font-medium transition-all hover:border-neon hover:text-neon">
+            <Link href="/contact" className="border border-safariborder text-gray-700 md:text-gray-300 px-5 py-2.5 rounded-lg text-sm font-medium transition-all hover:border-neon hover:text-neon">
               Contact Us
             </Link>
           </div>

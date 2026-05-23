@@ -75,7 +75,7 @@ function ProfileTab() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2 className="mb-5 text-base md:text-lg font-semibold text-gray-900 md:text-white">Profile Information</h2>
+      <h2 className="mb-5 text-base md:text-lg font-semibold text-white">Profile Information</h2>
       <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -84,7 +84,7 @@ function ProfileTab() {
               type="text"
               value={formData.firstName}
               onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-              className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-sm text-gray-900 md:text-white focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
+              className="w-full rounded-lg border border-safariborder bg-safaridark px-4 py-2.5 text-sm text-white focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
             />
           </div>
           <div>
@@ -93,7 +93,7 @@ function ProfileTab() {
               type="text"
               value={formData.lastName}
               onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-              className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-sm text-gray-900 md:text-white focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
+              className="w-full rounded-lg border border-safariborder bg-safaridark px-4 py-2.5 text-sm text-white focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
             />
           </div>
         </div>
@@ -103,7 +103,7 @@ function ProfileTab() {
             type="email"
             value={formData.email}
             disabled
-            className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-100 md:bg-safaridark/50 px-4 py-2.5 text-sm text-gray-500 md:text-gray-400 cursor-not-allowed"
+            className="w-full rounded-lg border border-safariborder bg-gray-100 md:bg-safaridark/50 px-4 py-2.5 text-sm text-gray-500 md:text-gray-400 cursor-not-allowed"
           />
           <p className="mt-1 text-xs text-gray-500 md:text-gray-400">Email cannot be changed</p>
         </div>
@@ -114,12 +114,12 @@ function ProfileTab() {
             value={formData.phone}
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
             placeholder="+254 700 000 000"
-            className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-sm text-gray-900 md:text-white focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
+            className="w-full rounded-lg border border-safariborder bg-safaridark px-4 py-2.5 text-sm text-white focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
           />
         </div>
       </div>
       
-      <div className="mt-6 pt-5 border-t border-gray-200 md:border-safariborder flex items-center gap-4">
+      <div className="mt-6 pt-5 border-t border-safariborder flex items-center gap-4">
         <button
           type="submit"
           disabled={updateProfile.isLoading}
@@ -200,7 +200,7 @@ function PasswordTab() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2 className="mb-5 text-base md:text-lg font-semibold text-gray-900 md:text-white">Change Password</h2>
+      <h2 className="mb-5 text-base md:text-lg font-semibold text-white">Change Password</h2>
       <div className="space-y-4 max-w-md">
         <div>
           <label className="mb-1.5 block text-sm font-medium text-gray-700 md:text-gray-300">Current Password</label>
@@ -208,7 +208,7 @@ function PasswordTab() {
             type="password"
             value={formData.currentPassword}
             onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
-            className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-sm text-gray-900 md:text-white focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
+            className="w-full rounded-lg border border-safariborder bg-safaridark px-4 py-2.5 text-sm text-white focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
           />
         </div>
         <div>
@@ -217,7 +217,7 @@ function PasswordTab() {
             type="password"
             value={formData.newPassword}
             onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-            className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-sm text-gray-900 md:text-white focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
+            className="w-full rounded-lg border border-safariborder bg-safaridark px-4 py-2.5 text-sm text-white focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
           />
         </div>
         <div>
@@ -226,12 +226,12 @@ function PasswordTab() {
             type="password"
             value={formData.confirmPassword}
             onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-            className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-sm text-gray-900 md:text-white focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
+            className="w-full rounded-lg border border-safariborder bg-safaridark px-4 py-2.5 text-sm text-white focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
           />
         </div>
       </div>
 
-      <div className="mt-6 pt-5 border-t border-gray-200 md:border-safariborder flex items-center gap-4">
+      <div className="mt-6 pt-5 border-t border-safariborder flex items-center gap-4">
         <button
           type="submit"
           disabled={isLoading}
@@ -371,7 +371,7 @@ function AddressesTab() {
   return (
     <div>
       <div className="flex justify-between items-center mb-5">
-        <h2 className="text-base md:text-lg font-semibold text-gray-900 md:text-white">Saved Addresses</h2>
+        <h2 className="text-base md:text-lg font-semibold text-white">Saved Addresses</h2>
         {!showForm && (
           <button
             onClick={() => setShowForm(true)}
@@ -389,8 +389,8 @@ function AddressesTab() {
       )}
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="mb-6 p-4 rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark">
-          <h3 className="text-sm font-medium text-gray-900 md:text-white mb-4">
+        <form onSubmit={handleSubmit} className="mb-6 p-4 rounded-lg border border-safariborder bg-safaridark">
+          <h3 className="text-sm font-medium text-white mb-4">
             {editingAddress ? 'Edit Address' : 'Add New Address'}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -401,7 +401,7 @@ function AddressesTab() {
                 value={formData.label}
                 onChange={(e) => setFormData({ ...formData, label: e.target.value })}
                 required
-                className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-white md:bg-safaridark px-3 py-2 text-sm text-gray-900 md:text-white focus:border-neon focus:outline-none"
+                className="w-full rounded-lg border border-safariborder bg-safaridark px-3 py-2 text-sm text-white focus:border-neon focus:outline-none"
               />
             </div>
             <div>
@@ -411,7 +411,7 @@ function AddressesTab() {
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 required
-                className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-white md:bg-safaridark px-3 py-2 text-sm text-gray-900 md:text-white focus:border-neon focus:outline-none"
+                className="w-full rounded-lg border border-safariborder bg-safaridark px-3 py-2 text-sm text-white focus:border-neon focus:outline-none"
               />
             </div>
             <div className="md:col-span-2">
@@ -421,7 +421,7 @@ function AddressesTab() {
                 value={formData.line1}
                 onChange={(e) => setFormData({ ...formData, line1: e.target.value })}
                 required
-                className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-white md:bg-safaridark px-3 py-2 text-sm text-gray-900 md:text-white focus:border-neon focus:outline-none"
+                className="w-full rounded-lg border border-safariborder bg-safaridark px-3 py-2 text-sm text-white focus:border-neon focus:outline-none"
               />
             </div>
             <div className="md:col-span-2">
@@ -430,7 +430,7 @@ function AddressesTab() {
                 type="text"
                 value={formData.line2}
                 onChange={(e) => setFormData({ ...formData, line2: e.target.value })}
-                className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-white md:bg-safaridark px-3 py-2 text-sm text-gray-900 md:text-white focus:border-neon focus:outline-none"
+                className="w-full rounded-lg border border-safariborder bg-safaridark px-3 py-2 text-sm text-white focus:border-neon focus:outline-none"
               />
             </div>
             <div>
@@ -440,7 +440,7 @@ function AddressesTab() {
                 value={formData.city}
                 onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                 required
-                className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-white md:bg-safaridark px-3 py-2 text-sm text-gray-900 md:text-white focus:border-neon focus:outline-none"
+                className="w-full rounded-lg border border-safariborder bg-safaridark px-3 py-2 text-sm text-white focus:border-neon focus:outline-none"
               />
             </div>
             <div>
@@ -450,7 +450,7 @@ function AddressesTab() {
                 value={formData.state}
                 onChange={(e) => setFormData({ ...formData, state: e.target.value })}
                 required
-                className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-white md:bg-safaridark px-3 py-2 text-sm text-gray-900 md:text-white focus:border-neon focus:outline-none"
+                className="w-full rounded-lg border border-safariborder bg-safaridark px-3 py-2 text-sm text-white focus:border-neon focus:outline-none"
               />
             </div>
             <div>
@@ -460,7 +460,7 @@ function AddressesTab() {
                 value={formData.postal}
                 onChange={(e) => setFormData({ ...formData, postal: e.target.value })}
                 required
-                className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-white md:bg-safaridark px-3 py-2 text-sm text-gray-900 md:text-white focus:border-neon focus:outline-none"
+                className="w-full rounded-lg border border-safariborder bg-safaridark px-3 py-2 text-sm text-white focus:border-neon focus:outline-none"
               />
             </div>
             <div>
@@ -470,7 +470,7 @@ function AddressesTab() {
                 value={formData.country}
                 onChange={(e) => setFormData({ ...formData, country: e.target.value })}
                 required
-                className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-white md:bg-safaridark px-3 py-2 text-sm text-gray-900 md:text-white focus:border-neon focus:outline-none"
+                className="w-full rounded-lg border border-safariborder bg-safaridark px-3 py-2 text-sm text-white focus:border-neon focus:outline-none"
               />
             </div>
           </div>
@@ -486,7 +486,7 @@ function AddressesTab() {
             <button
               type="button"
               onClick={handleCancel}
-              className="border border-gray-300 md:border-safariborder text-gray-700 md:text-gray-300 font-medium text-sm px-4 py-2 rounded-lg hover:bg-gray-50 md:hover:bg-safaridark transition-all"
+              className="border border-gray-300 md:border-safariborder text-gray-700 md:text-gray-300 font-medium text-sm px-4 py-2 rounded-lg hover:bg-safaridark transition-all"
             >
               Cancel
             </button>
@@ -497,9 +497,9 @@ function AddressesTab() {
       <div className="space-y-4">
         {addresses && addresses.length > 0 ? (
           addresses.map((address) => (
-            <div key={address.id} className="rounded-lg border border-gray-200 md:border-safariborder p-4">
+            <div key={address.id} className="rounded-lg border border-safariborder p-4">
               <div className="flex justify-between items-start mb-2">
-                <span className="font-medium text-gray-900 md:text-white">{address.label}</span>
+                <span className="font-medium text-white">{address.label}</span>
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleEdit(address)}
@@ -560,7 +560,7 @@ function NotificationsTab() {
 
   return (
     <>
-      <h2 className="mb-5 text-base md:text-lg font-semibold text-gray-900 md:text-white">Notification Preferences</h2>
+      <h2 className="mb-5 text-base md:text-lg font-semibold text-white">Notification Preferences</h2>
       <div className="space-y-3">
         {[
           { label: 'Order updates', desc: 'Get notified about order status changes' },
@@ -568,16 +568,16 @@ function NotificationsTab() {
           { label: 'New products', desc: 'Be the first to know about new arrivals' },
           { label: 'Newsletter', desc: 'Monthly tech news and tips' },
         ].map((item, idx) => (
-          <label key={idx} className="flex items-start gap-3 p-4 rounded-lg border border-gray-200 md:border-safariborder cursor-pointer hover:bg-gray-50 md:hover:bg-safaridark transition-colors">
+          <label key={idx} className="flex items-start gap-3 p-4 rounded-lg border border-safariborder cursor-pointer hover:bg-safaridark transition-colors">
             <input type="checkbox" defaultChecked className="mt-1 rounded text-neon accent-neon" />
             <div>
-              <p className="font-medium text-sm text-gray-900 md:text-white">{item.label}</p>
+              <p className="font-medium text-sm text-white">{item.label}</p>
               <p className="text-xs text-gray-500 md:text-gray-400">{item.desc}</p>
             </div>
           </label>
         ))}
       </div>
-      <div className="mt-6 pt-5 border-t border-gray-200 md:border-safariborder flex items-center gap-4">
+      <div className="mt-6 pt-5 border-t border-safariborder flex items-center gap-4">
         <button
           onClick={handleSave}
           className="bg-neon hover:bg-neon-dim text-black font-bold text-sm px-5 py-2.5 rounded-lg transition-all flex items-center gap-2"
@@ -604,13 +604,13 @@ function PaymentTab() {
 
   return (
     <>
-      <h2 className="mb-5 text-base md:text-lg font-semibold text-gray-900 md:text-white">Payment Methods</h2>
+      <h2 className="mb-5 text-base md:text-lg font-semibold text-white">Payment Methods</h2>
       <div className="space-y-4">
-        <div className="rounded-lg border border-gray-200 md:border-safariborder p-4 flex items-center justify-between">
+        <div className="rounded-lg border border-safariborder p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <CreditCard className="h-5 w-5 text-gray-400" />
             <div>
-              <p className="font-medium text-sm text-gray-900 md:text-white">M-Pesa</p>
+              <p className="font-medium text-sm text-white">M-Pesa</p>
               <p className="text-xs text-gray-500 md:text-gray-400">+254 7XX XXX XXX</p>
             </div>
           </div>
@@ -620,7 +620,7 @@ function PaymentTab() {
           Add Payment Method
         </button>
       </div>
-      <div className="mt-6 pt-5 border-t border-gray-200 md:border-safariborder flex items-center gap-4">
+      <div className="mt-6 pt-5 border-t border-safariborder flex items-center gap-4">
         <button
           onClick={handleSave}
           className="bg-neon hover:bg-neon-dim text-black font-bold text-sm px-5 py-2.5 rounded-lg transition-all flex items-center gap-2"
@@ -658,9 +658,9 @@ export default function Settings() {
   }
 
   return (
-    <div className="md:bg-safaridark bg-gray-50 min-h-screen py-6 md:py-8">
+    <div className="bg-safaridark min-h-screen py-6 md:py-8">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <h1 className="mb-6 md:mb-8 font-display font-bold text-2xl md:text-3xl md:text-white text-gray-900">Account Settings</h1>
+        <h1 className="mb-6 md:mb-8 font-display font-bold text-2xl md:text-3xl text-white">Account Settings</h1>
 
         {/* Mobile tab pills */}
         <div className="md:hidden flex gap-2 overflow-x-auto scrollbar-none mb-6 pb-1">
@@ -706,7 +706,7 @@ export default function Settings() {
 
           {/* Content */}
           <div className="flex-1">
-            <div className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-5 md:p-6">
+            <div className="rounded-xl border border-safariborder bg-safarigray p-5 md:p-6">
               {renderTabContent()}
             </div>
           </div>

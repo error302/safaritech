@@ -45,11 +45,11 @@ export default function Login() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-white py-8 px-4 md:bg-safaridark md:py-12">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-safaridark py-8 px-4 md:py-12">
       <div className="w-full max-w-md">
-        <div className="rounded-lg border border-gray-200 bg-white p-6 md:rounded-xl md:border-safariborder md:bg-safarigray md:p-8">
+        <div className="rounded-xl border border-safariborder bg-safarigray p-6 md:p-8">
           <div className="mb-6 text-center md:mb-8">
-            <h1 className="mb-1 text-2xl font-bold text-gray-900 md:mb-2 md:text-3xl md:text-white">
+            <h1 className="mb-1 text-2xl font-bold text-white md:mb-2 md:text-3xl">
               Sign In
             </h1>
             <p className="text-sm text-gray-500 md:text-base md:text-gray-400">
@@ -77,7 +77,7 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-gray-900 placeholder:text-gray-400 focus:border-neon focus:outline-none md:border-safariborder md:bg-safarigray md:text-white md:placeholder:text-gray-500 md:focus:border-electric"
+                className="w-full rounded-lg border border-safariborder bg-safarigray px-4 py-2.5 text-white placeholder:text-gray-500 focus:border-neon focus:outline-none"
                 placeholder="you@example.com"
               />
             </div>
@@ -96,7 +96,7 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full rounded-lg border border-gray-200 bg-gray-50 pl-4 pr-11 py-2.5 text-gray-900 placeholder:text-gray-400 focus:border-neon focus:outline-none md:border-safariborder md:bg-safarigray md:text-white md:placeholder:text-gray-500 md:focus:border-electric"
+                  className="w-full rounded-lg border border-safariborder bg-safarigray pl-4 pr-11 py-2.5 text-white placeholder:text-gray-500 focus:border-neon focus:outline-none"
                   placeholder="••••••••"
                 />
                 <button
@@ -145,7 +145,7 @@ export default function Login() {
               Don&apos;t have an account?{' '}
               <Link
                 href="/register"
-                className="font-medium text-gray-900 hover:text-gray-700 md:text-neon md:hover:underline"
+                className="font-medium text-neon hover:underline"
               >
                 Create account
               </Link>

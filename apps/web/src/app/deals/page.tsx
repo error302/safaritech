@@ -38,7 +38,7 @@ export default function Deals() {
   })
 
   return (
-    <div className="md:bg-safaridark bg-gray-50 min-h-screen py-8">
+    <div className="bg-safaridark min-h-screen py-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Hero */}
         <div className="relative mb-12 overflow-hidden rounded-2xl bg-gradient-to-r from-red/20 via-accent/20 to-electric/20 p-8 md:p-12">
@@ -47,7 +47,7 @@ export default function Deals() {
               <Clock className="h-4 w-4" />
               Limited Time Offers
             </div>
-            <h1 className="mb-4 text-4xl font-bold font-display text-gray-900 md:text-white md:text-5xl">
+            <h1 className="mb-4 text-4xl font-bold font-display text-white md:text-5xl">
               Flash Sales & Deals
             </h1>
             <p className="mb-6 max-w-xl text-lg text-gray-500 md:text-gray-400">
@@ -76,7 +76,7 @@ export default function Deals() {
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red text-white">
                     <Clock className="h-4 w-4" />
                   </div>
-                  <h2 className="text-2xl font-bold font-display text-gray-900 md:text-white">Flash Sales</h2>
+                  <h2 className="text-2xl font-bold font-display text-white">Flash Sales</h2>
                   <span className="rounded-full bg-red/20 px-3 py-1 text-sm font-medium text-red animate-pulse">
                     Ending Soon
                   </span>
@@ -97,7 +97,7 @@ export default function Deals() {
               <section>
                 <div className="mb-6 flex items-center gap-2">
                   <Tag className="h-8 w-8 text-neon" />
-                  <h2 className="text-2xl font-bold font-display text-gray-900 md:text-white">All Deals</h2>
+                  <h2 className="text-2xl font-bold font-display text-white">All Deals</h2>
                   <span className="text-sm text-gray-500 md:text-gray-400 ml-2">
                     ({allDeals.length} products on sale)
                   </span>
@@ -117,7 +117,7 @@ export default function Deals() {
             {!isLoading && allDeals.length === 0 && (
               <div className="text-center py-20">
                 <Tag className="h-16 w-16 text-gray-300 md:text-gray-600 mx-auto mb-4" />
-                <h2 className="text-xl font-bold font-display text-gray-900 md:text-white mb-2">
+                <h2 className="text-xl font-bold font-display text-white mb-2">
                   No Active Deals
                 </h2>
                 <p className="text-gray-500 md:text-gray-400 max-w-md mx-auto">

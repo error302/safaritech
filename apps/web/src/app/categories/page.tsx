@@ -65,10 +65,10 @@ export default function Categories() {
   const { data: categories, isLoading } = trpc.category.getAll.useQuery()
 
   return (
-    <div className="md:bg-safaridark bg-gray-50 min-h-screen py-12">
+    <div className="bg-safaridark min-h-screen py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h1 className="mb-4 text-4xl font-bold font-display text-gray-900 md:text-white">Shop by Category</h1>
+          <h1 className="mb-4 text-4xl font-bold font-display text-white">Shop by Category</h1>
           <p className="mx-auto max-w-2xl text-lg text-gray-500 md:text-gray-400">
             Browse our extensive collection of electronics across all categories
           </p>
@@ -89,14 +89,14 @@ export default function Categories() {
                 <Link
                   key={category.id}
                   href={`/shop?cat=${category.slug}`}
-                  className="group relative overflow-hidden rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-6 transition-all hover:border-electric/50 hover:shadow-lg hover:shadow-electric/10"
+                  className="group relative overflow-hidden rounded-xl border border-safariborder bg-safarigray p-6 transition-all hover:border-electric/50 hover:shadow-lg hover:shadow-electric/10"
                 >
                   <div className={`absolute inset-0 ${metadata.gradient} opacity-0 transition-opacity group-hover:opacity-100`} />
                   <div className="relative z-10">
                     <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-neon/10 text-neon">
                       <IconComponent className="h-7 w-7" />
                     </div>
-                    <h3 className="mb-2 text-xl font-bold font-display text-gray-900 md:text-white">{category.name}</h3>
+                    <h3 className="mb-2 text-xl font-bold font-display text-white">{category.name}</h3>
                     <p className="mb-4 text-sm text-gray-500 md:text-gray-400 line-clamp-2">{metadata.description}</p>
                     <p className="text-sm font-medium text-neon">{productCount} products</p>
                   </div>

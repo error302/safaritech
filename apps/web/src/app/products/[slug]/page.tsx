@@ -56,13 +56,13 @@ export default function ProductPage({ params }: Props) {
 
   if (isLoading) {
     return (
-      <div className="md:bg-safaridark bg-gray-50 min-h-screen">
+      <div className="bg-safaridark min-h-screen">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="animate-pulse space-y-6">
-            <div className="h-80 md:h-96 bg-gray-200 md:bg-safarigray rounded-xl md:rounded-3xl" />
+            <div className="h-80 md:h-96 bg-safarigray rounded-xl md:rounded-3xl" />
             <div className="space-y-3">
-              <div className="h-7 w-2/3 bg-gray-200 md:bg-safarigray rounded" />
-              <div className="h-5 w-1/3 bg-gray-200 md:bg-safarigray rounded" />
+              <div className="h-7 w-2/3 bg-safarigray rounded" />
+              <div className="h-5 w-1/3 bg-safarigray rounded" />
             </div>
           </div>
         </div>
@@ -72,9 +72,9 @@ export default function ProductPage({ params }: Props) {
 
   if (!product) {
     return (
-      <div className="md:bg-safaridark bg-gray-50 min-h-screen flex items-center justify-center">
+      <div className="bg-safaridark min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="font-display font-bold text-xl md:text-2xl md:text-white text-gray-900 mb-2">
+          <h1 className="font-display font-bold text-xl md:text-2xl text-white mb-2">
             Product Not Found
           </h1>
           <p className="text-gray-500 mb-5">
@@ -136,9 +136,9 @@ const handleAddToCart = () => {
   })();
 
   return (
-    <div className="md:bg-safaridark bg-gray-50 min-h-screen pb-24 md:pb-0">
+    <div className="bg-safaridark min-h-screen pb-24 md:pb-0">
       {/* Breadcrumb */}
-      <div className="md:border-b md:border-safariborder border-b border-gray-100 bg-white md:bg-transparent">
+      <div className="border-b border-safariborder bg-transparent">
         <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center gap-1.5 text-xs text-gray-400">
           <Link href="/" className="hover:text-neon transition-colors">Home</Link>
           <ChevronRight className="w-3 h-3" />
@@ -157,7 +157,7 @@ const handleAddToCart = () => {
           {/* Image Gallery */}
           <div className="md:sticky md:top-24 self-start">
             <div 
-              className="relative aspect-square rounded-2xl md:rounded-3xl overflow-hidden bg-gray-50 md:bg-safarigray border border-gray-100 md:border-safariborder mb-3 cursor-zoom-in"
+              className="relative aspect-square rounded-2xl md:rounded-3xl overflow-hidden bg-safarigray border border-safariborder mb-3 cursor-zoom-in"
               onClick={() => setIsZoomed(!isZoomed)}
               onTouchStart={(e) => {
                 const touch = e.touches[0];
@@ -201,12 +201,12 @@ const handleAddToCart = () => {
                       navigator.share({ title: product.name, url: window.location.href });
                     }
                   }}
-                  className="w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm"
+                  className="w-9 h-9 bg-safarigray/90 backdrop-blur-sm border border-safariborder rounded-full flex items-center justify-center"
                 >
-                  <Share2 className="w-4 h-4 text-gray-700" />
+                  <Share2 className="w-4 h-4 text-gray-300" />
                 </button>
-                <button className="w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm" onClick={(e) => e.stopPropagation()}>
-                  <Heart className="w-4 h-4 text-gray-700" />
+                <button className="w-9 h-9 bg-safarigray/90 backdrop-blur-sm border border-safariborder rounded-full flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                  <Heart className="w-4 h-4 text-gray-300" />
                 </button>
               </div>
             </div>
@@ -221,7 +221,7 @@ const handleAddToCart = () => {
                       "relative w-14 h-14 md:w-16 md:h-16 rounded-xl overflow-hidden border-2 cursor-pointer transition-all shrink-0 " +
                       (i === selectedImage
                         ? "border-neon"
-                        : "border-gray-200 md:border-safariborder hover:border-neon/50")
+                        : "border-safariborder hover:border-neon/50")
                     }
                   >
                     <Image src={img || "/placeholder.jpg"} alt={product.name} fill className="object-cover" />
@@ -252,7 +252,7 @@ const handleAddToCart = () => {
               <p className="text-[10px] md:text-xs text-gray-400 md:text-gray-500 font-semibold tracking-wider uppercase mb-1">
                 {product.category?.name}
               </p>
-              <h1 className="font-display font-black text-2xl md:text-3xl lg:text-4xl md:text-white text-gray-900 leading-tight">
+              <h1 className="font-display font-black text-2xl md:text-3xl lg:text-4xl text-white leading-tight">
                 {product.name}
               </h1>
             </div>
@@ -272,7 +272,7 @@ const handleAddToCart = () => {
                   />
                 ))}
               </div>
-              <span className="text-sm font-semibold md:text-white text-gray-900">
+              <span className="text-sm font-semibold text-white">
                 {avgRating.toFixed(1)}
               </span>
               <span className="text-sm text-gray-400">
@@ -282,7 +282,7 @@ const handleAddToCart = () => {
 
             {/* Price */}
             <div className="flex items-baseline gap-2.5">
-              <span className="font-display font-black text-3xl md:text-4xl md:text-neon text-gray-900">
+              <span className="font-display font-black text-3xl md:text-4xl text-neon">
                 KES {(product.salePrice || product.price).toLocaleString()}
               </span>
               {product.salePrice && product.salePrice < product.price && (
@@ -306,7 +306,7 @@ const handleAddToCart = () => {
             {/* Color Selector */}
             {colors.length > 0 && (
               <div>
-                <p className="text-sm font-medium md:text-white text-gray-900 mb-3">
+                <p className="text-sm font-medium text-white mb-3">
                   Color: <span className="text-gray-400 font-normal">{activeColor}</span>
                 </p>
                 <div className="flex flex-wrap gap-2">
@@ -317,7 +317,7 @@ const handleAddToCart = () => {
                       className={`flex items-center gap-2 px-3 py-2 rounded-xl border-2 transition-all duration-200 ${
                         activeColor === color.name
                           ? "border-neon bg-neon/5 md:bg-neon/10"
-                          : "border-gray-200 md:border-safariborder hover:border-gray-300 md:hover:border-gray-600"
+                          : "border-safariborder hover:border-gray-300 md:hover:border-gray-600"
                       }`}
                     >
                       <span
@@ -338,19 +338,19 @@ const handleAddToCart = () => {
             {/* Quantity Selector */}
             <div className="flex items-center gap-4">
               <span className="text-sm font-medium md:text-white text-gray-700">Qty:</span>
-              <div className="flex items-center border border-gray-200 md:border-safariborder rounded-xl overflow-hidden">
+              <div className="flex items-center border border-safariborder rounded-xl overflow-hidden">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-10 h-10 flex items-center justify-center text-gray-600 md:text-gray-400 hover:bg-gray-50 md:hover:bg-safaridark transition-colors"
+                  className="w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-safaridark transition-colors"
                 >
                   <Minus className="w-4 h-4" />
                 </button>
-                <span className="w-10 h-10 flex items-center justify-center text-sm font-bold md:text-white text-gray-900 border-x border-gray-200 md:border-safariborder">
+                <span className="w-10 h-10 flex items-center justify-center text-sm font-bold text-white border-x border-safariborder">
                   {quantity}
                 </span>
                 <button
                   onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                  className="w-10 h-10 flex items-center justify-center text-gray-600 md:text-gray-400 hover:bg-gray-50 md:hover:bg-safaridark transition-colors"
+                  className="w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-safaridark transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
@@ -389,7 +389,7 @@ const handleAddToCart = () => {
                 return (
                   <div
                     key={item.text}
-                    className="bg-white md:bg-safarigray border border-gray-100 md:border-safariborder rounded-xl p-2.5 md:p-3 text-center"
+                    className="bg-safarigray border border-safariborder rounded-xl p-2.5 md:p-3 text-center"
                   >
                     <Icon className="w-4 h-4 md:w-5 md:h-5 text-green-600 md:text-neon/60 mx-auto mb-1" />
                     <div className="text-[10px] md:text-xs text-gray-500 font-medium">
@@ -403,10 +403,10 @@ const handleAddToCart = () => {
             {/* Specs table */}
             {Object.keys(specs).length > 0 && (
               <div className="pt-2">
-                <h3 className="text-sm font-bold md:text-white text-gray-900 mb-3">Specifications</h3>
-                <div className="bg-white md:bg-safarigray border border-gray-100 md:border-safariborder rounded-xl overflow-hidden">
+                <h3 className="text-sm font-bold text-white mb-3">Specifications</h3>
+                <div className="bg-safarigray border border-safariborder rounded-xl overflow-hidden">
                   {Object.entries(specs).map(([key, value], i) => (
-                    <div key={key} className={`flex px-4 py-2.5 text-sm ${i % 2 === 0 ? 'bg-gray-50/50 md:bg-safaridark/30' : ''}`}>
+                    <div key={key} className={`flex px-4 py-2.5 text-sm ${i % 2 === 0 ? "bg-safaridark/30" : ""}`}>
                       <span className="w-1/3 text-gray-500 font-medium text-xs">{key}</span>
                       <span className="flex-1 md:text-gray-300 text-gray-700 text-xs">{String(value)}</span>
                     </div>
@@ -421,7 +421,7 @@ const handleAddToCart = () => {
         {related.length > 0 && (
           <section className="mt-12 md:mt-20">
             <div className="flex items-end justify-between mb-5 md:mb-8">
-              <h2 className="font-display font-bold text-lg md:text-2xl md:text-white text-gray-900">
+              <h2 className="font-display font-bold text-lg md:text-2xl text-white">
                 You May Also Like
               </h2>
               <Link
@@ -441,12 +441,12 @@ const handleAddToCart = () => {
       </div>
 
       {/* Sticky bottom CTA — mobile only */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-gray-100 px-4 py-3 pb-safe">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-safaridark/95 backdrop-blur-lg border-t border-safariborder px-4 py-3 pb-safe">
         <div className="flex gap-3">
           <button
             onClick={handleAddToCart}
             disabled={addToCart.isPending || product.stock === 0}
-            className="flex-1 bg-gray-900 hover:bg-gray-800 text-white font-display font-bold text-sm py-3.5 rounded-xl transition-all active:scale-[0.97] disabled:opacity-40 flex items-center justify-center gap-2"
+            className="flex-1 bg-neon hover:bg-neon-dim text-black font-display font-bold text-sm py-3.5 rounded-xl transition-all active:scale-[0.97] disabled:opacity-40 flex items-center justify-center gap-2"
           >
             <ShoppingCart className="w-4 h-4" />
             {addedToCart ? "Added!" : addToCart.isPending ? "Adding..." : "Add to Cart"}

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: "Safaritech",
   },
   openGraph: {
@@ -26,17 +26,16 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#00FF9F",
+  themeColor: "#0A0A0A",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-    <body className="font-body antialiased md:bg-safaridark md:text-white bg-gray-50 text-gray-900">
+    <body className="font-body antialiased bg-safaridark text-white">
       <Providers>
         <Navbar />
         <main className="min-h-screen pb-20 md:pb-0">

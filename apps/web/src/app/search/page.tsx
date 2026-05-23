@@ -71,10 +71,10 @@ function SearchContent() {
   }
 
   return (
-    <div className="md:bg-safaridark bg-gray-50 min-h-screen py-8">
+    <div className="bg-safaridark min-h-screen py-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="mb-4 text-3xl font-bold font-display text-gray-900 md:text-white">Search</h1>
+          <h1 className="mb-4 text-3xl font-bold font-display text-white">Search</h1>
 
           <form onSubmit={handleSearch} className="relative max-w-2xl">
             <SearchIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500 md:text-gray-400" />
@@ -83,7 +83,7 @@ function SearchContent() {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search for products..."
-              className="w-full rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray py-3 pl-12 pr-12 text-gray-900 md:text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-electric focus:outline-none"
+              className="w-full rounded-xl border border-safariborder bg-safarigray py-3 pl-12 pr-12 text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-electric focus:outline-none"
             />
             {searchInput && (
               <button
@@ -100,10 +100,10 @@ function SearchContent() {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Filters Sidebar */}
           <aside className={`lg:w-64 ${showFilters ? 'block' : 'hidden lg:block'}`}>
-            <div className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-4 space-y-6">
+            <div className="rounded-xl border border-safariborder bg-safarigray p-4 space-y-6">
               {categories && categories.length > 0 && (
                 <div>
-                  <h3 className="mb-3 font-semibold text-gray-900 md:text-white">Category</h3>
+                  <h3 className="mb-3 font-semibold text-white">Category</h3>
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -113,7 +113,7 @@ function SearchContent() {
                         onChange={() => setSelectedCategory('')}
                         className="text-neon focus:ring-neon"
                       />
-                      <span className="text-sm text-gray-900 md:text-white">All Categories</span>
+                      <span className="text-sm text-white">All Categories</span>
                     </label>
                     {categories.map((cat) => (
                       <label key={cat.id} className="flex items-center gap-2 cursor-pointer">
@@ -124,7 +124,7 @@ function SearchContent() {
                           onChange={() => handleCategoryChange(cat.slug)}
                           className="text-neon focus:ring-neon"
                         />
-                        <span className="text-sm text-gray-900 md:text-white">{cat.name}</span>
+                        <span className="text-sm text-white">{cat.name}</span>
                       </label>
                     ))}
                   </div>
@@ -132,7 +132,7 @@ function SearchContent() {
               )}
 
               <div>
-                <h3 className="mb-3 font-semibold text-gray-900 md:text-white">Price Range</h3>
+                <h3 className="mb-3 font-semibold text-white">Price Range</h3>
                 <div className="space-y-2">
                   {priceRanges.map((range, idx) => (
                     <label key={range.label} className="flex items-center gap-2 cursor-pointer">
@@ -143,7 +143,7 @@ function SearchContent() {
                         onChange={() => setPriceRange(idx)}
                         className="text-neon focus:ring-neon"
                       />
-                      <span className="text-sm text-gray-900 md:text-white">{range.label}</span>
+                      <span className="text-sm text-white">{range.label}</span>
                     </label>
                   ))}
                 </div>
@@ -170,7 +170,7 @@ function SearchContent() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="rounded-lg border border-gray-200 md:border-safariborder bg-white md:bg-safarigray px-3 py-2 text-sm text-gray-900 md:text-white focus:border-electric focus:outline-none"
+                  className="rounded-lg border border-safariborder bg-safarigray px-3 py-2 text-sm text-white focus:border-electric focus:outline-none"
                 >
                   <option value="relevance">Relevance</option>
                   <option value="price-low">Price: Low to High</option>
@@ -180,12 +180,12 @@ function SearchContent() {
 
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className="lg:hidden p-2 rounded-lg border border-gray-200 md:border-safariborder text-gray-900 md:text-white"
+                  className="lg:hidden p-2 rounded-lg border border-safariborder text-white"
                 >
                   <Filter className="h-5 w-5" />
                 </button>
 
-                <div className="hidden sm:flex gap-1 rounded-lg border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-1">
+                <div className="hidden sm:flex gap-1 rounded-lg border border-safariborder bg-safarigray p-1">
                   <button
                     onClick={() => setViewMode('grid')}
                     className={`p-2 ${viewMode === 'grid' ? 'text-neon' : 'text-gray-500 md:text-gray-400'}`}
@@ -255,7 +255,7 @@ function SearchContent() {
 export default function Search() {
   return (
     <Suspense fallback={
-      <div className="md:bg-safaridark bg-gray-50 min-h-screen py-8 flex items-center justify-center">
+      <div className="bg-safaridark min-h-screen py-8 flex items-center justify-center">
         <Loader2 className="h-8 w-8 text-neon animate-spin" />
       </div>
     }>

@@ -14,20 +14,20 @@ export default function BlogPost({ params }: BlogPostPageProps) {
 
   if (isLoading) {
     return (
-      <div className="md:bg-safaridark bg-gray-50 min-h-screen py-8">
+      <div className="bg-safaridark min-h-screen py-8">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <div className="h-4 w-32 bg-gray-200 md:bg-safarigray rounded animate-pulse mb-6" />
+          <div className="h-4 w-32 bg-safarigray rounded animate-pulse mb-6" />
           <div className="space-y-4">
-            <div className="h-8 w-3/4 bg-gray-200 md:bg-safarigray rounded animate-pulse" />
+            <div className="h-8 w-3/4 bg-safarigray rounded animate-pulse" />
             <div className="flex gap-4">
-              <div className="h-4 w-32 bg-gray-200 md:bg-safarigray rounded animate-pulse" />
-              <div className="h-4 w-32 bg-gray-200 md:bg-safarigray rounded animate-pulse" />
+              <div className="h-4 w-32 bg-safarigray rounded animate-pulse" />
+              <div className="h-4 w-32 bg-safarigray rounded animate-pulse" />
             </div>
-            <div className="aspect-video bg-gray-200 md:bg-safarigray rounded-xl animate-pulse" />
+            <div className="aspect-video bg-safarigray rounded-xl animate-pulse" />
             <div className="space-y-3">
-              <div className="h-4 w-full bg-gray-200 md:bg-safarigray rounded animate-pulse" />
-              <div className="h-4 w-full bg-gray-200 md:bg-safarigray rounded animate-pulse" />
-              <div className="h-4 w-2/3 bg-gray-200 md:bg-safarigray rounded animate-pulse" />
+              <div className="h-4 w-full bg-safarigray rounded animate-pulse" />
+              <div className="h-4 w-full bg-safarigray rounded animate-pulse" />
+              <div className="h-4 w-2/3 bg-safarigray rounded animate-pulse" />
             </div>
           </div>
         </div>
@@ -37,14 +37,14 @@ export default function BlogPost({ params }: BlogPostPageProps) {
 
   if (error || !post) {
     return (
-      <div className="md:bg-safaridark bg-gray-50 min-h-screen py-8">
+      <div className="bg-safaridark min-h-screen py-8">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <Link href="/blog" className="mb-6 inline-flex items-center text-sm text-gray-500 md:text-gray-400 hover:text-neon">
             <ChevronLeft className="mr-2 h-4 w-4" />
             Back to Blog
           </Link>
           <div className="text-center py-20">
-            <h1 className="text-2xl font-bold text-gray-900 md:text-white mb-4">
+            <h1 className="text-2xl font-bold text-white mb-4">
               {error ? 'Error Loading Post' : 'Post Not Found'}
             </h1>
             <p className="text-gray-500 md:text-gray-400 mb-6">
@@ -63,7 +63,7 @@ export default function BlogPost({ params }: BlogPostPageProps) {
   }
 
   return (
-    <div className="md:bg-safaridark bg-gray-50 min-h-screen py-8">
+    <div className="bg-safaridark min-h-screen py-8">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <Link href="/blog" className="mb-6 inline-flex items-center text-sm text-gray-500 md:text-gray-400 hover:text-neon">
           <ChevronLeft className="mr-2 h-4 w-4" />
@@ -75,7 +75,7 @@ export default function BlogPost({ params }: BlogPostPageProps) {
 <span className="mb-4 inline-block text-sm font-medium text-neon">
 {post.seoDesc || 'Tech'}
 </span>
-            <h1 className="mb-4 text-4xl font-bold font-display leading-tight text-gray-900 md:text-white">{post.title}</h1>
+            <h1 className="mb-4 text-4xl font-bold font-display leading-tight text-white">{post.title}</h1>
             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 md:text-gray-400">
               <div className="flex items-center gap-1">
                 <User className="h-4 w-4" />
@@ -97,12 +97,12 @@ export default function BlogPost({ params }: BlogPostPageProps) {
           </div>
 
           <div
-            className="prose prose-invert max-w-none text-gray-600 md:text-gray-300"
+            className="prose prose-invert max-w-none text-gray-300"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
 
-          <div className="mt-12 border-t border-gray-200 md:border-safariborder pt-8">
-            <h3 className="mb-4 text-lg font-semibold text-gray-900 md:text-white">Share this article</h3>
+          <div className="mt-12 border-t border-safariborder pt-8">
+            <h3 className="mb-4 text-lg font-semibold text-white">Share this article</h3>
             <div className="flex gap-4">
               <a href="#" className="flex items-center gap-2 text-gray-500 md:text-gray-400 hover:text-neon">
                 <Facebook className="h-5 w-5" />
@@ -120,8 +120,8 @@ export default function BlogPost({ params }: BlogPostPageProps) {
           </div>
         </article>
 
-        <div className="mt-12 rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-8 text-center">
-          <h3 className="mb-2 text-xl font-semibold text-gray-900 md:text-white">Want to learn more?</h3>
+        <div className="mt-12 rounded-xl border border-safariborder bg-safarigray p-8 text-center">
+          <h3 className="mb-2 text-xl font-semibold text-white">Want to learn more?</h3>
           <p className="text-gray-500 md:text-gray-400 mb-6">Browse our full collection of tech articles and buying guides.</p>
           <Link href="/blog" className="bg-neon hover:bg-neon-dim text-black font-bold px-5 py-2.5 rounded-lg text-sm transition-all">
             View All Articles

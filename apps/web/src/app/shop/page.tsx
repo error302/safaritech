@@ -122,8 +122,8 @@ export default function ShopPage() {
   const FilterPanel = () => (
     <aside className="w-full space-y-4">
       {/* Search */}
-      <div className="bg-white md:bg-safaridark border border-gray-100 md:border-safariborder rounded-2xl p-5 shadow-sm md:shadow-none">
-        <h3 className="font-bold font-display text-gray-900 md:text-white mb-3">Search</h3>
+      <div className="bg-safaridark border border-safariborder rounded-2xl p-5 shadow-sm md:shadow-none">
+        <h3 className="font-bold font-display text-white mb-3">Search</h3>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
@@ -131,14 +131,14 @@ export default function ShopPage() {
             placeholder="Search products..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safarigray text-sm text-gray-900 md:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neon/50 transition"
+            className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-safariborder bg-safarigray text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neon/50 transition"
           />
         </div>
       </div>
 
       {/* Price Range */}
-      <div className="bg-white md:bg-safaridark border border-gray-100 md:border-safariborder rounded-2xl p-5 shadow-sm md:shadow-none">
-        <h3 className="font-bold font-display text-gray-900 md:text-white mb-4">Price Range</h3>
+      <div className="bg-safaridark border border-safariborder rounded-2xl p-5 shadow-sm md:shadow-none">
+        <h3 className="font-bold font-display text-white mb-4">Price Range</h3>
         <input
           type="range"
           min={5000}
@@ -155,8 +155,8 @@ export default function ShopPage() {
       </div>
 
       {/* Brands */}
-      <div className="bg-white md:bg-safaridark border border-gray-100 md:border-safariborder rounded-2xl p-5 shadow-sm md:shadow-none">
-        <h3 className="font-bold font-display text-gray-900 md:text-white mb-4">Brand</h3>
+      <div className="bg-safaridark border border-safariborder rounded-2xl p-5 shadow-sm md:shadow-none">
+        <h3 className="font-bold font-display text-white mb-4">Brand</h3>
         <div className="space-y-2.5">
           {allBrands.map((brand) => (
             <label key={brand} className="flex items-center gap-3 cursor-pointer group">
@@ -170,7 +170,7 @@ export default function ShopPage() {
                 className="w-2 h-2 rounded-full shrink-0"
                 style={{ backgroundColor: brandColors[brand] || "#888" }}
               />
-              <span className="text-sm font-medium text-gray-600 md:text-gray-300 group-hover:text-gray-900 md:group-hover:text-white transition-colors flex-1">
+              <span className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors flex-1">
                 {brand}
               </span>
               {selectedBrands.includes(brand) && (
@@ -182,8 +182,8 @@ export default function ShopPage() {
       </div>
 
       {/* Availability */}
-      <div className="bg-white md:bg-safaridark border border-gray-100 md:border-safariborder rounded-2xl p-5 shadow-sm md:shadow-none">
-        <h3 className="font-bold font-display text-gray-900 md:text-white mb-4">Availability</h3>
+      <div className="bg-safaridark border border-safariborder rounded-2xl p-5 shadow-sm md:shadow-none">
+        <h3 className="font-bold font-display text-white mb-4">Availability</h3>
         <label className="flex items-center gap-3 cursor-pointer group">
           <input
             type="checkbox"
@@ -191,7 +191,7 @@ export default function ShopPage() {
             onChange={() => setInStockOnly(!inStockOnly)}
             className="w-4 h-4 rounded border-gray-300 md:border-gray-600 accent-neon"
           />
-          <span className="text-sm font-medium text-gray-600 md:text-gray-300 group-hover:text-gray-900 md:group-hover:text-white transition-colors">
+          <span className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">
             In Stock Only
           </span>
         </label>
@@ -199,7 +199,7 @@ export default function ShopPage() {
 
       <button
         onClick={resetFilters}
-        className="w-full bg-gray-100 md:bg-safarigray hover:bg-red-50 md:hover:bg-red-900/20 hover:text-red-600 md:hover:text-red-400 text-gray-900 md:text-white text-sm font-bold py-3.5 rounded-xl transition-all border border-transparent hover:border-red-200 md:hover:border-red-900"
+        className="w-full bg-safarigray hover:bg-red-50 md:hover:bg-red-900/20 hover:text-red-600 md:hover:text-red-400 text-white text-sm font-bold py-3.5 rounded-xl transition-all border border-transparent hover:border-red-900"
       >
         Reset All Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
       </button>
@@ -209,7 +209,7 @@ export default function ShopPage() {
   const selectedCatLabel = staticCategories.find((c) => c.id === selectedCat)?.label;
 
   return (
-    <div className="min-h-screen bg-gray-50 md:bg-[#0A0A0A] pb-24 md:pb-12">
+    <div className="min-h-screen bg-safaridark pb-24 md:pb-12">
       {/* Mobile filter overlay */}
       {sidebarOpen && (
         <div
@@ -217,11 +217,11 @@ export default function ShopPage() {
           onClick={() => setSidebarOpen(false)}
         >
           <div
-            className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl max-h-[90vh] overflow-y-auto"
+            className="absolute bottom-0 left-0 right-0 bg-safarigray border-t border-safariborder rounded-t-3xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="sticky top-0 bg-white/95 backdrop-blur-md px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-              <h3 className="font-bold font-display text-xl text-gray-900">
+            <div className="sticky top-0 bg-safarigray/95 backdrop-blur-md px-5 py-4 border-b border-safariborder flex items-center justify-between">
+              <h3 className="font-bold font-display text-xl text-white">
                 Filters {activeFilterCount > 0 && <span className="text-neon">({activeFilterCount})</span>}
               </h3>
               <button
@@ -239,11 +239,11 @@ export default function ShopPage() {
       )}
 
       {/* Header */}
-      <div className="bg-white md:bg-safaridark md:border-b md:border-safariborder border-b border-gray-100 sticky md:static top-14 z-30">
+      <div className="bg-safarigray border-b border-safariborder sticky md:static top-14 z-30">
         <div className="max-w-7xl mx-auto px-4 py-4 md:py-6">
           <div className="flex flex-col md:flex-row gap-4 items-start md:items-end justify-between">
             <div>
-              <h1 className="font-display font-black text-2xl md:text-4xl text-gray-900 md:text-white capitalize">
+              <h1 className="font-display font-black text-2xl md:text-4xl text-white capitalize">
                 {selectedBrands.length === 1
                   ? selectedBrands[0]
                   : selectedCat === "all"
@@ -257,7 +257,7 @@ export default function ShopPage() {
             </div>
             <div className="flex items-center gap-3 w-full md:w-auto">
               <button
-                className="md:hidden flex-1 flex items-center justify-center gap-2 bg-gray-100 text-gray-900 text-sm font-bold py-2.5 rounded-xl relative"
+                className="md:hidden flex-1 flex items-center justify-center gap-2 bg-safaridark border border-safariborder text-white text-sm font-bold py-2.5 rounded-xl relative"
                 onClick={() => setSidebarOpen(true)}
               >
                 <SlidersHorizontal className="w-4 h-4" />
@@ -271,7 +271,7 @@ export default function ShopPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="flex-1 md:flex-none bg-gray-100 md:bg-safarigray md:border border-safariborder rounded-xl px-4 py-2.5 text-sm font-bold text-gray-900 md:text-white focus:outline-none focus:ring-2 focus:ring-neon/50 cursor-pointer"
+                className="flex-1 md:flex-none bg-safaridark border border-safariborder rounded-xl px-4 py-2.5 text-sm font-bold text-white focus:outline-none focus:ring-2 focus:ring-neon/50 cursor-pointer"
               >
                 <option value="newest">Newest First</option>
                 <option value="hot">🔥 Hot Deals</option>
@@ -287,8 +287,8 @@ export default function ShopPage() {
               onClick={() => setSelectedCat("all")}
               className={`shrink-0 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                 selectedCat === "all"
-                  ? "bg-gray-900 md:bg-white text-white md:text-black shadow-md"
-                  : "bg-gray-100 md:bg-safarigray text-gray-600 md:text-gray-300 hover:bg-gray-200 md:hover:bg-safariborder"
+                  ? "bg-white text-black shadow-md"
+                  : "bg-safarigray text-gray-300 hover:bg-gray-200 md:hover:bg-safariborder"
               }`}
             >
               All
@@ -301,8 +301,8 @@ export default function ShopPage() {
                   onClick={() => setSelectedCat(cat.id)}
                   className={`shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                     selectedCat === cat.id
-                      ? "bg-gray-900 md:bg-white text-white md:text-black shadow-md"
-                      : "bg-gray-100 md:bg-safarigray text-gray-600 md:text-gray-300 hover:bg-gray-200 md:hover:bg-safariborder"
+                      ? "bg-white text-black shadow-md"
+                      : "bg-safarigray text-gray-300 hover:bg-gray-200 md:hover:bg-safariborder"
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -352,15 +352,15 @@ export default function ShopPage() {
             {isLoading ? (
               <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
                 {Array(12).fill(0).map((_, i) => (
-                  <div key={i} className="aspect-[3/4] rounded-2xl bg-gray-100 md:bg-safarigray skeleton-shimmer" />
+                  <div key={i} className="aspect-[3/4] rounded-2xl bg-safarigray skeleton-shimmer" />
                 ))}
               </div>
             ) : filtered.length === 0 ? (
-              <div className="text-center py-20 bg-white md:bg-safarigray/20 border border-gray-100 md:border-safariborder rounded-3xl">
-                <div className="w-20 h-20 bg-gray-50 md:bg-safaridark rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="text-center py-20 bg-safarigray/20 border border-safariborder rounded-3xl">
+                <div className="w-20 h-20 bg-safaridark rounded-full flex items-center justify-center mx-auto mb-6">
                   <Search className="w-8 h-8 text-gray-400" />
                 </div>
-                <div className="font-display font-bold text-xl md:text-2xl text-gray-900 md:text-white mb-2">
+                <div className="font-display font-bold text-xl md:text-2xl text-white mb-2">
                   No products found
                 </div>
                 <p className="text-gray-500 text-sm mb-6">Try adjusting your filters or search terms</p>

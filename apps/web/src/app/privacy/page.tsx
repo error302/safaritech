@@ -1,15 +1,15 @@
 export default function PrivacyPolicy() {
   return (
-    <div className="md:bg-safaridark bg-gray-50 min-h-screen py-12">
+    <div className="bg-safaridark min-h-screen py-12">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h1 className="mb-4 text-4xl font-bold font-display text-gray-900 md:text-white">Privacy Policy</h1>
+          <h1 className="mb-4 text-4xl font-bold font-display text-white">Privacy Policy</h1>
           <p className="text-gray-500 md:text-gray-400">Last Updated: April 29, 2026</p>
         </div>
 
-        <div className="space-y-8 text-gray-600 md:text-gray-400">
-          <section className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-8">
-            <h2 className="mb-4 text-2xl font-semibold text-gray-900 md:text-white">Introduction</h2>
+        <div className="space-y-8 text-gray-400">
+          <section className="rounded-xl border border-safariborder bg-safarigray p-8">
+            <h2 className="mb-4 text-2xl font-semibold text-white">Introduction</h2>
             <p className="mb-4">
               Safaritech ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and protect your personal information when you use our website, mobile applications, and related services (collectively, "Services").
             </p>
@@ -18,10 +18,10 @@ export default function PrivacyPolicy() {
             </p>
           </section>
 
-          <section className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-8">
-            <h2 className="mb-4 text-2xl font-semibold text-gray-900 md:text-white">Information We Collect</h2>
+          <section className="rounded-xl border border-safariborder bg-safarigray p-8">
+            <h2 className="mb-4 text-2xl font-semibold text-white">Information We Collect</h2>
 
-            <h3 className="mb-3 text-lg font-semibold text-gray-900 md:text-white">Personal Information</h3>
+            <h3 className="mb-3 text-lg font-semibold text-white">Personal Information</h3>
             <p className="mb-4">When you register, place an order, or contact us, we may collect:</p>
             <ul className="list-disc pl-6 mb-6 space-y-2">
               <li>Name and contact details (email, phone number, address)</li>
@@ -30,7 +30,7 @@ export default function PrivacyPolicy() {
               <li>Communication records with our support team</li>
             </ul>
 
-            <h3 className="mb-3 text-lg font-semibold text-gray-900 md:text-white">Usage Information</h3>
+            <h3 className="mb-3 text-lg font-semibold text-white">Usage Information</h3>
             <p className="mb-4">We automatically collect:</p>
             <ul className="list-disc pl-6 mb-6 space-y-2">
               <li>Device information (browser type, IP address, operating system)</li>
@@ -39,7 +39,7 @@ export default function PrivacyPolicy() {
               <li>Cookies and similar tracking technologies</li>
             </ul>
 
-            <h3 className="mb-3 text-lg font-semibold text-gray-900 md:text-white">Order Information</h3>
+            <h3 className="mb-3 text-lg font-semibold text-white">Order Information</h3>
             <ul className="list-disc pl-6 space-y-2">
               <li>Product purchases and order history</li>
               <li>Delivery addresses and preferences</li>
@@ -47,12 +47,12 @@ export default function PrivacyPolicy() {
             </ul>
           </section>
 
-          <section className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-8">
-            <h2 className="mb-4 text-2xl font-semibold text-gray-900 md:text-white">How We Use Your Information</h2>
+          <section className="rounded-xl border border-safariborder bg-safarigray p-8">
+            <h2 className="mb-4 text-2xl font-semibold text-white">How We Use Your Information</h2>
 
             <div className="space-y-4">
               <div>
-                <h3 className="mb-2 text-lg font-semibold text-gray-900 md:text-white">To Process Orders</h3>
+                <h3 className="mb-2 text-lg font-semibold text-white">To Process Orders</h3>
                 <ul className="list-disc pl-6">
                   <li>Process payments and fulfill orders</li>
                   <li>Arrange shipping and delivery</li>
@@ -61,7 +61,7 @@ export default function PrivacyPolicy() {
               </div>
 
               <div>
-                <h3 className="mb-2 text-lg font-semibold text-gray-900 md:text-white">To Improve Our Services</h3>
+                <h3 className="mb-2 text-lg font-semibold text-white">To Improve Our Services</h3>
                 <ul className="list-disc pl-6">
                   <li>Analyze usage patterns and preferences</li>
                   <li>Personalize your shopping experience</li>
@@ -70,7 +70,7 @@ export default function PrivacyPolicy() {
               </div>
 
               <div>
-                <h3 className="mb-2 text-lg font-semibold text-gray-900 md:text-white">To Communicate With You</h3>
+                <h3 className="mb-2 text-lg font-semibold text-white">To Communicate With You</h3>
                 <ul className="list-disc pl-6">
                   <li>Send order confirmations and updates</li>
                   <li>Respond to inquiries and support requests</li>
@@ -79,7 +79,7 @@ export default function PrivacyPolicy() {
               </div>
 
               <div>
-                <h3 className="mb-2 text-lg font-semibold text-gray-900 md:text-white">For Security & Compliance</h3>
+                <h3 className="mb-2 text-lg font-semibold text-white">For Security & Compliance</h3>
                 <ul className="list-disc pl-6">
                   <li>Prevent fraud and protect against unauthorized access</li>
                   <li>Comply with legal obligations</li>
@@ -89,8 +89,8 @@ export default function PrivacyPolicy() {
             </div>
           </section>
 
-          <section className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-8">
-            <h2 className="mb-4 text-2xl font-semibold text-gray-900 md:text-white">Information Sharing</h2>
+          <section className="rounded-xl border border-safariborder bg-safarigray p-8">
+            <h2 className="mb-4 text-2xl font-semibold text-white">Information Sharing</h2>
             <p className="mb-4">
               We do not sell your personal information. We may share your information with:
             </p>
@@ -102,8 +102,8 @@ export default function PrivacyPolicy() {
             </ul>
           </section>
 
-          <section className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-8">
-            <h2 className="mb-4 text-2xl font-semibold text-gray-900 md:text-white">Data Security</h2>
+          <section className="rounded-xl border border-safariborder bg-safarigray p-8">
+            <h2 className="mb-4 text-2xl font-semibold text-white">Data Security</h2>
             <p className="mb-4">
               We implement appropriate security measures to protect your personal information:
             </p>
@@ -119,8 +119,8 @@ export default function PrivacyPolicy() {
             </p>
           </section>
 
-          <section className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-8">
-            <h2 className="mb-4 text-2xl font-semibold text-gray-900 md:text-white">Your Rights</h2>
+          <section className="rounded-xl border border-safariborder bg-safarigray p-8">
+            <h2 className="mb-4 text-2xl font-semibold text-white">Your Rights</h2>
             <p className="mb-4">You have the following rights regarding your personal information:</p>
             <ul className="list-disc pl-6 space-y-2">
               <li><strong>Access:</strong> Request a copy of your personal data</li>
@@ -135,8 +135,8 @@ export default function PrivacyPolicy() {
             </p>
           </section>
 
-          <section className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-8">
-            <h2 className="mb-4 text-2xl font-semibold text-gray-900 md:text-white">Cookies & Tracking</h2>
+          <section className="rounded-xl border border-safariborder bg-safarigray p-8">
+            <h2 className="mb-4 text-2xl font-semibold text-white">Cookies & Tracking</h2>
             <p className="mb-4">
               We use cookies and similar technologies to:
             </p>
@@ -151,8 +151,8 @@ export default function PrivacyPolicy() {
             </p>
           </section>
 
-          <section className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-8">
-            <h2 className="mb-4 text-2xl font-semibold text-gray-900 md:text-white">Data Retention</h2>
+          <section className="rounded-xl border border-safariborder bg-safarigray p-8">
+            <h2 className="mb-4 text-2xl font-semibold text-white">Data Retention</h2>
             <p className="mb-4">
               We retain your personal information for as long as necessary to:
             </p>
@@ -166,8 +166,8 @@ export default function PrivacyPolicy() {
             </p>
           </section>
 
-          <section className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-8">
-            <h2 className="mb-4 text-2xl font-semibold text-gray-900 md:text-white">Changes to This Policy</h2>
+          <section className="rounded-xl border border-safariborder bg-safarigray p-8">
+            <h2 className="mb-4 text-2xl font-semibold text-white">Changes to This Policy</h2>
             <p className="mb-4">
               We may update this Privacy Policy from time to time. We will notify you of material changes by:
             </p>
@@ -181,8 +181,8 @@ export default function PrivacyPolicy() {
             </p>
           </section>
 
-          <section className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-8">
-            <h2 className="mb-4 text-2xl font-semibold text-gray-900 md:text-white">Contact Us</h2>
+          <section className="rounded-xl border border-safariborder bg-safarigray p-8">
+            <h2 className="mb-4 text-2xl font-semibold text-white">Contact Us</h2>
             <p className="mb-4">
               If you have questions about this Privacy Policy or our data practices, please contact us:
             </p>

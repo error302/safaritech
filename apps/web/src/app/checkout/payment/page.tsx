@@ -57,19 +57,19 @@ export default function PaymentPage() {
   }
 
   return (
-    <div className="md:bg-safaridark bg-gray-50 min-h-screen py-16 flex items-center justify-center">
+    <div className="bg-safaridark min-h-screen py-16 flex items-center justify-center">
       <div className="mx-auto max-w-md px-4">
         <div className="text-center mb-8">
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-100 md:bg-green-900/20">
             <Smartphone className="h-10 w-10 text-green-600 md:text-green-400" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 md:text-white mb-2">Complete Payment</h1>
+          <h1 className="text-2xl font-bold text-white mb-2">Complete Payment</h1>
           <p className="text-gray-500 md:text-gray-400">
             Check your phone for the M-Pesa STK push notification
           </p>
         </div>
 
-        <div className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-6 mb-6">
+        <div className="rounded-xl border border-safariborder bg-safarigray p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
             <span className="text-gray-500 md:text-gray-400">Order ID</span>
             <span className="font-mono text-sm font-bold text-neon">{orderId}</span>

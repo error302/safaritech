@@ -6,6 +6,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: '**',
       },
+      {
+        protocol: 'https',
+        hostname: 'cdn.simpleicons.org',
+      },
     ],
   },
   async headers() {

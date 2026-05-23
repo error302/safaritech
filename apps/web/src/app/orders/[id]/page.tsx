@@ -38,7 +38,7 @@ export default function OrderDetail() {
 
   if (isLoading) {
     return (
-      <div className="md:bg-safaridark bg-gray-50 min-h-screen py-6 md:py-8">
+      <div className="bg-safaridark min-h-screen py-6 md:py-8">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center py-24">
           <Loader2 className="mx-auto h-12 w-12 text-neon animate-spin mb-4" />
           <p className="text-gray-500 md:text-gray-400">Loading order details...</p>
@@ -49,7 +49,7 @@ export default function OrderDetail() {
 
   if (error || !order) {
     return (
-      <div className="md:bg-safaridark bg-gray-50 min-h-screen py-6 md:py-8">
+      <div className="bg-safaridark min-h-screen py-6 md:py-8">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <Link
             href="/orders"
@@ -58,9 +58,9 @@ export default function OrderDetail() {
             <ChevronLeft className="mr-1 h-4 w-4" />
             Back to Orders
           </Link>
-          <div className="bg-white md:bg-safarigray border border-gray-200 md:border-safariborder rounded-xl p-8 md:p-12 text-center">
+          <div className="bg-safarigray border border-safariborder rounded-xl p-8 md:p-12 text-center">
             <Package className="mx-auto h-12 w-12 text-gray-300 md:text-gray-600 mb-4" />
-            <h2 className="mb-2 text-lg md:text-xl font-semibold text-gray-900 md:text-white">Order Not Found</h2>
+            <h2 className="mb-2 text-lg md:text-xl font-semibold text-white">Order Not Found</h2>
             <p className="text-sm text-gray-500 md:text-gray-400">
               This order could not be found or you do not have permission to view it.
             </p>
@@ -74,7 +74,7 @@ export default function OrderDetail() {
   const StatusIcon = status.icon;
 
   return (
-    <div className="md:bg-safaridark bg-gray-50 min-h-screen py-6 md:py-8">
+    <div className="bg-safaridark min-h-screen py-6 md:py-8">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <Link
           href="/orders"
@@ -86,7 +86,7 @@ export default function OrderDetail() {
 
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="font-display font-bold text-2xl md:text-3xl text-gray-900 md:text-white">
+            <h1 className="font-display font-bold text-2xl md:text-3xl text-white">
               Order #{order.id.slice(0, 8)}
             </h1>
             <p className="text-sm text-gray-500 md:text-gray-400 mt-1">
@@ -100,19 +100,19 @@ export default function OrderDetail() {
         </div>
 
         <div className="grid gap-6">
-          <div className="bg-white md:bg-safarigray border border-gray-200 md:border-safariborder rounded-xl p-6">
-            <h2 className="font-semibold text-gray-900 md:text-white mb-4">Items</h2>
+          <div className="bg-safarigray border border-safariborder rounded-xl p-6">
+            <h2 className="font-semibold text-white mb-4">Items</h2>
             <ul className="space-y-4">
               {order.items.map((item) => (
                 <li
                   key={item.id}
-                  className="flex justify-between items-start gap-4 border-b border-gray-100 md:border-safariborder pb-4 last:border-0 last:pb-0"
+                  className="flex justify-between items-start gap-4 border-b border-safariborder pb-4 last:border-0 last:pb-0"
                 >
                   <div>
-                    <p className="font-medium text-gray-900 md:text-white">{item.product.name}</p>
+                    <p className="font-medium text-white">{item.product.name}</p>
                     <p className="text-sm text-gray-500 md:text-gray-400">Qty: {item.quantity}</p>
                   </div>
-                  <p className="font-semibold text-gray-900 md:text-white shrink-0">
+                  <p className="font-semibold text-white shrink-0">
                     {formatPrice(item.unitPrice * item.quantity)}
                   </p>
                 </li>
@@ -121,12 +121,12 @@ export default function OrderDetail() {
           </div>
 
           {order.shippingAddress && (
-            <div className="bg-white md:bg-safarigray border border-gray-200 md:border-safariborder rounded-xl p-6">
-              <h2 className="font-semibold text-gray-900 md:text-white mb-4 flex items-center gap-2">
+            <div className="bg-safarigray border border-safariborder rounded-xl p-6">
+              <h2 className="font-semibold text-white mb-4 flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-neon" />
                 Shipping Address
               </h2>
-              <p className="text-gray-600 md:text-gray-400">
+              <p className="text-gray-400">
                 {order.shippingAddress.line1}
                 <br />
                 {order.shippingAddress.city}, {order.shippingAddress.state}
@@ -142,16 +142,16 @@ export default function OrderDetail() {
             </div>
           )}
 
-          <div className="bg-white md:bg-safarigray border border-gray-200 md:border-safariborder rounded-xl p-6">
-            <h2 className="font-semibold text-gray-900 md:text-white mb-4">Summary</h2>
+          <div className="bg-safarigray border border-safariborder rounded-xl p-6">
+            <h2 className="font-semibold text-white mb-4">Summary</h2>
             <dl className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <dt className="text-gray-500 md:text-gray-400">Subtotal</dt>
-                <dd className="text-gray-900 md:text-white">{formatPrice(order.subtotal)}</dd>
+                <dd className="text-white">{formatPrice(order.subtotal)}</dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-gray-500 md:text-gray-400">Shipping</dt>
-                <dd className="text-gray-900 md:text-white">{formatPrice(order.shipping)}</dd>
+                <dd className="text-white">{formatPrice(order.shipping)}</dd>
               </div>
               {order.discount > 0 && (
                 <div className="flex justify-between">
@@ -159,13 +159,13 @@ export default function OrderDetail() {
                   <dd className="text-green-600 md:text-neon">-{formatPrice(order.discount)}</dd>
                 </div>
               )}
-              <div className="flex justify-between pt-2 border-t border-gray-100 md:border-safariborder font-bold text-base">
-                <dt className="text-gray-900 md:text-white">Total</dt>
+              <div className="flex justify-between pt-2 border-t border-safariborder font-bold text-base">
+                <dt className="text-white">Total</dt>
                 <dd className="text-neon">{formatPrice(order.total)}</dd>
               </div>
               <div className="flex justify-between pt-2">
                 <dt className="text-gray-500 md:text-gray-400">Payment</dt>
-                <dd className="text-gray-900 md:text-white capitalize">
+                <dd className="text-white capitalize">
                   {order.paymentMethod} · {order.paymentStatus}
                 </dd>
               </div>

@@ -7,6 +7,12 @@
 :root {
   --font-outfit: 'Outfit', sans-serif;
   --font-dm-sans: 'DM Sans', sans-serif;
+  --surface: #111111;
+  --surface-elevated: #161616;
+  --border: #1f1f1f;
+  --text: #ffffff;
+  --text-muted: #9ca3af;
+  --accent: #00ff9f;
 }
 
 * {
@@ -15,74 +21,77 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   font-family: var(--font-dm-sans);
+  background-color: #0a0a0a;
+  color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
 }
 
-@media (max-width: 767px) {
-  body {
-    background-color: #f9fafb;
-    color: #111827;
+@layer components {
+  .surface-card {
+    @apply bg-safarigray border border-safariborder rounded-2xl;
   }
-}
 
-@media (min-width: 768px) {
-  body {
-    background-color: #0A0A0A;
-    color: #ffffff;
+  .surface-elevated {
+    @apply bg-safarigray/90 border border-safariborder backdrop-blur-md;
+  }
+
+  .text-muted {
+    @apply text-gray-400;
+  }
+
+  .section-pad {
+    @apply px-4 max-w-7xl mx-auto;
   }
 }
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar {
   width: 4px;
+  height: 4px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #00FF9F33;
+  background: #00ff9f33;
   border-radius: 99px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #00FF9F66;
+  background: #00ff9f66;
 }
 
-/* ── Glow utilities ── */
 .glow-neon {
-  box-shadow: 0 0 20px #00FF9F33, 0 0 40px #00FF9F11;
+  box-shadow: 0 0 20px #00ff9f33, 0 0 40px #00ff9f11;
 }
 .glow-neon-text {
-  text-shadow: 0 0 20px #00FF9F66;
-}
-.glow-electric {
-  box-shadow: 0 0 20px #00B8FF33;
+  text-shadow: 0 0 20px #00ff9f66;
 }
 
-/* ── Product card hover ── */
 .product-card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 @media (min-width: 768px) {
   .product-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 20px 40px #00000088, 0 0 0 1px #00FF9F22;
+    box-shadow: 0 20px 40px #00000088, 0 0 0 1px #00ff9f22;
   }
 }
 
-/* ── Range input / checkbox accent ── */
-input[type="range"] {
-  accent-color: #00FF9F;
+input[type='range'] {
+  accent-color: #00ff9f;
 }
-input[type="checkbox"] {
-  accent-color: #00FF9F;
+input[type='checkbox'] {
+  accent-color: #00ff9f;
 }
 
-/* ── Line clamp ── */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -90,7 +99,6 @@ input[type="checkbox"] {
   overflow: hidden;
 }
 
-/* ── Hide scrollbar for horizontal scroll ── */
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
@@ -99,54 +107,66 @@ input[type="checkbox"] {
   scrollbar-width: none;
 }
 
-/* ── Safe area for bottom nav on notched phones ── */
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* ── Slide up animation for bottom sheets ── */
 @keyframes slide-up {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 .animate-slide-up {
   animation: slide-up 0.25s ease-out;
 }
 
-/* ── Fade in animation ── */
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .animate-fade-in {
   animation: fade-in 0.4s ease-out;
 }
 
-/* ── Shimmer loading skeleton ── */
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 .skeleton-shimmer {
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+  background: linear-gradient(
+    90deg,
+    #111111 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    #111111 100%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
 
-/* ── Minimum touch target 44px for mobile accessibility ── */
 @media (max-width: 767px) {
   button,
-  [role="button"],
-  input[type="submit"],
-  input[type="button"],
+  [role='button'],
+  input[type='submit'],
+  input[type='button'],
   .touch-target {
     min-height: 44px;
-    min-width: 44px;
   }
-  
+
   .touch-target-lg {
     min-height: 48px;
-    min-width: 48px;
   }
 }
 

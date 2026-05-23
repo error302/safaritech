@@ -44,11 +44,11 @@ export default function Register() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center py-8 md:py-12 px-4 bg-white md:bg-safaridark">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center py-8 md:py-12 px-4 bg-safaridark">
       <div className="w-full max-w-md">
-        <div className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-6 md:p-8">
+        <div className="rounded-xl border border-safariborder bg-safarigray p-6 md:p-8">
           <div className="mb-6 md:mb-8 text-center">
-            <h1 className="mb-2 text-2xl md:text-3xl font-bold font-display text-gray-900 md:text-white">Create Account</h1>
+            <h1 className="mb-2 text-2xl md:text-3xl font-bold font-display text-white">Create Account</h1>
             <p className="text-sm text-gray-500 md:text-gray-400">Join Safaritech and start shopping</p>
           </div>
 
@@ -69,7 +69,7 @@ export default function Register() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-sm text-gray-900 md:text-white placeholder:text-gray-400 focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
+                className="w-full rounded-lg border border-safariborder bg-safaridark px-4 py-2.5 text-sm text-white placeholder:text-gray-400 focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
                 placeholder="John Doe"
               />
             </div>
@@ -84,7 +84,7 @@ export default function Register() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-sm text-gray-900 md:text-white placeholder:text-gray-400 focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
+                className="w-full rounded-lg border border-safariborder bg-safaridark px-4 py-2.5 text-sm text-white placeholder:text-gray-400 focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
                 placeholder="you@example.com"
               />
             </div>
@@ -98,7 +98,7 @@ export default function Register() {
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-sm text-gray-900 md:text-white placeholder:text-gray-400 focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
+                className="w-full rounded-lg border border-safariborder bg-safaridark px-4 py-2.5 text-sm text-white placeholder:text-gray-400 focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
                 placeholder="+254 7XX XXX XXX"
               />
             </div>
@@ -115,7 +115,7 @@ export default function Register() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={8}
-                  className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark pl-4 pr-11 py-2.5 text-sm text-gray-900 md:text-white placeholder:text-gray-400 focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
+                  className="w-full rounded-lg border border-safariborder bg-safaridark pl-4 pr-11 py-2.5 text-sm text-white placeholder:text-gray-400 focus:border-neon focus:outline-none focus:ring-2 focus:ring-neon/20"
                   placeholder="8+ characters"
                 />
                 <button
@@ -141,7 +141,7 @@ export default function Register() {
             </button>
           </form>
 
-          <div className="mt-5 pt-5 border-t border-gray-200 md:border-safariborder text-center">
+          <div className="mt-5 pt-5 border-t border-safariborder text-center">
             <p className="text-sm text-gray-500 md:text-gray-400">
               Already have an account?{' '}
               <Link href="/login" className="text-neon font-semibold hover:underline">

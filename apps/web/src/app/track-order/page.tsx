@@ -54,16 +54,16 @@ export default function TrackOrder() {
   ]
 
   return (
-    <div className="md:bg-safaridark bg-gray-50 min-h-screen py-16">
+    <div className="bg-safaridark min-h-screen py-16">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h1 className="mb-4 text-4xl font-bold font-display text-gray-900 md:text-white">Track Your Order</h1>
+          <h1 className="mb-4 text-4xl font-bold font-display text-white">Track Your Order</h1>
           <p className="text-gray-500 md:text-gray-400">
             Enter your order ID to track your delivery in real-time.
           </p>
         </div>
 
-        <div className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-6 mb-8">
+        <div className="rounded-xl border border-safariborder bg-safarigray p-6 mb-8">
           {!session ? (
             <div className="text-center py-8">
               <p className="text-gray-500 md:text-gray-400 mb-4">Please sign in to track your orders</p>
@@ -77,7 +77,7 @@ export default function TrackOrder() {
           ) : (
             <form onSubmit={handleTrack} className="space-y-4">
               <div>
-                <label htmlFor="orderId" className="mb-2 block text-sm font-medium text-gray-900 md:text-white">
+                <label htmlFor="orderId" className="mb-2 block text-sm font-medium text-white">
                   Order ID
                 </label>
                 <div className="flex gap-3">
@@ -87,7 +87,7 @@ export default function TrackOrder() {
                     value={orderId}
                     onChange={(e) => setOrderId(e.target.value)}
                     required
-                    className="flex-1 rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-3 text-gray-900 md:text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-electric focus:outline-none"
+                    className="flex-1 rounded-lg border border-safariborder bg-safaridark px-4 py-3 text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-electric focus:outline-none"
                     placeholder="e.g., ORD-XXXXXXXX"
                   />
                   <button
@@ -118,16 +118,16 @@ export default function TrackOrder() {
         )}
 
         {order && (
-          <div className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray overflow-hidden">
-            <div className="border-b border-gray-200 md:border-safariborder p-6">
+          <div className="rounded-xl border border-safariborder bg-safarigray overflow-hidden">
+            <div className="border-b border-safariborder p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-500 md:text-gray-400">Order ID</p>
-                  <p className="text-xl font-bold text-gray-900 md:text-white">{order.id}</p>
+                  <p className="text-xl font-bold text-white">{order.id}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-gray-500 md:text-gray-400">Order Date</p>
-                  <p className="font-medium text-gray-900 md:text-white">
+                  <p className="font-medium text-white">
                     {new Date(order.createdAt).toLocaleDateString('en-KE', {
                       year: 'numeric',
                       month: 'short',
@@ -139,7 +139,7 @@ export default function TrackOrder() {
             </div>
 
             <div className="p-6">
-              <h3 className="mb-6 text-lg font-semibold text-gray-900 md:text-white">Delivery Progress</h3>
+              <h3 className="mb-6 text-lg font-semibold text-white">Delivery Progress</h3>
               <div className="space-y-6">
                 {timeline.map((item, idx) => {
                   const isCompleted = timeline.findIndex(t => t.status === order.status) >= idx
@@ -158,7 +158,7 @@ export default function TrackOrder() {
                         )}
                       </div>
                       <div className="flex-1 pb-6">
-                        <p className={`font-medium ${isCompleted ? 'text-gray-900 md:text-white' : 'text-gray-400'}`}>
+                        <p className={`font-medium ${isCompleted ? 'text-white' : 'text-gray-400'}`}>
                           {item.label}
                         </p>
                         {isCurrent && (
@@ -171,20 +171,20 @@ export default function TrackOrder() {
               </div>
             </div>
 
-            <div className="border-t border-gray-200 md:border-safariborder p-6">
-              <h3 className="mb-4 text-lg font-semibold text-gray-900 md:text-white">Order Items</h3>
+            <div className="border-t border-safariborder p-6">
+              <h3 className="mb-4 text-lg font-semibold text-white">Order Items</h3>
               <div className="space-y-3">
                 {order.items.map((item, idx) => (
                   <div key={idx} className="flex justify-between">
                     <div>
-                      <p className="font-medium text-gray-900 md:text-white">{item.product.name}</p>
+                      <p className="font-medium text-white">{item.product.name}</p>
                       <p className="text-sm text-gray-500 md:text-gray-400">Qty: {item.quantity}</p>
                     </div>
                     <p className="font-medium text-neon">KSh {(item.unitPrice * item.quantity).toLocaleString()}</p>
                   </div>
                 ))}
-                <div className="border-t border-gray-200 md:border-safariborder pt-3 flex justify-between">
-                  <p className="font-semibold text-gray-900 md:text-white">Total</p>
+                <div className="border-t border-safariborder pt-3 flex justify-between">
+                  <p className="font-semibold text-white">Total</p>
                   <p className="font-bold text-neon">KSh {order.total.toLocaleString()}</p>
                 </div>
               </div>

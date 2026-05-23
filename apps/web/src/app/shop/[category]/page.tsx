@@ -35,7 +35,7 @@ export default function ShopCategory() {
 
   if (isLoading) {
     return (
-      <div className="md:bg-safaridark bg-gray-50 min-h-screen py-8">
+      <div className="bg-safaridark min-h-screen py-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-center py-24">
             <Loader2 className="h-12 w-12 text-neon animate-spin mb-4" />
@@ -47,16 +47,16 @@ export default function ShopCategory() {
   }
 
   return (
-    <div className="md:bg-safaridark bg-gray-50 min-h-screen py-8">
+    <div className="bg-safaridark min-h-screen py-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <nav className="mb-8 flex items-center gap-2 text-sm">
           <Link href="/shop" className="text-gray-500 md:text-gray-400 hover:text-neon">Shop</Link>
           <ChevronRight className="h-4 w-4 text-gray-500 md:text-gray-400" />
-          <span className="text-gray-900 md:text-white">{categoryName}</span>
+          <span className="text-white">{categoryName}</span>
         </nav>
 
         <div className="mb-8">
-          <h1 className="mb-2 text-4xl font-bold font-display text-gray-900 md:text-white">{categoryName}</h1>
+          <h1 className="mb-2 text-4xl font-bold font-display text-white">{categoryName}</h1>
           <p className="text-gray-500 md:text-gray-400">{products.length} products available</p>
         </div>
 

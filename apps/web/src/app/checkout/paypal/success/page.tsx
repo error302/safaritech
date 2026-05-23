@@ -51,8 +51,8 @@ export default function PayPalSuccess() {
 
   if (error) {
     return (
-      <div className="md:bg-safaridark bg-gray-50 min-h-screen flex items-center justify-center p-4">
-        <div className="text-center p-8 max-w-sm rounded-2xl border border-red-200 md:border-red-900 bg-white md:bg-safarigray shadow-xl">
+      <div className="bg-safaridark min-h-screen flex items-center justify-center p-4">
+        <div className="text-center p-8 max-w-sm rounded-2xl border border-red-200 md:border-red-900 bg-safarigray shadow-xl">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 md:bg-red-900/20">
             <svg viewBox="0 0 24 24" className="h-8 w-8 text-red-600 md:text-red-400 fill-none stroke-current stroke-2" xmlns="http://www.w3.org/2000/svg">
               <circle cx="12" cy="12" r="10"></circle>
@@ -60,7 +60,7 @@ export default function PayPalSuccess() {
               <line x1="12" y1="16" x2="12.01" y2="16"></line>
             </svg>
           </div>
-          <h1 className="text-xl font-bold text-gray-900 md:text-white mb-2">Payment Verification Failed</h1>
+          <h1 className="text-xl font-bold text-white mb-2">Payment Verification Failed</h1>
           <p className="text-red-600 md:text-red-400 text-sm mb-6">{error}</p>
           <button
             onClick={() => router.push('/checkout')}
@@ -74,12 +74,12 @@ export default function PayPalSuccess() {
   }
 
   return (
-    <div className="md:bg-safaridark bg-gray-50 min-h-screen flex items-center justify-center">
-      <div className="text-center p-8 max-w-sm rounded-2xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray shadow-xl backdrop-blur-md">
+    <div className="bg-safaridark min-h-screen flex items-center justify-center">
+      <div className="text-center p-8 max-w-sm rounded-2xl border border-safariborder bg-safarigray shadow-xl backdrop-blur-md">
         <div className="relative mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 md:bg-blue-900/20 mx-auto">
           <Loader2 className="h-10 w-10 text-blue-500 animate-spin" />
         </div>
-        <h1 className="text-xl font-bold text-gray-900 md:text-white mb-2">Verifying Payment...</h1>
+        <h1 className="text-xl font-bold text-white mb-2">Verifying Payment...</h1>
         <p className="text-gray-500 md:text-gray-400 text-sm">Please do not close this window while we confirm your payment with PayPal.</p>
       </div>
     </div>

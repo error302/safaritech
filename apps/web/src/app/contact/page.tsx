@@ -42,12 +42,12 @@ export default function Contact() {
 
   if (sent) {
     return (
-      <div className="md:bg-safaridark bg-gray-50 min-h-screen py-16 flex items-center justify-center">
+      <div className="bg-safaridark min-h-screen py-16 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-4">
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green/10">
             <Send className="h-10 w-10 text-green" />
           </div>
-          <h1 className="mb-4 text-3xl font-bold font-display text-gray-900 md:text-white">Message Sent!</h1>
+          <h1 className="mb-4 text-3xl font-bold font-display text-white">Message Sent!</h1>
           <p className="text-gray-500 md:text-gray-400 mb-8">
             Thank you for reaching out. We&apos;ll get back to you within 24 hours.
           </p>
@@ -66,10 +66,10 @@ export default function Contact() {
   }
 
   return (
-    <div className="md:bg-safaridark bg-gray-50 min-h-screen py-16">
+    <div className="bg-safaridark min-h-screen py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h1 className="mb-4 text-4xl font-bold font-display text-gray-900 md:text-white">Get In Touch</h1>
+          <h1 className="mb-4 text-4xl font-bold font-display text-white">Get In Touch</h1>
           <p className="text-gray-500 md:text-gray-400 max-w-2xl mx-auto">
             Have a question? We&apos;re here to help. Reach out through any of our channels below.
           </p>
@@ -78,7 +78,7 @@ export default function Contact() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Contact Info */}
           <div className="lg:col-span-1 space-y-4">
-            <div className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-6">
+            <div className="rounded-xl border border-safariborder bg-safarigray p-6">
               <div className="flex items-start gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-neon/10 text-neon">
                   <Phone className="h-6 w-6" />
@@ -91,7 +91,7 @@ export default function Contact() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-6">
+            <div className="rounded-xl border border-safariborder bg-safarigray p-6">
               <div className="flex items-start gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-neon/10 text-neon">
                   <Mail className="h-6 w-6" />
@@ -104,7 +104,7 @@ export default function Contact() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-6">
+            <div className="rounded-xl border border-safariborder bg-safarigray p-6">
               <div className="flex items-start gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-neon/10 text-neon">
                   <MapPin className="h-6 w-6" />
@@ -130,7 +130,7 @@ export default function Contact() {
 
           {/* Contact Form */}
           <div className="lg:col-span-2">
-            <form onSubmit={handleSubmit} className="rounded-xl border border-gray-200 md:border-safariborder bg-white md:bg-safarigray p-8">
+            <form onSubmit={handleSubmit} className="rounded-xl border border-safariborder bg-safarigray p-8">
               <h2 className="mb-6 text-xl font-semibold">Send us a Message</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -144,7 +144,7 @@ export default function Contact() {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
-                    className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-gray-900 md:text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-neon focus:outline-none"
+                    className="w-full rounded-lg border border-safariborder bg-safaridark px-4 py-2.5 text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-neon focus:outline-none"
                     placeholder="John Doe"
                   />
                 </div>
@@ -158,7 +158,7 @@ export default function Contact() {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
-                    className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-gray-900 md:text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-neon focus:outline-none"
+                    className="w-full rounded-lg border border-safariborder bg-safaridark px-4 py-2.5 text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-neon focus:outline-none"
                     placeholder="you@example.com"
                   />
                 </div>
@@ -174,7 +174,7 @@ export default function Contact() {
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-gray-900 md:text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-neon focus:outline-none"
+                    className="w-full rounded-lg border border-safariborder bg-safaridark px-4 py-2.5 text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-neon focus:outline-none"
                     placeholder="+254 7XX XXX XXX"
                   />
                 </div>
@@ -187,7 +187,7 @@ export default function Contact() {
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     required
-                    className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-gray-900 md:text-white focus:border-neon focus:outline-none"
+                    className="w-full rounded-lg border border-safariborder bg-safaridark px-4 py-2.5 text-white focus:border-neon focus:outline-none"
                   >
                     <option value="">Select a subject</option>
                     <option value="order">Order Inquiry</option>
@@ -209,7 +209,7 @@ export default function Contact() {
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   required
                   rows={5}
-                  className="w-full rounded-lg border border-gray-200 md:border-safariborder bg-gray-50 md:bg-safaridark px-4 py-2.5 text-gray-900 md:text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-neon focus:outline-none resize-none"
+                  className="w-full rounded-lg border border-safariborder bg-safaridark px-4 py-2.5 text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-neon focus:outline-none resize-none"
                   placeholder="How can we help you?"
                 />
               </div>
