@@ -4,23 +4,22 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
-// Use the pooled connection for runtime queries (better for serverless/Vercel)
-// Fall back to DATABASE_URL if DATABASE_URL_POOLED is not set
 function getDatasourceUrl(): string | undefined {
-  const pooledUrl = process.env.DATABASE_URL_POOLED
-  if (pooledUrl) return pooledUrl
-
-  // Also support legacy Accelerate URLs
-  const accelerateUrl = process.env.DATABASE_URL_ACCELERATE
-  if (accelerateUrl) return accelerateUrl
-
   const dbUrl = process.env.DATABASE_URL
-  if (dbUrl && (dbUrl.startsWith('prisma://') || dbUrl.startsWith('prisma+postgres://'))) {
-    return dbUrl
+  if (!dbUrl) return undefined
+
+  // If URL already has query params, append with &, otherwise with ?
+  const separator = dbUrl.includes('?') ? '&' : '?'
+
+  // Add connection_limit for serverless environments (Vercel)
+  // This prevents connection pool exhaustion
+  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+    if (!dbUrl.includes('connection_limit')) {
+      return `${dbUrl}${separator}connection_limit=1`
+    }
   }
 
-  // Fall back to undefined (Prisma will use the URL from schema.prisma)
-  return undefined
+  return dbUrl
 }
 
 const datasourceUrl = getDatasourceUrl()
