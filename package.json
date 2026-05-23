@@ -13,9 +13,9 @@
     "lint": "npm --prefix apps/web run lint",
     "typecheck": "npm --prefix apps/web run typecheck",
     "start": "npm --prefix apps/web run start",
-    "prisma:generate": "npx prisma generate",
-    "prisma:push": "npx prisma db push",
-    "prisma:seed": "npx tsx prisma/seed.ts",
+    "prisma:generate": "npx prisma generate --schema=apps/web/prisma/schema.prisma",
+    "prisma:push": "npx prisma db push --schema=apps/web/prisma/schema.prisma",
+    "prisma:seed": "npx tsx apps/web/scripts/seed-admin.ts",
     "upload:samples": "node apps/web/scripts/upload-sample-products.mjs",
     "docker:up": "docker compose -f docker/docker-compose.yml up --build",
     "docker:down": "docker compose -f docker/docker-compose.yml down"

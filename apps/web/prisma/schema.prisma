@@ -1,0 +1,297 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String    @id @default(uuid())
+  email            String    @unique
+  name             String?
+  passwordHash     String?
+  phone            String?
+  role             String    @default("CUSTOMER")
+  stripeId         String?   @unique
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  createdAt        DateTime  @default(now())
+
+  orders       Order[]
+  addresses    Address[]
+  wishlistItems WishlistItem[]
+  cartItems    CartItem[]
+  reviews      Review[]
+  blogPosts    BlogPost[]
+
+  // LMS relationships
+  progress         UserProgress[]
+  studySessions    StudySession[]
+  streak           Streak?
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  name        String
+  description String
+  price       Int
+  salePrice   Int?
+  stock       Int      @default(0)
+  images      String   @default("")
+  specs       String?  @default("{}")
+  colors      String?  @default("[]")
+  brand       String?  @default("")
+  isFeatured  Boolean  @default(false)
+  isHot       Boolean  @default(false)
+  badge       String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  orderItems OrderItem[]
+  wishlist   WishlistItem[]
+  cartItems  CartItem[]
+  reviews    Review[]
+}
+
+model Category {
+  id       String    @id @default(uuid())
+  name     String    @unique
+  slug     String    @unique
+  image    String?
+  products Product[]
+}
+
+model Order {
+  id                String   @id @default(uuid())
+  user              User     @relation(fields: [userId], references: [id])
+  userId            String
+  status            String   @default("PENDING")
+  total             Int
+  subtotal          Int
+  shipping          Int      @default(0)
+  discount          Int      @default(0)
+  paymentStatus     String   @default("PENDING")
+  paymentMethod     String
+  stripeId          String?
+  stripeSessionId   String?
+  mpesaRef          String?
+  paypalOrderId     String?
+  couponId          String?
+  couponCode        String?
+  coupon            Coupon?  @relation(fields: [couponId], references: [id])
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now()) @updatedAt
+
+  items              OrderItem[]
+  shippingAddress    Address? @relation("ShippingAddress", fields: [shippingAddressId], references: [id])
+  shippingAddressId  String?
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   String
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+  quantity      Int
+  unitPrice     Int
+  selectedColor String?
+}
+
+model Address {
+  id       String @id @default(uuid())
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String
+  label    String
+  line1    String
+  line2    String?
+  city     String
+  state    String
+  postal   String
+  country  String
+  phone    String
+
+  orders Order[] @relation("ShippingAddress")
+}
+
+model WishlistItem {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  createdAt DateTime @default(now())
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  quantity  Int      @default(1)
+  selectedColor String?
+  createdAt DateTime @default(now())
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  rating    Int
+  title     String?
+  comment   String?
+  createdAt DateTime @default(now())
+}
+
+model BlogPost {
+  id            String    @id @default(uuid())
+  title         String
+  slug          String    @unique
+  content       String
+  excerpt       String?
+  featuredImage String?
+  seoTitle      String?
+  seoDesc       String?
+  author        User      @relation(fields: [authorId], references: [id])
+  authorId      String
+  published     Boolean   @default(false)
+  publishedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Coupon {
+  id            String    @id @default(uuid())
+  code          String    @unique
+  description   String?
+  discountType  String
+  discountValue Int
+  minOrderValue Int?
+  maxDiscount   Int?
+  usageLimit    Int?
+  usedCount     Int       @default(0)
+  expiresAt     DateTime?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+
+  orders Order[]
+}
+
+model Contact {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  status    String   @default("NEW")
+  createdAt DateTime @default(now())
+}
+
+model SiteSetting {
+  id    String @id @default(uuid())
+  key   String @unique
+  value String @default("")
+}
+
+// ---------------------------------------------------------
+// LMS (LEARNING MANAGEMENT SYSTEM) MODELS
+// ---------------------------------------------------------
+
+model Subject {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  slug      String   @unique
+  topics    Topic[]
+  createdAt DateTime @default(now())
+}
+
+model Topic {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  subject   Subject  @relation(fields: [subjectId], references: [id])
+  subjectId String
+  questions Question[]
+  studyNotes StudyNote[]
+  createdAt DateTime @default(now())
+}
+
+model StudyNote {
+  id        String   @id @default(uuid())
+  topic     Topic    @relation(fields: [topicId], references: [id])
+  topicId   String
+  title     String
+  content   String   // Markdown/Rich text for KLB notes
+  imageUrl  String?  // For diagrams
+  videoUrl  String?  // For embedded YouTube/explanation videos
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Question {
+  id            String   @id @default(uuid())
+  topic         Topic    @relation(fields: [topicId], references: [id])
+  topicId       String
+  questionText  String
+  imageUrl      String?
+  videoUrl      String?  // For video walk-throughs of this specific question
+  marks         Int
+  year          Int?
+  markingScheme MarkingScheme?
+  userProgress  UserProgress[]
+  createdAt     DateTime @default(now())
+}
+
+model MarkingScheme {
+  id         String   @id @default(uuid())
+  question   Question @relation(fields: [questionId], references: [id])
+  questionId String   @unique
+  content    String   // Step-by-step point allocation
+  createdAt  DateTime @default(now())
+}
+
+model UserProgress {
+  id             String   @id @default(uuid())
+  user           User     @relation(fields: [userId], references: [id])
+  userId         String
+  question       Question @relation(fields: [questionId], references: [id])
+  questionId     String
+  nextReviewDate DateTime @default(now())
+  easeFactor     Float    @default(2.5) // SM-2 parameter
+  repetitions    Int      @default(0)
+  interval       Int      @default(0)   // Days until next review
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([userId, questionId])
+}
+
+model StudySession {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  startTime DateTime @default(now())
+  endTime   DateTime?
+  duration  Int?     // Duration in minutes
+  createdAt DateTime @default(now())
+}
+
+model Streak {
+  id             String   @id @default(uuid())
+  user           User     @relation(fields: [userId], references: [id])
+  userId         String   @unique
+  currentStreak  Int      @default(0)
+  longestStreak  Int      @default(0)
+  lastStudyDate  DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
