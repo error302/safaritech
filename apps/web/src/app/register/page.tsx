@@ -2,12 +2,13 @@
 
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Eye, EyeOff } from 'lucide-react'
+import { useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Eye, EyeOff, Check, X } from 'lucide-react'
 
-export default function Register() {
+function RegisterForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -15,6 +16,16 @@ export default function Register() {
   const [phone, setPhone] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [registered, setRegistered] = useState(false)
+
+  // Password strength indicators
+  const passwordChecks = [
+    { label: 'At least 8 characters', met: password.length >= 8 },
+    { label: 'One uppercase letter', met: /[A-Z]/.test(password) },
+    { label: 'One lowercase letter', met: /[a-z]/.test(password) },
+    { label: 'One number', met: /[0-9]/.test(password) },
+  ]
+  const allPasswordRequirementsMet = passwordChecks.every(c => c.met)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,19 +36,39 @@ export default function Register() {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password, phone }),
+        body: JSON.stringify({ name, email, password, phone: phone || undefined }),
       })
 
+      const data = await res.json()
+
       if (!res.ok) {
-        const data = await res.json()
-        setError(data.error || 'Registration failed')
+        setError(data.error || 'Registration failed. Please try again.')
         return
       }
 
-      await signIn('credentials', { email, password, redirect: false })
-      router.push('/dashboard')
+      // Registration successful — auto sign in
+      setRegistered(true)
+      const signInResult = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      })
+
+      if (signInResult?.ok) {
+        // Small delay to ensure session is established
+        await new Promise(resolve => setTimeout(resolve, 500))
+        const callback = searchParams.get('callback')
+        if (callback) {
+          router.push(callback)
+        } else {
+          router.push('/dashboard')
+        }
+      } else {
+        // If auto-login fails, redirect to login page with a message
+        router.push('/login?message=Account+created.+Please+sign+in.')
+      }
     } catch {
-      setError('Something went wrong')
+      setError('Something went wrong. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -51,6 +82,12 @@ export default function Register() {
             <h1 className="mb-2 text-2xl md:text-3xl font-bold font-display text-white">Create Account</h1>
             <p className="text-sm text-gray-500 md:text-gray-400">Join Safaritech and start shopping</p>
           </div>
+
+          {registered && (
+            <div className="rounded-lg bg-green-50 md:bg-green-500/10 border border-green-200 md:border-green-500/20 p-3 text-sm text-green-700 md:text-green-400 mb-4">
+              Account created! Signing you in...
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
@@ -91,7 +128,7 @@ export default function Register() {
 
             <div>
               <label htmlFor="phone" className="mb-1.5 block text-sm font-medium text-gray-700 md:text-gray-300">
-                Phone Number (Kenya)
+                Phone Number (Kenya) <span className="text-gray-500 text-xs">optional</span>
               </label>
               <input
                 id="phone"
@@ -130,12 +167,29 @@ export default function Register() {
                   )}
                 </button>
               </div>
+              {/* Password requirements */}
+              {password.length > 0 && (
+                <div className="mt-2 space-y-1">
+                  {passwordChecks.map((check) => (
+                    <div key={check.label} className="flex items-center gap-1.5 text-xs">
+                      {check.met ? (
+                        <Check className="h-3.5 w-3.5 text-green-400 shrink-0" />
+                      ) : (
+                        <X className="h-3.5 w-3.5 text-gray-500 shrink-0" />
+                      )}
+                      <span className={check.met ? 'text-green-400' : 'text-gray-500'}>
+                        {check.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <button
               type="submit"
-              disabled={loading}
-              className="w-full bg-neon hover:brightness-110 text-black font-display font-bold text-sm py-3 rounded-lg transition-all active:scale-[0.98] disabled:opacity-50"
+              disabled={loading || (password.length > 0 && !allPasswordRequirementsMet)}
+              className="w-full bg-neon hover:brightness-110 text-black font-display font-bold text-sm py-3 rounded-lg transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Creating account...' : 'Create Account'}
             </button>
@@ -152,5 +206,17 @@ export default function Register() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-safaridark">
+        <div className="w-5 h-5 border-2 border-neon border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <RegisterForm />
+    </Suspense>
   )
 }

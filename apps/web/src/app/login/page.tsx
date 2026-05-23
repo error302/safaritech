@@ -17,6 +17,7 @@ function LoginForm() {
 
   // Check for error from NextAuth redirect (e.g., ?error=CredentialsSignin)
   const urlError = searchParams.get('error')
+  const urlMessage = searchParams.get('message')
   const getErrorMessage = (err: string) => {
     const messages: Record<string, string> = {
       CredentialsSignin: 'Invalid email or password. Please check your credentials and try again.',
@@ -75,6 +76,11 @@ function LoginForm() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {urlMessage && !error && !urlError && (
+              <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700 md:border-green-500/20 md:bg-green-500/10 md:text-green-400">
+                {urlMessage}
+              </div>
+            )}
             {(error || urlError) && (
               <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600 md:border-red/20 md:bg-red/10 md:text-red">
                 {error || getErrorMessage(urlError!)}
