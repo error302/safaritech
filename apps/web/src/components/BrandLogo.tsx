@@ -11,6 +11,8 @@ type Props = {
 };
 
 export default function BrandLogo({ brand, size = 32, className }: Props) {
+  const isRemote = brand.isRemote || brand.logoSrc.startsWith("http");
+
   return (
     <span
       className={cn(
@@ -25,6 +27,7 @@ export default function BrandLogo({ brand, size = 32, className }: Props) {
         width={size}
         height={size}
         className="object-contain max-h-full max-w-full"
+        unoptimized={isRemote}
       />
     </span>
   );

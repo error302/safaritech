@@ -20,7 +20,7 @@ export default function SiteLogo({
   showText = true,
 }: Props) {
   const { settings } = useSiteSettings();
-  const logoUrl = settings?.logo_url || "/brands/safaritech-icon.svg";
+  const logoUrl = settings?.logo_url || "/logo.jpg";
   const storeName = settings?.store_name || "Safaritech";
 
   // Split store name to apply accent color to "tech" part if it's "Safaritech"

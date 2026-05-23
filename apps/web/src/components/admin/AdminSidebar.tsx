@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
+import SiteLogo from "@/components/SiteLogo";
 import {
   Package,
   ShoppingCart,
@@ -38,18 +38,7 @@ export default function AdminSidebar() {
     <>
       {/* Logo */}
       <div className="p-6 border-b border-safariborder">
-        <Link href="/" className="flex items-center gap-2.5">
-          <Image
-            src="/brands/safaritech-icon.svg"
-            alt="Safaritech"
-            width={28}
-            height={28}
-            className="rounded-lg object-contain"
-          />
-          <span className="font-display font-bold text-lg text-white">
-            Safari<span className="text-neon">tech</span>
-          </span>
-        </Link>
+        <SiteLogo href="/" iconSize={28} textSize="text-lg" />
       </div>
 
       {/* Nav */}

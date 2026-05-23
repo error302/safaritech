@@ -8,9 +8,9 @@
   "theme_color": "#0A0A0A",
   "icons": [
     {
-      "src": "/brands/safaritech-icon.svg",
+      "src": "/logo.jpg",
       "sizes": "any",
-      "type": "image/svg+xml"
+      "type": "image/jpeg"
     }
   ]
 }
