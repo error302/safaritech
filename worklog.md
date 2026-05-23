@@ -95,3 +95,30 @@ Stage Summary:
 - Password requirements clearly shown: 8+ chars, uppercase, lowercase, number
 - After registration, auto-login attempts; if it fails, redirects to login with success message
 - Duplicate email error properly handled with user-friendly message
+---
+Task ID: 3
+Agent: Main Agent
+Task: Remove mock data, fix sign-in indicator, fix cart badge, fix other bugs
+
+Work Log:
+- Cleared all mock/seed data from production database (products, categories, orders, users except admin, coupons, reviews, blog posts, etc.)
+- Rewrote Navbar.tsx with full session awareness: user avatar dropdown with admin link, Sign In/Register for guests, Sign Out option
+- Added CartBadge component with neon glow shadow effect for cleaner look
+- Updated MobileBottomNav with session-aware menu showing Sign In/Create Account for guests
+- Fixed checkout/page.tsx to use tRPC server cart instead of disconnected Zustand client cart
+- Fixed cart router to throw TRPCError UNAUTHORIZED instead of silent fail for guests
+- Fixed ProductCard to redirect to login on UNAUTHORIZED error
+- Fixed formatKES in admin pages (was dividing by 100, prices are in KES not cents)
+- Fixed monthlyRevenue double-division in order router
+- Added public getCategories procedure (search/shop were using admin-only procedure)
+- Fixed originalPrice mapping on homepage and shop (was reversed)
+- Fixed image parsing for comma-separated strings (was wrapping entire string instead of splitting)
+- Added empty state for Latest Arrivals section on homepage
+- Reviewed VoltAgent/awesome-design-md for design inspiration: pill buttons, surface hierarchy, cart drawer patterns
+
+Stage Summary:
+- All mock data cleared - only admin user (mohameddosho20@gmail.com) remains
+- Navbar now clearly shows login state with avatar, dropdown menu, and auth actions
+- Cart badge uses floating neon glow effect
+- 13 bug fixes pushed in one commit
+- Key design principles from awesome-design-md applied: pill buttons for CTAs, surface hierarchy for dark theme
