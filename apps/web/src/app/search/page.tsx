@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Search as SearchIcon, X, Filter, Grid, List, Loader2 } from 'lucide-react'
@@ -47,12 +47,12 @@ function SearchContent() {
   // Filter products by price range
   const filteredProducts = (productsData?.products || [])
     .filter(p => {
-      const price = p.salePrice || p.price
+      const price = (p as any).salePrice || p.price
       return price >= priceRanges[priceRange].min && price < priceRanges[priceRange].max
     })
     .sort((a, b) => {
-      const priceA = a.salePrice || a.price
-      const priceB = b.salePrice || b.price
+      const priceA = (a as any).salePrice || a.price
+      const priceB = (b as any).salePrice || b.price
       switch (sortBy) {
         case 'price-low': return priceA - priceB
         case 'price-high': return priceB - priceA
@@ -77,19 +77,19 @@ function SearchContent() {
           <h1 className="mb-4 text-3xl font-bold font-display text-white">Search</h1>
 
           <form onSubmit={handleSearch} className="relative max-w-2xl">
-            <SearchIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500 md:text-gray-400" />
+            <SearchIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
             <input
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search for products..."
-              className="w-full rounded-xl border border-safariborder bg-safarigray py-3 pl-12 pr-12 text-white placeholder:text-gray-500 md:placeholder:text-gray-400 focus:border-electric focus:outline-none"
+              className="w-full rounded-xl border border-safariborder bg-safarigray py-3 pl-12 pr-12 text-white placeholder:text-gray-500 focus:border-neon focus:outline-none transition-colors"
             />
             {searchInput && (
               <button
                 type="button"
                 onClick={() => { setSearchInput(''); setQuery('') }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 md:text-gray-400 hover:text-white"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -111,18 +111,18 @@ function SearchContent() {
                         name="category"
                         checked={!selectedCategory}
                         onChange={() => setSelectedCategory('')}
-                        className="text-neon focus:ring-neon"
+                        className="accent-neon"
                       />
                       <span className="text-sm text-white">All Categories</span>
                     </label>
-                    {categories.map((cat) => (
+                    {categories.map((cat: any) => (
                       <label key={cat.id} className="flex items-center gap-2 cursor-pointer">
                         <input
                           type="radio"
                           name="category"
                           checked={selectedCategory === cat.slug}
                           onChange={() => handleCategoryChange(cat.slug)}
-                          className="text-neon focus:ring-neon"
+                          className="accent-neon"
                         />
                         <span className="text-sm text-white">{cat.name}</span>
                       </label>
@@ -141,7 +141,7 @@ function SearchContent() {
                         name="priceRange"
                         checked={priceRange === idx}
                         onChange={() => setPriceRange(idx)}
-                        className="text-neon focus:ring-neon"
+                        className="accent-neon"
                       />
                       <span className="text-sm text-white">{range.label}</span>
                     </label>
@@ -161,7 +161,7 @@ function SearchContent() {
           {/* Results */}
           <div className="flex-1">
             <div className="mb-4 flex items-center justify-between">
-              <p className="text-gray-500 md:text-gray-400">
+              <p className="text-gray-400">
                 {isLoading ? 'Loading...' : `${filteredProducts.length} results`}
                 {query && <span> for &quot;{query}&quot;</span>}
               </p>
@@ -170,7 +170,7 @@ function SearchContent() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="rounded-lg border border-safariborder bg-safarigray px-3 py-2 text-sm text-white focus:border-electric focus:outline-none"
+                  className="rounded-lg border border-safariborder bg-safarigray px-3 py-2 text-sm text-white focus:border-neon focus:outline-none"
                 >
                   <option value="relevance">Relevance</option>
                   <option value="price-low">Price: Low to High</option>
@@ -188,13 +188,13 @@ function SearchContent() {
                 <div className="hidden sm:flex gap-1 rounded-lg border border-safariborder bg-safarigray p-1">
                   <button
                     onClick={() => setViewMode('grid')}
-                    className={`p-2 ${viewMode === 'grid' ? 'text-neon' : 'text-gray-500 md:text-gray-400'}`}
+                    className={`p-2 ${viewMode === 'grid' ? 'text-neon' : 'text-gray-500'}`}
                   >
                     <Grid className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`p-2 ${viewMode === 'list' ? 'text-neon' : 'text-gray-500 md:text-gray-400'}`}
+                    className={`p-2 ${viewMode === 'list' ? 'text-neon' : 'text-gray-500'}`}
                   >
                     <List className="h-4 w-4" />
                   </button>
@@ -205,44 +205,50 @@ function SearchContent() {
             {isLoading ? (
               <div className="py-16 text-center">
                 <Loader2 className="mx-auto h-12 w-12 text-neon animate-spin mb-4" />
-                <p className="text-gray-500 md:text-gray-400">Searching products...</p>
+                <p className="text-gray-400">Searching products...</p>
               </div>
             ) : filteredProducts.length > 0 ? (
               <div className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-2 md:grid-cols-3' : 'grid-cols-1'}`}>
-{filteredProducts.map((product) => {
-                const productData: any = product;
-                const images = productData.images
-                  ? (Array.isArray(productData.images) ? productData.images : [String(productData.images)])
-                  : null;
-                return (
-                  <ProductCard
-                    key={product.id}
-                    product={{
-                      id: product.id,
-                      name: product.name,
-                      slug: product.slug,
-                      price: product.price,
-                      originalPrice: (productData as any).salePrice ?? null,
-                      images: images,
-                      inStock: true,
-                      isHot: productData.isHot ?? null,
-                      badge: productData.badge ?? null,
-                      rating: 0,
-                      reviewCount: 0,
-                      description: product.description,
-                      category: productData.category
-                        ? { id: productData.category.id, name: productData.category.name }
-                        : null,
-                    }}
-                  />
-                );
-              })}
+                {filteredProducts.map((product) => {
+                  const productData: any = product;
+                  const images = productData.images
+                    ? (Array.isArray(productData.images) ? productData.images : [String(productData.images)])
+                    : null;
+                  return (
+                    <ProductCard
+                      key={product.id}
+                      product={{
+                        id: product.id,
+                        name: product.name,
+                        slug: product.slug,
+                        price: product.price,
+                        originalPrice: productData.salePrice ?? null,
+                        images: images,
+                        inStock: (productData.stock ?? 0) > 0,
+                        isHot: productData.isHot ?? null,
+                        badge: productData.badge ?? null,
+                        rating: 0,
+                        reviewCount: 0,
+                        description: product.description,
+                        category: productData.category
+                          ? { id: productData.category.id, name: productData.category.name }
+                          : null,
+                      }}
+                    />
+                  );
+                })}
               </div>
             ) : (
               <div className="py-16 text-center">
-                <SearchIcon className="mx-auto h-12 w-12 text-gray-500 md:text-gray-400 mb-4" />
-                <p className="text-lg text-gray-500 md:text-gray-400">No products found matching your criteria.</p>
-                <p className="text-sm text-gray-500 md:text-gray-400 mt-2">Try adjusting your search or filters.</p>
+                <SearchIcon className="mx-auto h-12 w-12 text-gray-500 mb-4" />
+                <p className="text-lg text-gray-400 mb-2">No products found matching your criteria.</p>
+                <p className="text-sm text-gray-500 mb-6">Try adjusting your search or filters.</p>
+                <Link
+                  href="/shop"
+                  className="text-sm font-bold text-neon hover:text-neon-dim transition-colors"
+                >
+                  Browse All Products
+                </Link>
               </div>
             )}
           </div>

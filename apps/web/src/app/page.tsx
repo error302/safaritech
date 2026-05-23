@@ -18,6 +18,7 @@ import {
   Zap,
   Watch,
   Tag,
+  PackageOpen,
 } from "lucide-react";
 
 const trustItems = [
@@ -42,16 +43,16 @@ function parseImages(raw: unknown): string[] | null {
   try {
     return JSON.parse(raw as string);
   } catch {
-    return (raw as string).split(',').filter(Boolean);
+    return [raw as string];
   }
 }
 
 export default function HomePage() {
   const { data: productsData, isLoading } = trpc.product.getAll.useQuery({ limit: 8 });
-  const { data: hotData } = trpc.product.getHot.useQuery();
+  const { data: hotDeals = [] } = trpc.product.getHot.useQuery();
 
   const newArrivals = productsData?.products ?? [];
-  const hotDeals = hotData ?? [];
+  const hasProducts = newArrivals.length > 0;
 
   return (
     <div className="bg-safaridark min-h-screen">
@@ -126,7 +127,7 @@ export default function HomePage() {
 
       <BrandShowcase />
 
-      {/* Hot deals */}
+      {/* Hot deals - only show if there are hot products */}
       {hotDeals.length > 0 && (
         <section className="py-10 md:py-16 px-4 border-y border-orange-900/30 bg-gradient-to-br from-orange-950/40 to-red-950/20">
           <div className="max-w-7xl mx-auto">
@@ -159,8 +160,8 @@ export default function HomePage() {
                     id: p.id as string,
                     name: p.name as string,
                     slug: p.slug as string,
-                    price: (p.salePrice || p.price) as number,
-                    originalPrice: p.price as number,
+                    price: p.price as number,
+                    originalPrice: (p.salePrice as number) ?? null,
                     images: parseImages(p.images),
                     inStock: (p.stock as number) > 0,
                     isHot: true,
@@ -221,7 +222,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Latest */}
+      {/* Latest Arrivals / Empty State */}
       <section className="pb-8 md:pb-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-end justify-between mb-8 gap-3">
@@ -234,12 +235,14 @@ export default function HomePage() {
               </div>
               <p className="text-sm text-gray-400">The newest tech in Kenya, curated for you.</p>
             </div>
-            <Link
-              href="/shop"
-              className="text-sm font-bold text-neon hover:text-neon-dim transition-colors flex items-center gap-1 shrink-0"
-            >
-              See All <ChevronRight className="w-4 h-4" />
-            </Link>
+            {hasProducts && (
+              <Link
+                href="/shop"
+                className="text-sm font-bold text-neon hover:text-neon-dim transition-colors flex items-center gap-1 shrink-0"
+              >
+                See All <ChevronRight className="w-4 h-4" />
+              </Link>
+            )}
           </div>
 
           {isLoading ? (
@@ -248,11 +251,7 @@ export default function HomePage() {
                 <div key={i} className="aspect-[3/4] rounded-2xl skeleton-shimmer" />
               ))}
             </div>
-          ) : newArrivals.length === 0 ? (
-            <div className="py-16 text-center">
-              <p className="text-gray-500 text-sm">No products yet</p>
-            </div>
-          ) : (
+          ) : hasProducts ? (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
               {newArrivals.map((p: Record<string, unknown>) => (
                 <ProductCard
@@ -261,8 +260,8 @@ export default function HomePage() {
                     id: p.id as string,
                     name: p.name as string,
                     slug: p.slug as string,
-                    price: (p.salePrice || p.price) as number,
-                    originalPrice: p.price as number,
+                    price: p.price as number,
+                    originalPrice: (p.salePrice as number) ?? null,
                     images: parseImages(p.images),
                     inStock: (p.stock as number) > 0,
                     isHot: (p.isHot as boolean) ?? null,
@@ -278,6 +277,32 @@ export default function HomePage() {
                   }}
                 />
               ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 md:py-24 bg-safarigray/30 border border-safariborder rounded-3xl">
+              <div className="w-20 h-20 bg-safaridark rounded-full flex items-center justify-center mx-auto mb-6">
+                <PackageOpen className="w-8 h-8 text-gray-500" />
+              </div>
+              <h3 className="font-display font-bold text-xl md:text-2xl text-white mb-3">
+                Coming Soon
+              </h3>
+              <p className="text-gray-400 text-sm max-w-md mx-auto mb-6 px-4">
+                We&apos;re curating the best tech products for Kenya. Check back soon for amazing deals on smartphones, laptops, and accessories.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center px-4">
+                <Link
+                  href="/shop"
+                  className="bg-neon hover:bg-neon-dim text-black font-display font-bold px-6 py-3 rounded-xl text-sm transition-all active:scale-[0.98]"
+                >
+                  Browse Shop
+                </Link>
+                <Link
+                  href="/deals"
+                  className="bg-safarigray border border-safariborder text-white font-display font-bold px-6 py-3 rounded-xl text-sm transition-all hover:border-neon/30"
+                >
+                  View Deals
+                </Link>
+              </div>
             </div>
           )}
         </div>

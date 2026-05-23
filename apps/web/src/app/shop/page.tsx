@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { trpc } from "@/utils/trpc";
 import ProductCard from "@/components/ProductCard";
@@ -7,7 +7,7 @@ import { PullToRefresh } from "@/components/PullToRefresh";
 import {
   Smartphone, Laptop, Gamepad2, Headphones, Search,
   SlidersHorizontal, X, Tv, Camera, Watch, Tablet,
-  Wifi, HardDrive, Home, Package
+  Wifi, HardDrive, Home, Package, Loader2
 } from "lucide-react";
 
 const staticCategories = [
@@ -45,7 +45,7 @@ const brandColors: Record<string, string> = {
   "TP-Link": "#4CAF50",
 };
 
-export default function ShopPage() {
+function ShopContent() {
   const searchParams = useSearchParams();
   const initCat   = searchParams.get("cat") || searchParams.get("category") || "all";
   const initBrand = searchParams.get("brand") || "";
@@ -122,7 +122,7 @@ export default function ShopPage() {
   const FilterPanel = () => (
     <aside className="w-full space-y-4">
       {/* Search */}
-      <div className="bg-safaridark border border-safariborder rounded-2xl p-5 shadow-sm md:shadow-none">
+      <div className="bg-safaridark border border-safariborder rounded-2xl p-5">
         <h3 className="font-bold font-display text-white mb-3">Search</h3>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -137,7 +137,7 @@ export default function ShopPage() {
       </div>
 
       {/* Price Range */}
-      <div className="bg-safaridark border border-safariborder rounded-2xl p-5 shadow-sm md:shadow-none">
+      <div className="bg-safaridark border border-safariborder rounded-2xl p-5">
         <h3 className="font-bold font-display text-white mb-4">Price Range</h3>
         <input
           type="range"
@@ -155,41 +155,43 @@ export default function ShopPage() {
       </div>
 
       {/* Brands */}
-      <div className="bg-safaridark border border-safariborder rounded-2xl p-5 shadow-sm md:shadow-none">
-        <h3 className="font-bold font-display text-white mb-4">Brand</h3>
-        <div className="space-y-2.5">
-          {allBrands.map((brand) => (
-            <label key={brand} className="flex items-center gap-3 cursor-pointer group">
-              <input
-                type="checkbox"
-                checked={selectedBrands.includes(brand)}
-                onChange={() => toggleBrand(brand)}
-                className="w-4 h-4 rounded border-gray-300 md:border-gray-600 accent-neon"
-              />
-              <span
-                className="w-2 h-2 rounded-full shrink-0"
-                style={{ backgroundColor: brandColors[brand] || "#888" }}
-              />
-              <span className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors flex-1">
-                {brand}
-              </span>
-              {selectedBrands.includes(brand) && (
-                <span className="text-[10px] font-bold bg-neon/20 text-neon px-1.5 py-0.5 rounded-full">✓</span>
-              )}
-            </label>
-          ))}
+      {allBrands.length > 0 && (
+        <div className="bg-safaridark border border-safariborder rounded-2xl p-5">
+          <h3 className="font-bold font-display text-white mb-4">Brand</h3>
+          <div className="space-y-2.5">
+            {allBrands.map((brand) => (
+              <label key={brand} className="flex items-center gap-3 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={selectedBrands.includes(brand)}
+                  onChange={() => toggleBrand(brand)}
+                  className="w-4 h-4 rounded border-gray-600 accent-neon"
+                />
+                <span
+                  className="w-2 h-2 rounded-full shrink-0"
+                  style={{ backgroundColor: brandColors[brand] || "#888" }}
+                />
+                <span className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors flex-1">
+                  {brand}
+                </span>
+                {selectedBrands.includes(brand) && (
+                  <span className="text-[10px] font-bold bg-neon/20 text-neon px-1.5 py-0.5 rounded-full">✓</span>
+                )}
+              </label>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Availability */}
-      <div className="bg-safaridark border border-safariborder rounded-2xl p-5 shadow-sm md:shadow-none">
+      <div className="bg-safaridark border border-safariborder rounded-2xl p-5">
         <h3 className="font-bold font-display text-white mb-4">Availability</h3>
         <label className="flex items-center gap-3 cursor-pointer group">
           <input
             type="checkbox"
             checked={inStockOnly}
             onChange={() => setInStockOnly(!inStockOnly)}
-            className="w-4 h-4 rounded border-gray-300 md:border-gray-600 accent-neon"
+            className="w-4 h-4 rounded border-gray-600 accent-neon"
           />
           <span className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">
             In Stock Only
@@ -199,7 +201,7 @@ export default function ShopPage() {
 
       <button
         onClick={resetFilters}
-        className="w-full bg-safarigray hover:bg-red-50 md:hover:bg-red-900/20 hover:text-red-600 md:hover:text-red-400 text-white text-sm font-bold py-3.5 rounded-xl transition-all border border-transparent hover:border-red-900"
+        className="w-full bg-safarigray hover:bg-red-900/20 hover:text-red-400 text-white text-sm font-bold py-3.5 rounded-xl transition-all border border-transparent hover:border-red-900"
       >
         Reset All Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
       </button>
@@ -226,7 +228,7 @@ export default function ShopPage() {
               </h3>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-safaridark"
               >
                 <X className="w-5 h-5 text-gray-500" />
               </button>
@@ -288,7 +290,7 @@ export default function ShopPage() {
               className={`shrink-0 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                 selectedCat === "all"
                   ? "bg-white text-black shadow-md"
-                  : "bg-safarigray text-gray-300 hover:bg-gray-200 md:hover:bg-safariborder"
+                  : "bg-safarigray text-gray-300 hover:bg-safariborder"
               }`}
             >
               All
@@ -302,7 +304,7 @@ export default function ShopPage() {
                   className={`shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                     selectedCat === cat.id
                       ? "bg-white text-black shadow-md"
-                      : "bg-safarigray text-gray-300 hover:bg-gray-200 md:hover:bg-safariborder"
+                      : "bg-safarigray text-gray-300 hover:bg-safariborder"
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -412,5 +414,17 @@ export default function ShopPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-safaridark flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-neon animate-spin" />
+      </div>
+    }>
+      <ShopContent />
+    </Suspense>
   );
 }
