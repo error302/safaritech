@@ -2,27 +2,45 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/server/db'
 
 export async function GET() {
-  const details: Record<string, any> = {
-    timestamp: new Date().toISOString(),
-    nodeEnv: process.env.NODE_ENV,
-    hasDatabaseUrl: !!process.env.DATABASE_URL,
-    hasDatabaseUrlPooled: !!process.env.DATABASE_URL_POOLED,
-    hasNextauthSecret: !!process.env.NEXTAUTH_SECRET,
-    hasNextauthUrl: !!process.env.NEXTAUTH_URL,
-    databaseUrlProtocol: process.env.DATABASE_URL?.split('://')[0] || 'missing',
-    pooledUrlProtocol: process.env.DATABASE_URL_POOLED?.split('://')[0] || 'missing',
+  const checks: Record<string, { status: string; detail?: string }> = {}
+
+  // Check 1: Environment variables
+  const envVars = {
+    NEXTAUTH_SECRET: !!process.env.NEXTAUTH_SECRET,
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL || '(not set)',
+    DATABASE_URL: !!process.env.DATABASE_URL,
+    DATABASE_URL_POOLED: !!process.env.DATABASE_URL_POOLED,
+    NODE_ENV: process.env.NODE_ENV || '(not set)',
+  }
+  checks['environment'] = { status: 'ok', detail: JSON.stringify(envVars) }
+
+  // Check 2: Database connectivity
+  try {
+    const userCount = await prisma.user.count()
+    const adminCount = await prisma.user.count({ where: { role: 'ADMIN' } })
+    checks['database'] = { status: 'ok', detail: `${userCount} users, ${adminCount} admins` }
+  } catch (error) {
+    checks['database'] = { status: 'error', detail: String(error) }
   }
 
+  // Check 3: Admin user exists
   try {
-    await prisma.$queryRaw`SELECT 1`
-    details.status = 'healthy'
-    details.database = 'connected'
-    return NextResponse.json(details)
-  } catch (error: any) {
-    details.status = 'unhealthy'
-    details.database = 'failed'
-    details.dbError = error?.message || String(error)
-    details.dbErrorCode = error?.code || 'unknown'
-    return NextResponse.json(details, { status: 503 })
+    const adminEmail = 'mohameddosho20@gmail.com'
+    const admin = await prisma.user.findUnique({ where: { email: adminEmail } })
+    if (admin) {
+      checks['admin_user'] = { status: 'ok', detail: `Found: ${admin.email}, role: ${admin.role}, hasPassword: ${!!admin.passwordHash}` }
+    } else {
+      checks['admin_user'] = { status: 'warning', detail: `Admin user ${adminEmail} not found in database` }
+    }
+  } catch (error) {
+    checks['admin_user'] = { status: 'error', detail: String(error) }
   }
+
+  const allOk = Object.values(checks).every(c => c.status === 'ok')
+
+  return NextResponse.json({
+    status: allOk ? 'healthy' : 'issues_found',
+    timestamp: new Date().toISOString(),
+    checks,
+  }, { status: allOk ? 200 : 503 })
 }

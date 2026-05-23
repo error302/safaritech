@@ -17,13 +17,15 @@ function LoginForm() {
 
   // Check for error from NextAuth redirect (e.g., ?error=CredentialsSignin)
   const urlError = searchParams.get('error')
-  const errorMessages: Record<string, string> = {
-    CredentialsSignin: 'Invalid email or password. Please check your credentials and try again.',
-    SessionRequired: 'Please sign in to access this page.',
-    Configuration: 'Authentication configuration error. Please try again later.',
-    AccessDenied: 'Access denied. You may not have permission to sign in.',
-    Verification: 'The verification link may have expired. Please try again.',
-    Default: 'Something went wrong. Please try again.',
+  const getErrorMessage = (err: string) => {
+    const messages: Record<string, string> = {
+      CredentialsSignin: 'Invalid email or password. Please check your credentials and try again.',
+      SessionRequired: 'Please sign in to access this page.',
+      Configuration: 'Authentication configuration error. Please try again later.',
+      AccessDenied: 'Access denied. You may not have permission to sign in.',
+      Verification: 'The verification link may have expired. Please try again.',
+    }
+    return messages[err] || 'Something went wrong. Please try again.'
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -39,23 +41,21 @@ function LoginForm() {
       })
 
       if (result?.error) {
-        const errorMessages: Record<string, string> = {
-          CredentialsSignin: 'Invalid email or password. Please check your credentials and try again.',
-          SessionRequired: 'Please sign in to access this page.',
-          Configuration: 'Authentication configuration error. Please try again later.',
-          Default: 'Something went wrong. Please try again.',
-        }
-        setError(errorMessages[result.error] || errorMessages.Default)
-      } else {
+        setError(getErrorMessage(result.error))
+      } else if (result?.ok) {
+        // Small delay to ensure session is established
+        await new Promise(resolve => setTimeout(resolve, 500))
         const callback = searchParams.get('callback')
         if (callback === 'admin' || email.includes('admin')) {
           router.push('/admin')
         } else {
           router.push('/dashboard')
         }
+      } else {
+        setError('An unexpected error occurred. Please try again.')
       }
     } catch {
-      setError('Something went wrong')
+      setError('Something went wrong. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -77,7 +77,7 @@ function LoginForm() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {(error || urlError) && (
               <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600 md:border-red/20 md:bg-red/10 md:text-red">
-                {error || errorMessages[urlError!] || errorMessages.Default}
+                {error || getErrorMessage(urlError!)}
               </div>
             )}
 
