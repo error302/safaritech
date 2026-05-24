@@ -10,14 +10,11 @@ import {
   Search,
   ShoppingCart,
   User,
-  Menu,
-  X,
   Smartphone,
   Laptop,
   Gamepad2,
   Headphones,
   Flame,
-  ChevronRight,
   Package,
   LogOut,
   Settings,
@@ -155,7 +152,6 @@ function CartButton() {
 
 export default function Navbar() {
   const router = useRouter();
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { data: session } = useSession();
 
@@ -163,7 +159,6 @@ export default function Navbar() {
     e.preventDefault();
     const q = searchQuery.trim();
     router.push(q ? `/search?q=${encodeURIComponent(q)}` : "/search");
-    setMobileOpen(false);
   };
 
   return (
@@ -217,50 +212,13 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile */}
+      {/* Mobile — just logo + search, bottom nav handles everything else */}
       <nav className="md:hidden bg-safaridark/95 backdrop-blur-md border-b border-safariborder sticky top-0 z-50">
-        <div className="px-4">
-          <div className="flex items-center justify-between h-14 gap-3">
+        <div className="px-4 py-3">
+          <div className="mb-3">
             <SiteLogo iconSize={28} textSize="text-lg" />
-
-            <div className="flex items-center gap-1 shrink-0">
-              {session?.user ? (
-                <Link
-                  href="/dashboard"
-                  className="relative flex items-center justify-center w-10 h-10 rounded-xl hover:bg-safarigray transition-colors"
-                  aria-label="My Account"
-                >
-                  <div className="w-7 h-7 rounded-full bg-neon/20 border border-neon/50 flex items-center justify-center text-neon text-[10px] font-bold">
-                    {session.user.name
-                      ? session.user.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
-                      : session.user.email?.[0]?.toUpperCase() || "U"}
-                  </div>
-                  <span className="absolute bottom-0.5 right-1.5 w-2 h-2 bg-neon rounded-full ring-2 ring-safaridark" />
-                </Link>
-              ) : (
-                <Link
-                  href="/login"
-                  className="flex items-center justify-center w-10 h-10 rounded-xl hover:bg-safarigray transition-colors text-gray-400 hover:text-white"
-                  aria-label="Sign In"
-                >
-                  <User className="w-5 h-5" />
-                </Link>
-              )}
-              <button
-                className="flex items-center justify-center w-10 h-10 rounded-xl text-gray-400 hover:text-white hover:bg-safarigray transition-colors"
-                onClick={() => setMobileOpen(!mobileOpen)}
-                aria-label={mobileOpen ? "Close Menu" : "Open Menu"}
-              >
-                {mobileOpen ? (
-                  <X className="w-5 h-5" />
-                ) : (
-                  <Menu className="w-5 h-5" />
-                )}
-              </button>
-            </div>
           </div>
-
-          <form className="pb-3" onSubmit={handleSearch}>
+          <form onSubmit={handleSearch}>
             <div className="relative">
               <Search
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4"
@@ -270,110 +228,12 @@ export default function Navbar() {
                 type="search"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search Safaritech..."
+                placeholder="Search phones, laptops, gaming gear..."
                 className="w-full bg-safarigray border border-safariborder rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-neon/40"
               />
             </div>
           </form>
         </div>
-
-        {mobileOpen && (
-          <div className="border-t border-safariborder bg-safarigray animate-fade-in">
-            {/* User greeting in mobile menu */}
-            {session?.user && (
-              <div className="px-4 py-3 border-b border-safariborder bg-safaridark/50">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-neon/20 border border-neon/50 flex items-center justify-center text-neon text-sm font-bold">
-                    {session.user.name
-                      ? session.user.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
-                      : session.user.email?.[0]?.toUpperCase() || "U"}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-white truncate">
-                      {session.user.name || "User"}
-                    </p>
-                    <p className="text-xs text-gray-500 truncate">
-                      {session.user.email}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="px-4 py-3 flex flex-col gap-0.5 max-h-[60vh] overflow-y-auto">
-              {categoryLinks.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className="flex items-center justify-between py-3.5 px-3 rounded-xl text-gray-200 hover:bg-safaridark transition-all min-h-[48px]"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  <span className="flex items-center gap-3">
-                    {item.icon && (
-                      <item.icon
-                        className="w-4 h-4 text-neon"
-                        aria-hidden="true"
-                      />
-                    )}
-                    {item.label}
-                  </span>
-                  <ChevronRight
-                    className="w-4 h-4 text-gray-600"
-                    aria-hidden="true"
-                  />
-                </Link>
-              ))}
-
-              {/* Auth section in mobile menu */}
-              <div className="border-t border-safariborder mt-2 pt-2">
-                {session?.user ? (
-                  <>
-                    <Link
-                      href="/dashboard"
-                      className="flex items-center gap-3 py-3.5 px-3 rounded-xl text-gray-200 hover:bg-safaridark transition-all min-h-[48px]"
-                      onClick={() => setMobileOpen(false)}
-                    >
-                      <LayoutDashboard className="w-4 h-4 text-neon" />
-                      <span className="flex-1">My Dashboard</span>
-                      <ChevronRight className="w-4 h-4 text-gray-600" />
-                    </Link>
-                    {session.user.role === "ADMIN" && (
-                      <Link
-                        href="/admin"
-                        className="flex items-center gap-3 py-3.5 px-3 rounded-xl text-gray-200 hover:bg-safaridark transition-all min-h-[48px]"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        <Settings className="w-4 h-4 text-neon" />
-                        <span className="flex-1">Admin Panel</span>
-                        <ChevronRight className="w-4 h-4 text-gray-600" />
-                      </Link>
-                    )}
-                    <button
-                      onClick={() => {
-                        setMobileOpen(false);
-                        signOut({ callbackUrl: "/" });
-                      }}
-                      className="flex items-center gap-3 py-3.5 px-3 rounded-xl text-red-400 hover:bg-red-950/30 transition-all min-h-[48px] w-full text-left"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      Sign Out
-                    </button>
-                  </>
-                ) : (
-                  <Link
-                    href="/login"
-                    className="flex items-center gap-3 py-3.5 px-3 rounded-xl text-gray-200 hover:bg-safaridark transition-all min-h-[48px]"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    <User className="w-4 h-4 text-neon" />
-                    <span className="flex-1">Sign In</span>
-                    <ChevronRight className="w-4 h-4 text-gray-600" />
-                  </Link>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
       </nav>
     </>
   );
