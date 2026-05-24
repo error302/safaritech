@@ -10,7 +10,7 @@ type Props = {
   uploadTo?: "cloudinary" | "local";
 };
 
-export default function ImageUploader({ value, onChange, multiple = false, uploadTo: initialUploadTo = "local" }: Props) {
+export default function ImageUploader({ value, onChange, multiple = false, uploadTo: initialUploadTo = "cloudinary" }: Props) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [dragOver, setDragOver] = useState(false);
@@ -42,12 +42,11 @@ export default function ImageUploader({ value, onChange, multiple = false, uploa
         body: formData,
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        const data = await res.json();
         throw new Error(data.error || "Upload failed");
       }
-
-      const data = await res.json();
 
       if (multiple) {
         onChange([...existingUrls, data.url].join(","));

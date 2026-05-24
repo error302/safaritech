@@ -140,7 +140,7 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <ImageUploader value={images} onChange={setImages} multiple uploadTo="local" />
+      <ImageUploader value={images} onChange={setImages} multiple uploadTo="cloudinary" />
 
       <div>
         <label className="block text-sm font-medium text-white mb-2">Product Name *</label>
