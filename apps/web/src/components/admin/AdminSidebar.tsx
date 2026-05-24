@@ -18,12 +18,14 @@ import {
   Menu,
   X,
   ExternalLink,
+  Layers,
 } from "lucide-react";
 import { useState } from "react";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Overview", href: "/admin" },
   { icon: Package, label: "Products", href: "/admin/products" },
+  { icon: Layers, label: "Categories", href: "/admin/categories" },
   { icon: ShoppingCart, label: "Orders", href: "/admin/orders" },
   { icon: Users, label: "Users", href: "/admin/users" },
   { icon: FileText, label: "Blog", href: "/admin/blog" },
