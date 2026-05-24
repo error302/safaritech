@@ -224,7 +224,6 @@ export default function Navbar() {
             <SiteLogo iconSize={28} textSize="text-lg" />
 
             <div className="flex items-center gap-1 shrink-0">
-              <CartButton />
               {session?.user ? (
                 <Link
                   href="/dashboard"
