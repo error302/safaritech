@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useMemo, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { trpc } from "@/utils/trpc";
+import { useSiteSettings } from "@/components/SiteSettingsProvider";
 import SiteLogo from "@/components/SiteLogo";
 import {
   Search,
@@ -21,15 +22,27 @@ import {
   LayoutDashboard,
   ChevronDown,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-const categoryLinks = [
-  { label: "All Products", href: "/shop", icon: Package },
-  { label: "Phones", href: "/shop?cat=smartphones", icon: Smartphone },
-  { label: "Laptops", href: "/shop?cat=laptops", icon: Laptop },
-  { label: "Gaming", href: "/shop?cat=gaming", icon: Gamepad2 },
-  { label: "Accessories", href: "/shop?cat=accessories", icon: Headphones },
-  { label: "Deals", href: "/deals", icon: Flame },
-] as const;
+// Map icon name strings to actual Lucide icon components
+const iconMap: Record<string, LucideIcon> = {
+  Smartphone,
+  Laptop,
+  Gamepad2,
+  Headphones,
+  Flame,
+  Package,
+};
+
+// Default category links (used when no settings are loaded yet)
+const defaultCategoryLinks = [
+  { label: "All Products", href: "/shop", icon: "Package" },
+  { label: "Phones", href: "/shop?cat=smartphones", icon: "Smartphone" },
+  { label: "Laptops", href: "/shop?cat=laptops", icon: "Laptop" },
+  { label: "Gaming", href: "/shop?cat=gaming", icon: "Gamepad2" },
+  { label: "Accessories", href: "/shop?cat=accessories", icon: "Headphones" },
+  { label: "Deals", href: "/deals", icon: "Flame" },
+];
 
 function UserMenu() {
   const { data: session } = useSession();
@@ -154,12 +167,24 @@ export default function Navbar() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const { data: session } = useSession();
+  const { settings } = useSiteSettings();
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
     const q = searchQuery.trim();
     router.push(q ? `/search?q=${encodeURIComponent(q)}` : "/search");
   };
+
+  // Parse nav category links from settings
+  const categoryLinks = useMemo(() => {
+    try {
+      const parsed = settings?.nav_category_links ? JSON.parse(settings.nav_category_links) : null;
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    } catch { /* use defaults */ }
+    return defaultCategoryLinks;
+  }, [settings?.nav_category_links]);
 
   return (
     <>
@@ -193,21 +218,22 @@ export default function Navbar() {
 
           {/* Category bar */}
           <div className="flex items-center gap-1 py-2 border-t border-safariborder/50 text-sm">
-            {categoryLinks.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-safarigray transition-all text-xs font-medium"
-              >
-                {item.icon && (
-                  <item.icon
+            {categoryLinks.map((item: any) => {
+              const IconComp = iconMap[item.icon] || Package;
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-safarigray transition-all text-xs font-medium"
+                >
+                  <IconComp
                     className="w-3.5 h-3.5"
                     aria-hidden="true"
                   />
-                )}
-                {item.label}
-              </Link>
-            ))}
+                  {item.label}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </nav>

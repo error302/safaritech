@@ -7,22 +7,31 @@ import { PullToRefresh } from "@/components/PullToRefresh";
 import {
   Smartphone, Laptop, Gamepad2, Headphones, Search,
   SlidersHorizontal, X, Tv, Camera, Watch, Tablet,
-  Wifi, HardDrive, Home, Package, Loader2
+  Wifi, HardDrive, Home, Package, Loader2, Monitor, Cpu, Mouse,
+  Keyboard, Speaker, Battery, Zap, Tag
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-const staticCategories = [
-  { id: "smartphones",  label: "Phones",       icon: Smartphone },
-  { id: "laptops",      label: "Laptops",       icon: Laptop },
-  { id: "tablets",      label: "Tablets",       icon: Tablet },
-  { id: "audio",        label: "Audio",         icon: Headphones },
-  { id: "gaming",       label: "Gaming",        icon: Gamepad2 },
-  { id: "wearables",    label: "Wearables",     icon: Watch },
-  { id: "cameras",      label: "Cameras",       icon: Camera },
-  { id: "tvs-displays", label: "TVs",           icon: Tv },
-  { id: "accessories",  label: "Accessories",   icon: Package },
-  { id: "storage",      label: "Storage",       icon: HardDrive },
-  { id: "networking",   label: "Networking",    icon: Wifi },
-  { id: "smart-home",   label: "Smart Home",    icon: Home },
+const iconMap: Record<string, LucideIcon> = {
+  Smartphone, Laptop, Gamepad2, Headphones, Tv, Camera, Watch, Tablet,
+  Wifi, HardDrive, Home, Package, Monitor, Cpu, Mouse, Keyboard,
+  Speaker, Battery, Zap, Tag,
+};
+
+// Fallback static categories (used when DB categories haven't loaded yet)
+const fallbackCategories = [
+  { slug: "smartphones", name: "Phones", iconName: "Smartphone" },
+  { slug: "laptops", name: "Laptops", iconName: "Laptop" },
+  { slug: "tablets", name: "Tablets", iconName: "Tablet" },
+  { slug: "audio", name: "Audio", iconName: "Headphones" },
+  { slug: "gaming", name: "Gaming", iconName: "Gamepad2" },
+  { slug: "wearables", name: "Wearables", iconName: "Watch" },
+  { slug: "cameras", name: "Cameras", iconName: "Camera" },
+  { slug: "tvs-displays", name: "TVs", iconName: "Tv" },
+  { slug: "accessories", name: "Accessories", iconName: "Package" },
+  { slug: "storage", name: "Storage", iconName: "HardDrive" },
+  { slug: "networking", name: "Networking", iconName: "Wifi" },
+  { slug: "smart-home", name: "Smart Home", iconName: "Home" },
 ];
 
 // Brand accent colors
@@ -65,6 +74,19 @@ function ShopContent() {
   });
 
   const { data: allBrands = [] } = trpc.product.getBrands.useQuery();
+  const { data: dbCategories } = trpc.category.getAll.useQuery();
+
+  // Build category list from DB or fallback
+  const categories = useMemo(() => {
+    if (dbCategories && dbCategories.length > 0) {
+      return dbCategories.map((cat: any) => ({
+        slug: cat.slug,
+        name: cat.name,
+        iconName: cat.iconName || "Package",
+      }));
+    }
+    return fallbackCategories;
+  }, [dbCategories]);
 
   const products = productsData?.products ?? [];
 
@@ -208,7 +230,7 @@ function ShopContent() {
     </aside>
   );
 
-  const selectedCatLabel = staticCategories.find((c) => c.id === selectedCat)?.label;
+  const selectedCatLabel = categories.find((c: any) => c.slug === selectedCat)?.name;
 
   return (
     <div className="min-h-screen bg-safaridark pb-24 md:pb-12">
@@ -295,20 +317,20 @@ function ShopContent() {
             >
               All
             </button>
-            {staticCategories.map((cat) => {
-              const Icon = cat.icon;
+            {categories.map((cat: any) => {
+              const Icon = iconMap[cat.iconName] || Package;
               return (
                 <button
-                  key={cat.id}
-                  onClick={() => setSelectedCat(cat.id)}
+                  key={cat.slug}
+                  onClick={() => setSelectedCat(cat.slug)}
                   className={`shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-                    selectedCat === cat.id
+                    selectedCat === cat.slug
                       ? "bg-white text-black shadow-md"
                       : "bg-safarigray text-gray-300 hover:bg-safariborder"
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
-                  {cat.label}
+                  {cat.name}
                 </button>
               );
             })}

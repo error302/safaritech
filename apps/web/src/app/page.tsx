@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { trpc } from "@/utils/trpc";
+import { useSiteSettings } from "@/components/SiteSettingsProvider";
 import ProductCard from "@/components/ProductCard";
 import BrandShowcase from "@/components/BrandShowcase";
 import PaymentBadges from "@/components/PaymentBadges";
@@ -19,22 +20,75 @@ import {
   Watch,
   Tag,
   PackageOpen,
+  CreditCard,
+  Clock,
+  Star,
+  Heart,
+  Package,
+  Flame,
+  Monitor,
+  Cpu,
+  Mouse,
+  Keyboard,
+  Speaker,
+  Battery,
+  Camera,
+  Tv,
+  Wifi,
+  HardDrive,
+  Home,
+  Tablet,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-const trustItems = [
-  { icon: Smartphone, title: "M-Pesa & PayPal", desc: "Instant & secure" },
-  { icon: Truck, title: "Free Delivery", desc: "Nairobi wide" },
-  { icon: RotateCcw, title: "7-Day Returns", desc: "No questions asked" },
-  { icon: ShieldCheck, title: "1-Year Warranty", desc: "On all devices" },
+// Map icon name strings to actual Lucide icon components
+const iconMap: Record<string, LucideIcon> = {
+  Smartphone,
+  Laptop,
+  Gamepad2,
+  Headphones,
+  Watch,
+  Tablet,
+  Camera,
+  Tv,
+  Wifi,
+  HardDrive,
+  Home,
+  Package,
+  Monitor,
+  Cpu,
+  Mouse,
+  Keyboard,
+  Speaker,
+  Battery,
+  Zap,
+  Tag,
+  Truck,
+  RotateCcw,
+  ShieldCheck,
+  CreditCard,
+  Clock,
+  Star,
+  Heart,
+  Flame,
+};
+
+// Default trust badges (used when no settings are loaded yet)
+const defaultTrustBadges = [
+  { title: "M-Pesa & PayPal", desc: "Instant & secure", icon: "Smartphone" },
+  { title: "Free Delivery", desc: "Nairobi wide", icon: "Truck" },
+  { title: "7-Day Returns", desc: "No questions asked", icon: "RotateCcw" },
+  { title: "1-Year Warranty", desc: "On all devices", icon: "ShieldCheck" },
 ];
 
-const categories = [
-  { id: "smartphones", label: "Phones", icon: Smartphone, desc: "Latest smartphones", gradient: "from-blue-600 to-blue-400" },
-  { id: "laptops", label: "Laptops", icon: Laptop, desc: "Work & play", gradient: "from-purple-600 to-purple-400" },
-  { id: "gaming", label: "Gaming", icon: Gamepad2, desc: "Next-gen consoles", gradient: "from-red-600 to-orange-400" },
-  { id: "audio", label: "Audio", icon: Headphones, desc: "Premium sound", gradient: "from-green-600 to-green-400" },
-  { id: "wearables", label: "Wearables", icon: Watch, desc: "Smart devices", gradient: "from-yellow-500 to-amber-400" },
-  { id: "accessories", label: "Accessories", icon: Tag, desc: "Must-have extras", gradient: "from-cyan-600 to-cyan-400" },
+// Default categories (used when no DB categories exist yet)
+const defaultCategories = [
+  { slug: "smartphones", name: "Phones", description: "Latest smartphones", iconName: "Smartphone", gradient: "from-blue-600 to-blue-400" },
+  { slug: "laptops", name: "Laptops", description: "Work & play", iconName: "Laptop", gradient: "from-purple-600 to-purple-400" },
+  { slug: "gaming", name: "Gaming", description: "Next-gen consoles", iconName: "Gamepad2", gradient: "from-red-600 to-orange-400" },
+  { slug: "audio", name: "Audio", description: "Premium sound", iconName: "Headphones", gradient: "from-green-600 to-green-400" },
+  { slug: "wearables", name: "Wearables", description: "Smart devices", iconName: "Watch", gradient: "from-yellow-500 to-amber-400" },
+  { slug: "accessories", name: "Accessories", description: "Must-have extras", iconName: "Tag", gradient: "from-cyan-600 to-cyan-400" },
 ];
 
 function parseImages(raw: unknown): string[] | null {
@@ -48,11 +102,48 @@ function parseImages(raw: unknown): string[] | null {
 }
 
 export default function HomePage() {
+  const { settings } = useSiteSettings();
   const { data: productsData, isLoading } = trpc.product.getAll.useQuery({ limit: 8 });
   const { data: hotDeals = [] } = trpc.product.getHot.useQuery();
+  const { data: dbCategories } = trpc.category.getAll.useQuery();
 
   const newArrivals = productsData?.products ?? [];
   const hasProducts = newArrivals.length > 0;
+
+  // Hero settings from site settings
+  const heroTitle = settings?.hero_title || "Elevate Your Digital Life.";
+  const heroSubtitle = settings?.hero_subtitle || "Samsung, Apple, Sony, HP and more — curated smartphones, laptops & accessories. Pay with M-Pesa or PayPal.";
+  const heroImage = settings?.hero_image || "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?q=80&w=2000&auto=format&fit=crop";
+  const heroBadgeText = settings?.hero_badge_text || "Kenya's Premium Tech Hub";
+  const heroCtaPrimaryText = settings?.hero_cta_primary_text || "Shop All Brands";
+  const heroCtaPrimaryLink = settings?.hero_cta_primary_link || "/shop";
+  const heroCtaSecondaryText = settings?.hero_cta_secondary_text || "View Phones";
+  const heroCtaSecondaryLink = settings?.hero_cta_secondary_link || "/shop?cat=smartphones";
+
+  // Parse trust badges from settings JSON
+  let trustBadges = defaultTrustBadges;
+  try {
+    const parsed = settings?.trust_badges ? JSON.parse(settings.trust_badges) : null;
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      trustBadges = parsed;
+    }
+  } catch { /* use defaults */ }
+
+  // Use DB categories if available, otherwise defaults
+  const categories = (dbCategories && dbCategories.length > 0)
+    ? dbCategories.map((cat: any) => ({
+        slug: cat.slug,
+        name: cat.name,
+        description: cat.description || "",
+        iconName: cat.iconName || "Smartphone",
+        gradient: cat.gradient || "from-blue-500/20 to-cyan-500/20",
+      }))
+    : defaultCategories;
+
+  // Split hero title to apply gradient to text after the last space (like original "Digital Life.")
+  const titleParts = heroTitle.split(/ (?=[^ ]+$)/); // split at last space
+  const titleMain = titleParts.length > 1 ? titleParts[0] : "";
+  const titleAccent = titleParts.length > 1 ? titleParts[1] : heroTitle;
 
   return (
     <div className="bg-safaridark min-h-screen">
@@ -62,7 +153,7 @@ export default function HomePage() {
           <div className="relative rounded-3xl overflow-hidden border border-safariborder min-h-[380px] sm:min-h-[440px] md:min-h-[520px]">
             <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/70 to-black/30 z-10" />
             <Image
-              src="https://images.unsplash.com/photo-1606813907291-d86efa9b94db?q=80&w=2000&auto=format&fit=crop"
+              src={heroImage}
               alt="Premium devices at Safaritech Kenya"
               fill
               className="object-cover object-center"
@@ -73,32 +164,32 @@ export default function HomePage() {
             <div className="relative z-20 px-5 py-12 sm:py-14 md:p-20 w-full md:w-2/3 lg:w-1/2">
               <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 text-white text-[11px] sm:text-xs font-semibold px-3.5 py-1.5 rounded-full mb-5">
                 <span className="w-2 h-2 bg-neon rounded-full animate-pulse shadow-[0_0_8px_#00FF9F]" />
-                Kenya&apos;s Premium Tech Hub
+                {heroBadgeText}
               </div>
 
               <h1 className="font-display font-black text-[2rem] sm:text-5xl md:text-6xl lg:text-7xl leading-[1.08] tracking-tight text-white mb-5 text-balance">
-                Elevate Your{" "}
+                {titleMain ? `${titleMain} ` : ""}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon to-electric">
-                  Digital Life.
+                  {titleAccent}
                 </span>
               </h1>
 
               <p className="text-gray-300 text-sm sm:text-base md:text-lg max-w-md leading-relaxed mb-7">
-                Samsung, Apple, Sony, HP and more — curated smartphones, laptops & accessories. Pay with M-Pesa or PayPal.
+                {heroSubtitle}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link
-                  href="/shop"
+                  href={heroCtaPrimaryLink}
                   className="bg-neon hover:bg-neon-dim text-black font-display font-bold px-6 py-3.5 rounded-xl text-sm sm:text-base transition-all active:scale-[0.98] text-center"
                 >
-                  Shop All Brands
+                  {heroCtaPrimaryText}
                 </Link>
                 <Link
-                  href="/shop?cat=smartphones"
+                  href={heroCtaSecondaryLink}
                   className="bg-white/10 backdrop-blur-md hover:bg-white/15 border border-white/15 text-white font-display font-bold px-6 py-3.5 rounded-xl text-sm sm:text-base transition-all active:scale-[0.98] text-center"
                 >
-                  View Phones
+                  {heroCtaSecondaryText}
                 </Link>
               </div>
             </div>
@@ -106,21 +197,24 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Trust */}
+      {/* Trust Badges */}
       <section className="py-6 md:py-8 border-y border-safariborder bg-safarigray/30">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-            {trustItems.map((item) => (
-              <div key={item.title} className="flex gap-3 items-start">
-                <div className="w-10 h-10 rounded-xl bg-safaridark border border-safariborder flex items-center justify-center shrink-0">
-                  <item.icon className="w-5 h-5 text-neon" />
+            {trustBadges.map((item: any) => {
+              const IconComp = iconMap[item.icon] || Smartphone;
+              return (
+                <div key={item.title} className="flex gap-3 items-start">
+                  <div className="w-10 h-10 rounded-xl bg-safaridark border border-safariborder flex items-center justify-center shrink-0">
+                    <IconComp className="w-5 h-5 text-neon" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-sm text-white mb-0.5">{item.title}</h3>
+                    <p className="text-xs text-gray-400">{item.desc}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-bold text-sm text-white mb-0.5">{item.title}</h3>
-                  <p className="text-xs text-gray-400">{item.desc}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -201,23 +295,26 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-5">
-            {categories.map((cat) => (
-              <Link
-                key={cat.id}
-                href={`/shop?cat=${cat.id}`}
-                className="group relative overflow-hidden rounded-2xl bg-safarigray border border-safariborder p-4 md:p-5 transition-all active:scale-[0.98] md:hover:border-neon/30 md:hover:-translate-y-0.5"
-              >
-                <div
-                  className={`w-11 h-11 md:w-12 md:h-12 rounded-full bg-gradient-to-br ${cat.gradient} flex items-center justify-center mb-10 md:mb-12 shadow-lg`}
+            {categories.map((cat: any) => {
+              const IconComp = iconMap[cat.iconName] || Smartphone;
+              return (
+                <Link
+                  key={cat.slug}
+                  href={`/shop?cat=${cat.slug}`}
+                  className="group relative overflow-hidden rounded-2xl bg-safarigray border border-safariborder p-4 md:p-5 transition-all active:scale-[0.98] md:hover:border-neon/30 md:hover:-translate-y-0.5"
                 >
-                  <cat.icon className="w-5 h-5 md:w-6 md:h-6 text-white" />
-                </div>
-                <h3 className="font-bold text-sm md:text-base text-white mb-1 group-hover:text-neon transition-colors">
-                  {cat.label}
-                </h3>
-                <p className="text-xs text-gray-500">{cat.desc}</p>
-              </Link>
-            ))}
+                  <div
+                    className={`w-11 h-11 md:w-12 md:h-12 rounded-full bg-gradient-to-br ${cat.gradient} flex items-center justify-center mb-10 md:mb-12 shadow-lg`}
+                  >
+                    <IconComp className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                  </div>
+                  <h3 className="font-bold text-sm md:text-base text-white mb-1 group-hover:text-neon transition-colors">
+                    {cat.name}
+                  </h3>
+                  <p className="text-xs text-gray-500">{cat.description}</p>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>

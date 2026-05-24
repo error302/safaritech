@@ -60,11 +60,15 @@ model Product {
 }
 
 model Category {
-  id       String    @id @default(uuid())
-  name     String    @unique
-  slug     String    @unique
-  image    String?
-  products Product[]
+  id          String    @id @default(uuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  image       String?
+  iconName    String    @default("Smartphone")
+  gradient    String    @default("from-blue-500/20 to-cyan-500/20")
+  sortOrder   Int       @default(0)
+  products    Product[]
 }
 
 model Order {

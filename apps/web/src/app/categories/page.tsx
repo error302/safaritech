@@ -40,10 +40,10 @@ export default function Categories() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {categories?.map((category) => {
-              const iconName = (category as any).iconName || defaultMetadata.icon;
+              const iconName = category.iconName || defaultMetadata.icon;
               const IconComponent = iconMap[iconName] || Smartphone;
-              const gradient = (category as any).gradient || defaultMetadata.gradient;
-              const description = (category as any).description || defaultMetadata.description;
+              const gradient = category.gradient || defaultMetadata.gradient;
+              const description = category.description || defaultMetadata.description;
               const productCount = (category as unknown as { _count: { products: number } })._count?.products || 0;
 
               return (
