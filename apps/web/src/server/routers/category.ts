@@ -5,6 +5,7 @@ export const categoryRouter = router({
   getAll: publicProcedure.query(async ({ ctx }) => {
     const categories = await ctx.prisma.category.findMany({
       include: { _count: { select: { products: true } } },
+      orderBy: { sortOrder: 'asc' },
     })
     return categories
   }),
@@ -23,6 +24,11 @@ export const categoryRouter = router({
     .input(z.object({
       name: z.string(),
       slug: z.string(),
+      description: z.string().optional(),
+      image: z.string().optional(),
+      iconName: z.string().default('Smartphone'),
+      gradient: z.string().default('from-blue-500/20 to-cyan-500/20'),
+      sortOrder: z.number().default(0),
     }))
     .mutation(async ({ ctx, input }) => {
       const category = await ctx.prisma.category.create({ data: input })
@@ -34,6 +40,11 @@ export const categoryRouter = router({
       id: z.string(),
       name: z.string().optional(),
       slug: z.string().optional(),
+      description: z.string().nullable().optional(),
+      image: z.string().nullable().optional(),
+      iconName: z.string().optional(),
+      gradient: z.string().optional(),
+      sortOrder: z.number().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       const { id, ...data } = input

@@ -2,10 +2,22 @@
 
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { BRANDS } from "@/lib/brands";
+import { trpc } from "@/utils/trpc";
+import { BRANDS, findBrandByName } from "@/lib/brands";
 import BrandLogo from "@/components/BrandLogo";
 
 export default function BrandShowcase() {
+  // Get brands dynamically from products in the database
+  const { data: dbBrands = [] } = trpc.product.getBrands.useQuery();
+
+  // Merge DB brands with static brand data (logos, colors)
+  const displayBrands = dbBrands.length > 0
+    ? dbBrands.map((name: string) => {
+        const staticBrand = findBrandByName(name);
+        return staticBrand || { name, logoSrc: "", iconColor: "888888" };
+      })
+    : BRANDS;
+
   return (
     <section className="py-12 md:py-20 px-4">
       <div className="max-w-7xl mx-auto">
@@ -32,7 +44,7 @@ export default function BrandShowcase() {
         {/* Mobile: horizontal snap scroll */}
         <div className="md:hidden -mx-4 px-4">
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory">
-            {BRANDS.map((brand) => (
+            {displayBrands.map((brand) => (
               <Link
                 key={brand.name}
                 href={`/shop?brand=${encodeURIComponent(brand.name)}`}
@@ -56,7 +68,7 @@ export default function BrandShowcase() {
 
         {/* Desktop: premium grid */}
         <div className="hidden md:grid grid-cols-4 lg:grid-cols-6 gap-4">
-          {BRANDS.map((brand) => (
+          {displayBrands.map((brand) => (
             <Link
               key={brand.name}
               href={`/shop?brand=${encodeURIComponent(brand.name)}`}
