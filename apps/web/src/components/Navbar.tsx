@@ -22,6 +22,7 @@ import {
   LogOut,
   Settings,
   LayoutDashboard,
+  ChevronDown,
 } from "lucide-react";
 
 const categoryLinks = [
@@ -54,9 +55,10 @@ function UserMenu() {
           className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-safarigray transition-colors"
           aria-label="User menu"
         >
-          <div className="w-8 h-8 rounded-full bg-neon/20 border border-neon/40 flex items-center justify-center text-neon text-xs font-bold">
+          <div className="w-8 h-8 rounded-full bg-neon/20 border-2 border-neon/50 flex items-center justify-center text-neon text-xs font-bold shadow-[0_0_10px_rgba(0,255,159,0.2)]">
             {initials}
           </div>
+          <ChevronDown className={`w-3 h-3 text-gray-500 transition-transform ${open ? 'rotate-180' : ''}`} />
         </button>
 
         {open && (
@@ -67,12 +69,19 @@ function UserMenu() {
             />
             <div className="absolute right-0 top-full mt-2 w-56 bg-safarigray border border-safariborder rounded-xl shadow-xl z-50 py-2 animate-fade-in">
               <div className="px-4 py-3 border-b border-safariborder">
-                <p className="text-sm font-semibold text-white truncate">
-                  {session.user.name || "User"}
-                </p>
-                <p className="text-xs text-gray-500 truncate">
-                  {session.user.email}
-                </p>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-neon/20 border border-neon/50 flex items-center justify-center text-neon text-xs font-bold">
+                    {initials}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-white truncate">
+                      {session.user.name || "User"}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate">
+                      {session.user.email}
+                    </p>
+                  </div>
+                </div>
               </div>
               <Link
                 href="/dashboard"
@@ -131,12 +140,12 @@ function CartButton() {
   return (
     <Link
       href="/cart"
-      className="relative p-2.5 rounded-xl hover:bg-safarigray transition-colors text-gray-400 hover:text-white"
+      className="relative flex items-center justify-center w-10 h-10 rounded-xl hover:bg-safarigray transition-colors group overflow-visible"
       aria-label={`Shopping Cart${cartCount > 0 ? ` (${cartCount} items)` : ""}`}
     >
-      <ShoppingCart className="w-5 h-5" />
+      <ShoppingCart className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" strokeWidth={1.8} />
       {cartCount > 0 && (
-        <span className="absolute -top-0.5 -right-0.5 bg-neon text-black text-[10px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center px-1 shadow-[0_0_8px_rgba(0,255,159,0.4)]">
+        <span className="absolute -top-1 -right-1 bg-neon text-black text-[10px] font-extrabold leading-none min-w-[18px] h-[18px] rounded-full flex items-center justify-center px-[5px] shadow-[0_0_10px_rgba(0,255,159,0.5)] ring-2 ring-safaridark">
           {cartCount > 99 ? "99+" : cartCount}
         </span>
       )}
@@ -216,8 +225,30 @@ export default function Navbar() {
 
             <div className="flex items-center gap-1 shrink-0">
               <CartButton />
+              {session?.user ? (
+                <Link
+                  href="/dashboard"
+                  className="relative flex items-center justify-center w-10 h-10 rounded-xl hover:bg-safarigray transition-colors"
+                  aria-label="My Account"
+                >
+                  <div className="w-7 h-7 rounded-full bg-neon/20 border border-neon/50 flex items-center justify-center text-neon text-[10px] font-bold">
+                    {session.user.name
+                      ? session.user.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+                      : session.user.email?.[0]?.toUpperCase() || "U"}
+                  </div>
+                  <span className="absolute bottom-0.5 right-1.5 w-2 h-2 bg-neon rounded-full ring-2 ring-safaridark" />
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  className="flex items-center justify-center w-10 h-10 rounded-xl hover:bg-safarigray transition-colors text-gray-400 hover:text-white"
+                  aria-label="Sign In"
+                >
+                  <User className="w-5 h-5" />
+                </Link>
+              )}
               <button
-                className="p-2.5 rounded-xl text-gray-400 hover:text-white"
+                className="flex items-center justify-center w-10 h-10 rounded-xl text-gray-400 hover:text-white hover:bg-safarigray transition-colors"
                 onClick={() => setMobileOpen(!mobileOpen)}
                 aria-label={mobileOpen ? "Close Menu" : "Open Menu"}
               >
@@ -249,6 +280,27 @@ export default function Navbar() {
 
         {mobileOpen && (
           <div className="border-t border-safariborder bg-safarigray animate-fade-in">
+            {/* User greeting in mobile menu */}
+            {session?.user && (
+              <div className="px-4 py-3 border-b border-safariborder bg-safaridark/50">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-neon/20 border border-neon/50 flex items-center justify-center text-neon text-sm font-bold">
+                    {session.user.name
+                      ? session.user.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+                      : session.user.email?.[0]?.toUpperCase() || "U"}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-white truncate">
+                      {session.user.name || "User"}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate">
+                      {session.user.email}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="px-4 py-3 flex flex-col gap-0.5 max-h-[60vh] overflow-y-auto">
               {categoryLinks.map((item) => (
                 <Link
@@ -282,8 +334,8 @@ export default function Navbar() {
                       className="flex items-center gap-3 py-3.5 px-3 rounded-xl text-gray-200 hover:bg-safaridark transition-all min-h-[48px]"
                       onClick={() => setMobileOpen(false)}
                     >
-                      <User className="w-4 h-4 text-neon" />
-                      <span className="flex-1">My Account</span>
+                      <LayoutDashboard className="w-4 h-4 text-neon" />
+                      <span className="flex-1">My Dashboard</span>
                       <ChevronRight className="w-4 h-4 text-gray-600" />
                     </Link>
                     {session.user.role === "ADMIN" && (

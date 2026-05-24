@@ -23,7 +23,9 @@ const config: Config = {
       },
       animation: {
         "fade-up": "fadeUp 0.6s ease forwards",
+        "fade-in": "fadeIn 0.2s ease forwards",
         "slide-in": "slideIn 0.4s ease forwards",
+        "slide-up": "slideUp 0.3s ease forwards",
         pulse_neon: "pulseNeon 2s ease-in-out infinite",
       },
       keyframes: {
@@ -38,6 +40,14 @@ const config: Config = {
         pulseNeon: {
           "0%, 100%": { boxShadow: "0 0 8px #00FF9F55" },
           "50%": { boxShadow: "0 0 20px #00FF9F99" },
+        },
+        fadeIn: {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        slideUp: {
+          from: { transform: "translateY(100%)" },
+          to: { transform: "translateY(0)" },
         },
       },
     },

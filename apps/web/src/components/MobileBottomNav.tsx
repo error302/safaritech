@@ -111,12 +111,12 @@ export default function MobileBottomNav() {
                     aria-hidden="true"
                   />
                   {"badge" in item && item.badge && item.badge > 0 && (
-                    <span className="absolute -top-2 -right-2.5 bg-neon text-black text-[9px] font-bold min-w-[16px] h-[16px] rounded-full flex items-center justify-center px-0.5 shadow-[0_0_6px_rgba(0,255,159,0.4)]">
+                    <span className="absolute -top-1.5 -right-2 bg-neon text-black text-[9px] font-extrabold leading-none min-w-[16px] h-[16px] rounded-full flex items-center justify-center px-[3px] shadow-[0_0_8px_rgba(0,255,159,0.5)] ring-2 ring-safaridark">
                       {item.badge > 99 ? "99+" : item.badge}
                     </span>
                   )}
                   {isAccount && isLoggedIn && !active && (
-                    <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-neon rounded-full" />
+                    <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-neon rounded-full ring-2 ring-safaridark" />
                   )}
                 </div>
                 <span
