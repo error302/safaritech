@@ -26,9 +26,10 @@ function getDatasourceUrl(): string | undefined {
 }
 
 const datasourceUrl = getDatasourceUrl();
+// Use `as any` to support both Prisma v4 (no datasourceUrl) and v5+
 const prisma = new PrismaClient({
   ...(datasourceUrl ? { datasourceUrl } : {}),
-});
+} as any);
 
 async function main() {
   const email = process.env.ADMIN_EMAIL || "mohameddosho20@gmail.com";

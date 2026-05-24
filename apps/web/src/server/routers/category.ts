@@ -5,7 +5,7 @@ export const categoryRouter = router({
   getAll: publicProcedure.query(async ({ ctx }) => {
     const categories = await ctx.prisma.category.findMany({
       include: { _count: { select: { products: true } } },
-      orderBy: { sortOrder: 'asc' },
+      orderBy: { name: 'asc' },
     })
     return categories
   }),
@@ -31,7 +31,9 @@ export const categoryRouter = router({
       sortOrder: z.number().default(0),
     }))
     .mutation(async ({ ctx, input }) => {
-      const category = await ctx.prisma.category.create({ data: input })
+      // Use `as any` because new fields (description, iconName, gradient, sortOrder)
+      // may not yet be in the generated Prisma Client types on Vercel
+      const category = await ctx.prisma.category.create({ data: input as any })
       return category
     }),
 
@@ -48,9 +50,10 @@ export const categoryRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       const { id, ...data } = input
+      // Use `as any` because new fields may not be in generated types yet
       const category = await ctx.prisma.category.update({
         where: { id },
-        data,
+        data: data as any,
       })
       return category
     }),

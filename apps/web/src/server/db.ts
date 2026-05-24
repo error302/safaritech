@@ -4,32 +4,37 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
-function getDatasourceUrl(): string | undefined {
+function createPrismaClient() {
   const dbUrl = process.env.DATABASE_URL
-  if (!dbUrl) return undefined
 
-  // If URL already has query params, append with &, otherwise with ?
-  const separator = dbUrl.includes('?') ? '&' : '?'
-
-  // Add connection_limit for serverless environments (Vercel)
-  // This prevents connection pool exhaustion
-  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+  // Build datasource URL with connection limit for serverless
+  let datasourceUrl = dbUrl
+  if (dbUrl && (process.env.VERCEL || process.env.NODE_ENV === 'production')) {
     if (!dbUrl.includes('connection_limit')) {
-      return `${dbUrl}${separator}connection_limit=1`
+      const separator = dbUrl.includes('?') ? '&' : '?'
+      datasourceUrl = `${dbUrl}${separator}connection_limit=1`
     }
   }
 
-  return dbUrl
+  // Try Prisma v5+ constructor with datasourceUrl, fall back to v4 style
+  try {
+    return new PrismaClient({
+      log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
+      ...(datasourceUrl ? { datasourceUrl } : {}),
+    } as any)
+  } catch {
+    // Prisma v4 doesn't support datasourceUrl in constructor
+    // Set via env var instead
+    if (datasourceUrl) {
+      process.env.DATABASE_URL = datasourceUrl
+    }
+    return new PrismaClient({
+      log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
+    })
+  }
 }
 
-const datasourceUrl = getDatasourceUrl()
-
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
-    ...(datasourceUrl ? { datasourceUrl } : {}),
-  })
+export const prisma = globalForPrisma.prisma ?? createPrismaClient()
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
