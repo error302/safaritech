@@ -232,6 +232,7 @@ export default function AdminBlogPage() {
         featuredImage: form.featuredImage || undefined,
         seoTitle: form.seoTitle || undefined,
         seoDesc: form.seoDesc || undefined,
+        published: form.published,
       });
     }
   }, [form, editingPost, createPost, updatePost]);

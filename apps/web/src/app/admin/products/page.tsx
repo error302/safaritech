@@ -34,7 +34,8 @@ export default function AdminProductsPage() {
   const { data: categories } = trpc.product.adminGetCategories.useQuery();
 
   const deleteProduct = trpc.product.delete.useMutation({
-    onSuccess: () => { utils.product.adminGetAll.invalidate(); },
+    onSuccess: () => { utils.product.adminGetAll.invalidate(); setDeleteConfirm(null); },
+    onError: (err) => { alert("Failed to delete product: " + err.message); },
   });
 
   const [openForm, setOpenForm] = useState(false);
@@ -191,7 +192,6 @@ export default function AdminProductsPage() {
               onClick={() => {
                 if (deleteConfirm) {
                   deleteProduct.mutate({ id: deleteConfirm });
-                  setDeleteConfirm(null);
                 }
               }}
               disabled={deleteProduct.isPending}

@@ -280,7 +280,6 @@ export default function AdminCategoriesPage() {
                 value={form.image}
                 onChange={(url: string) => setForm({ ...form, image: url })}
                 multiple={false}
-                uploadTo="cloudinary"
               />
             </div>
 

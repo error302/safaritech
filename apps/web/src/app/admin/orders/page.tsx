@@ -24,6 +24,15 @@ const statusColors: Record<string, string> = {
   REFUNDED: "text-gray-500 bg-gray-500/10 border-gray-500/20",
 };
 
+type OrderItem = {
+  id: string;
+  productId: string;
+  quantity: number;
+  unitPrice: number;
+  selectedColor: string | null;
+  product: { id: string; name: string; images: string; slug: string } | null;
+};
+
 type OrderRow = {
   id: string;
   total: number;
@@ -34,6 +43,7 @@ type OrderRow = {
   createdAt: Date;
   user: { name: string | null; email: string } | null;
   shippingAddress: { city: string } | null;
+  items: OrderItem[];
 };
 
 export default function AdminOrdersPage() {
@@ -209,6 +219,40 @@ export default function AdminOrdersPage() {
               <p className="text-sm text-gray-500">{selectedOrder.user?.email}</p>
               <p className="text-sm text-gray-500">{selectedOrder.shippingAddress?.city}</p>
             </div>
+
+            {/* Order Items */}
+            {selectedOrder.items && selectedOrder.items.length > 0 && (
+              <div className="bg-safaridark border border-safariborder rounded-xl p-4 space-y-3">
+                <h3 className="font-display font-semibold text-white mb-3">
+                  Items ({selectedOrder.items.length})
+                </h3>
+                {selectedOrder.items.map((item) => (
+                  <div key={item.id} className="flex items-center gap-3 py-2 border-b border-safariborder last:border-b-0">
+                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-safarigray shrink-0">
+                      {item.product?.images ? (
+                        <img
+                          src={item.product.images.split(",")[0]}
+                          alt={item.product.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">No img</div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-white font-medium truncate">{item.product?.name || "Unknown Product"}</p>
+                      <p className="text-xs text-gray-500">
+                        Qty: {item.quantity} × KSh {item.unitPrice.toLocaleString()}
+                        {item.selectedColor && <span className="ml-2">Color: {item.selectedColor}</span>}
+                      </p>
+                    </div>
+                    <span className="text-sm text-white font-medium shrink-0">
+                      KSh {(item.unitPrice * item.quantity).toLocaleString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
 
             {/* Order Summary */}
             <div className="bg-safaridark border border-safariborder rounded-xl p-4 space-y-2">

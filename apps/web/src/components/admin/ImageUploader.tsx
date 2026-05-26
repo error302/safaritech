@@ -1,20 +1,20 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Upload, X, Cloud, HardDrive } from "lucide-react";
+import { Upload, X, Cloud } from "lucide-react";
 
 type Props = {
   value?: string;
   onChange: (url: string) => void;
   multiple?: boolean;
+  /** @deprecated Cloudinary is always used now. This prop is kept for backward compatibility. */
   uploadTo?: "cloudinary" | "local";
 };
 
-export default function ImageUploader({ value, onChange, multiple = false, uploadTo: initialUploadTo = "cloudinary" }: Props) {
+export default function ImageUploader({ value, onChange, multiple = false }: Props) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [dragOver, setDragOver] = useState(false);
-  const [uploadTo, setUploadTo] = useState<"cloudinary" | "local">(initialUploadTo);
   const fileInput = useRef<HTMLInputElement>(null);
 
   const existingUrls = value ? value.split(",").filter(Boolean) : [];
@@ -35,7 +35,6 @@ export default function ImageUploader({ value, onChange, multiple = false, uploa
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("uploadTo", uploadTo);
 
       const res = await fetch("/api/upload", {
         method: "POST",
@@ -74,28 +73,10 @@ export default function ImageUploader({ value, onChange, multiple = false, uploa
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-4">
-        <span className="text-xs text-gray-500">Upload to:</span>
-        <button
-          type="button"
-          onClick={() => setUploadTo("cloudinary")}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-            uploadTo === "cloudinary" ? "bg-neon/10 text-neon border-neon/20" : "bg-safarigray text-gray-400 border-safariborder hover:text-white"
-          }`}
-        >
-          <Cloud className="w-3.5 h-3.5" />
-          Cloudinary
-        </button>
-        <button
-          type="button"
-          onClick={() => setUploadTo("local")}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-            uploadTo === "local" ? "bg-neon/10 text-neon border-neon/20" : "bg-safarigray text-gray-400 border-safariborder hover:text-white"
-          }`}
-        >
-          <HardDrive className="w-3.5 h-3.5" />
-          Local Storage
-        </button>
+      {/* Cloud upload indicator */}
+      <div className="flex items-center gap-2">
+        <Cloud className="w-3.5 h-3.5 text-neon" />
+        <span className="text-xs text-gray-500">Images are uploaded to Cloudinary</span>
       </div>
 
       {existingUrls.length > 0 && (

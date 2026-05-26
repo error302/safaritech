@@ -110,7 +110,7 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
     e.preventDefault();
     setError("");
 
-    const priceNum = parseFloat(price);
+    const priceNum = Math.round(parseFloat(price));
     if (isNaN(priceNum) || priceNum < 0) {
       setError("Invalid price");
       return;
@@ -121,7 +121,7 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
       slug: slugAuto,
       description: description.trim(),
       price: priceNum,
-      salePrice: salePrice ? parseFloat(salePrice) : undefined,
+      salePrice: salePrice ? Math.round(parseFloat(salePrice)) : undefined,
       stock: parseInt(stock) || 0,
       images: images.trim() || undefined,
       categoryId: categoryId || undefined,
@@ -140,7 +140,7 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <ImageUploader value={images} onChange={setImages} multiple uploadTo="cloudinary" />
+      <ImageUploader value={images} onChange={setImages} multiple />
 
       <div>
         <label className="block text-sm font-medium text-white mb-2">Product Name *</label>

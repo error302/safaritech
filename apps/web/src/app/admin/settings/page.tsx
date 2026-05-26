@@ -186,8 +186,8 @@ export default function AdminSettingsPage() {
     setFormState((prev) => ({ ...prev, [key]: value }));
   };
 
-  // Fetch settings from the database
-  const { data: settings, isLoading } = trpc.siteSetting.getAll.useQuery();
+  // Fetch settings from the database (admin endpoint includes sensitive keys, masked)
+  const { data: settings, isLoading } = trpc.siteSetting.adminGetAll.useQuery();
 
   // Populate form fields when settings data loads
   useEffect(() => {
@@ -316,7 +316,6 @@ export default function AdminSettingsPage() {
                       value={formState.logo_url}
                       onChange={(url: string) => updateField("logo_url", url)}
                       multiple={false}
-                      uploadTo="cloudinary"
                     />
                   </div>
 
@@ -395,7 +394,6 @@ export default function AdminSettingsPage() {
                       value={formState.hero_image}
                       onChange={(url: string) => updateField("hero_image", url)}
                       multiple={false}
-                      uploadTo="cloudinary"
                     />
                   </div>
 

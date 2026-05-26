@@ -58,11 +58,15 @@ export const blogRouter = router({
       featuredImage: z.string().optional(),
       seoTitle: z.string().optional(),
       seoDesc: z.string().optional(),
+      published: z.boolean().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
+      const { published, ...rest } = input
       const post = await ctx.prisma.blogPost.create({
         data: {
-          ...input,
+          ...rest,
+          published: published ?? false,
+          publishedAt: published ? new Date() : null,
           authorId: ctx.session.user.id,
         },
       })
@@ -82,11 +86,26 @@ export const blogRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       const { id, ...data } = input
+
+      // Only set publishedAt when transitioning from draft -> published
+      // Don't reset it on every update of an already-published post
+      let publishedAtUpdate: Date | null | undefined = undefined
+      if (data.published === true) {
+        const existing = await ctx.prisma.blogPost.findUnique({ where: { id }, select: { publishedAt: true, published: true } })
+        if (existing && !existing.publishedAt) {
+          // Transitioning from draft to published for the first time
+          publishedAtUpdate = new Date()
+        }
+      } else if (data.published === false) {
+        // Unpublishing — clear publishedAt
+        publishedAtUpdate = null
+      }
+
       const post = await ctx.prisma.blogPost.update({
         where: { id },
         data: {
           ...data,
-          publishedAt: data.published ? new Date() : null,
+          ...(publishedAtUpdate !== undefined && { publishedAt: publishedAtUpdate }),
         },
       })
       return post
