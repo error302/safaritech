@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Edit, Trash2, MoreVertical } from "lucide-react";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Edit, Trash2, Loader2 } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import AdminHeader from "@/components/admin/AdminHeader";
 import DataTable from "@/components/admin/DataTable";
 import Modal from "@/components/admin/Modal";
-import ImageUploader from "@/components/admin/ImageUploader";
 import ProductForm from "@/components/admin/ProductForm";
 
 type ProductRow = {
@@ -26,8 +25,9 @@ type ProductRow = {
   createdAt: Date;
 };
 
-export default function AdminProductsPage() {
+function AdminProductsContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const utils = trpc.useUtils();
 
   const { data: products, isLoading, refetch } = trpc.product.adminGetAll.useQuery({});
@@ -41,6 +41,16 @@ export default function AdminProductsPage() {
   const [openForm, setOpenForm] = useState(false);
   const [editProduct, setEditProduct] = useState<ProductRow | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+
+  // Auto-open create modal when navigating from /admin/products/new
+  useEffect(() => {
+    if (searchParams.get("action") === "create") {
+      setEditProduct(null);
+      setOpenForm(true);
+      // Clean up the URL without re-rendering
+      window.history.replaceState({}, "", "/admin/products");
+    }
+  }, [searchParams]);
 
   const columns = [
     {
@@ -92,7 +102,7 @@ export default function AdminProductsPage() {
       key: "stock",
       label: "Stock",
       render: (row: ProductRow) => (
-        <span className={row.stock < 10 ? "text-yellow" : "text-gray-400"}>
+        <span className={row.stock < 10 ? "text-yellow-400" : "text-gray-400"}>
           {row.stock}
         </span>
       ),
@@ -203,5 +213,17 @@ export default function AdminProductsPage() {
         </div>
       </Modal>
     </div>
+  );
+}
+
+export default function AdminProductsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-8 h-8 text-neon animate-spin" />
+      </div>
+    }>
+      <AdminProductsContent />
+    </Suspense>
   );
 }

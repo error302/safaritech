@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { trpc } from "@/utils/trpc";
 import ImageUploader from "./ImageUploader";
-import { Plus, X } from "lucide-react";
+import { Plus, X, AlertCircle } from "lucide-react";
 
 type Category = { id: string; name: string };
 type Product = {
@@ -177,7 +177,7 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-white mb-2">Price (KSh) *</label>
           <input
@@ -203,7 +203,7 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
           <label className="block text-sm font-medium text-white mb-2">Stock</label>
           <input
@@ -220,7 +220,7 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
           <select
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
-            className="w-full bg-safaridark border border-safariborder rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-neon"
+            className="w-full bg-safaridark border border-safariborder rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-neon appearance-none"
           >
             <option value="">Select category</option>
             {categories.map((cat) => (
@@ -333,9 +333,21 @@ export default function ProductForm({ product, categories, onSuccess }: Props) {
         )}
       </div>
 
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && (
+        <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
+          <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
+          <p className="text-sm text-red-400">{error}</p>
+        </div>
+      )}
 
-      <div className="flex justify-end gap-3 pt-2">
+      <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2 sticky bottom-0 bg-safarigray py-3 -mx-6 px-6 border-t border-safariborder sm:border-0 sm:bg-transparent sm:py-0 sm:static sm:mx-0 sm:px-0">
+        <button
+          type="button"
+          onClick={() => onSuccess()}
+          className="px-6 py-2.5 rounded-xl border border-safariborder text-gray-400 hover:text-white hover:border-white transition-all text-sm"
+        >
+          Cancel
+        </button>
         <button
           type="submit"
           disabled={isPending}

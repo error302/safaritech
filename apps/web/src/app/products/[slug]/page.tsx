@@ -136,7 +136,7 @@ const handleAddToCart = () => {
   })();
 
   return (
-    <div className="bg-safaridark min-h-screen pb-24 md:pb-0">
+    <div className="bg-safaridark min-h-screen pb-32 md:pb-0">
       {/* Breadcrumb */}
       <div className="border-b border-safariborder bg-transparent">
         <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center gap-1.5 text-xs text-gray-400">
@@ -441,17 +441,17 @@ const handleAddToCart = () => {
       </div>
 
       {/* Sticky bottom CTA — mobile only */}
-      <div className="md:hidden fixed bottom-[56px] left-0 right-0 z-40 bg-safaridark/95 backdrop-blur-lg border-t border-safariborder px-4 py-3">
+      <div className="md:hidden fixed bottom-[56px] left-0 right-0 z-40 bg-safaridark/95 backdrop-blur-lg border-t border-safariborder px-4 py-2.5 pb-safe">
         <div className="flex gap-3">
           <button
             onClick={handleAddToCart}
             disabled={addToCart.isPending || product.stock === 0}
-            className="flex-1 bg-neon hover:bg-neon-dim text-black font-display font-bold text-sm py-3.5 rounded-xl transition-all active:scale-[0.97] disabled:opacity-40 flex items-center justify-center gap-2"
+            className="flex-1 bg-neon hover:bg-neon-dim text-black font-display font-bold text-sm py-3 rounded-xl transition-all active:scale-[0.97] disabled:opacity-40 flex items-center justify-center gap-2 min-h-[44px]"
           >
             <ShoppingCart className="w-4 h-4" />
             {addedToCart ? "Added!" : addToCart.isPending ? "Adding..." : "Add to Cart"}
           </button>
-          <button className="flex-1 bg-green-700 hover:bg-green-800 text-white font-display font-bold text-sm py-3.5 rounded-xl transition-all active:scale-[0.97] flex items-center justify-center gap-2">
+          <button className="flex-1 bg-green-700 hover:bg-green-800 text-white font-display font-bold text-sm py-3 rounded-xl transition-all active:scale-[0.97] flex items-center justify-center gap-2 min-h-[44px]">
             <Smartphone className="w-4 h-4" />
             Buy Now
           </button>

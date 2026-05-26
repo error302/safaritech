@@ -24,3 +24,36 @@ Stage Summary:
 - Search page has full list view, mobile filter sheet, and active filter chips
 - All mock data removed - site relies entirely on admin-uploaded content
 - Product page mobile CTA properly positioned above bottom nav
+
+---
+Task ID: 2
+Agent: Main Agent
+Task: Fix product upload from admin dashboard (Cloudinary integration) and fix other admin bugs
+
+Work Log:
+- Analyzed user screenshot: EROFS read-only filesystem error when uploading product images
+- Root cause: /api/upload route was missing, local file storage doesn't work on Vercel
+- Created src/lib/cloudinary.ts with Cloudinary SDK initialization
+- Created /api/upload route with Cloudinary-only uploads + admin auth check
+- Rewrote ImageUploader component to remove local storage option (not viable on Vercel)
+- Updated ProductForm to use cloudinary (was using uploadTo="local")
+- Updated all ImageUploader instances (categories, blog, settings) to remove uploadTo prop
+- Fixed Category model in prisma schema (missing description, iconName, gradient, sortOrder)
+- Fixed security: siteSetting.getAll was public and exposed payment secrets
+- Added adminGetAll endpoint for settings with masked sensitive values
+- Fixed product delete: modal now closes on success, not before mutation completes
+- Fixed blog create: now passes published state to create mutation
+- Fixed blog update: publishedAt only set on first publish, not every update
+- Fixed order detail modal: now shows order items with images and prices
+- Fixed Categories link missing from admin sidebar navigation
+- Fixed ProductForm price: uses Math.round() to match Int type in schema
+- Updated vercel.json build command from prisma migrate deploy to prisma db push
+- Set up .env.local with user-provided Cloudinary credentials
+- Resolved merge conflicts with remote, pushed successfully
+
+Stage Summary:
+- Product image uploads now work via Cloudinary (cloud name: dro1kccjk)
+- 3 critical security bugs fixed (payment secrets exposure)
+- 8 high-priority bugs fixed across admin dashboard
+- Build command properly uses prisma db push for Vercel deployments
+- All TypeScript checks pass

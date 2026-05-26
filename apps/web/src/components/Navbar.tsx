@@ -238,11 +238,15 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile — just logo + search, bottom nav handles everything else */}
+      {/* Mobile — logo, search, cart + user icons */}
       <nav className="md:hidden bg-safaridark/95 backdrop-blur-md border-b border-safariborder sticky top-0 z-50">
         <div className="px-4 py-3">
-          <div className="mb-3">
+          <div className="flex items-center justify-between mb-2">
             <SiteLogo iconSize={28} textSize="text-lg" />
+            <div className="flex items-center gap-1">
+              <CartButton />
+              <UserMenu />
+            </div>
           </div>
           <form onSubmit={handleSearch}>
             <div className="relative">

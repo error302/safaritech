@@ -138,7 +138,7 @@ function LinkEditor({
       <label className="block text-sm font-medium text-white mb-2">{label}</label>
       <div className="space-y-2">
         {links.map((link, i) => (
-          <div key={i} className="flex items-center gap-2">
+          <div key={i} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <input
               type="text"
               value={link.label}
@@ -156,7 +156,7 @@ function LinkEditor({
             <button
               type="button"
               onClick={() => removeLink(i)}
-              className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition-colors shrink-0"
+              className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition-colors shrink-0 self-end sm:self-auto"
             >
               <AlertCircle className="w-4 h-4" />
             </button>
@@ -244,8 +244,28 @@ export default function AdminSettingsPage() {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Sidebar */}
-        <div className="lg:w-64 shrink-0 space-y-1">
+        {/* Mobile: Horizontal scrollable tabs */}
+        <div className="lg:hidden -mx-4 px-4 overflow-x-auto scrollbar-none">
+          <div className="flex gap-2 pb-2">
+            {sections.map((section) => (
+              <button
+                key={section.id}
+                onClick={() => setActiveSection(section.id)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap shrink-0 ${
+                  activeSection === section.id
+                    ? "bg-neon/10 text-neon border border-neon/20"
+                    : "text-gray-400 hover:text-white hover:bg-safarigray border border-safariborder"
+                }`}
+              >
+                <section.icon className="w-4 h-4 shrink-0" />
+                {section.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop: Vertical sidebar */}
+        <div className="hidden lg:block lg:w-64 shrink-0 space-y-1">
           {sections.map((section) => (
             <button
               key={section.id}
@@ -263,7 +283,7 @@ export default function AdminSettingsPage() {
         </div>
 
         {/* Content */}
-        <div className="flex-1 bg-safarigray border border-safariborder rounded-2xl p-6">
+        <div className="flex-1 bg-safarigray border border-safariborder rounded-2xl p-4 sm:p-6">
           {isLoading ? (
             <SkeletonSection />
           ) : (

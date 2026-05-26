@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { Upload, X, Cloud } from "lucide-react";
+import { useState, useRef, useCallback } from "react";
+import { Upload, X, Cloud, AlertCircle } from "lucide-react";
 
 type Props = {
   value?: string;
@@ -13,13 +13,22 @@ type Props = {
 
 export default function ImageUploader({ value, onChange, multiple = false }: Props) {
   const [uploading, setUploading] = useState(false);
+  const [uploadCount, setUploadCount] = useState(0);
+  const [uploadTotal, setUploadTotal] = useState(0);
   const [error, setError] = useState("");
   const [dragOver, setDragOver] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
 
-  const existingUrls = value ? value.split(",").filter(Boolean) : [];
+  // Use a ref to track the latest value to avoid stale closures
+  const valueRef = useRef(value);
+  valueRef.current = value;
 
-  const handleFile = async (file: File) => {
+  const getExistingUrls = useCallback(() => {
+    const current = valueRef.current;
+    return current ? current.split(",").filter(Boolean) : [];
+  }, []);
+
+  const handleFile = async (file: File): Promise<void> => {
     if (!file.type.startsWith("image/")) {
       setError("Only image files are allowed");
       return;
@@ -29,7 +38,6 @@ export default function ImageUploader({ value, onChange, multiple = false }: Pro
       return;
     }
 
-    setUploading(true);
     setError("");
 
     try {
@@ -47,28 +55,53 @@ export default function ImageUploader({ value, onChange, multiple = false }: Pro
         throw new Error(data.error || "Upload failed");
       }
 
+      // Read the latest value from ref to avoid race conditions
       if (multiple) {
-        onChange([...existingUrls, data.url].join(","));
+        const currentUrls = valueRef.current ? valueRef.current.split(",").filter(Boolean) : [];
+        onChange([...currentUrls, data.url].join(","));
       } else {
         onChange(data.url);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setUploading(false);
+    }
+  };
+
+  const handleFiles = async (files: FileList | File[]) => {
+    const fileArray = Array.from(files);
+    if (fileArray.length === 0) return;
+
+    setUploading(true);
+    setUploadCount(0);
+    setUploadTotal(fileArray.length);
+
+    // Upload files sequentially to avoid race conditions
+    for (let i = 0; i < fileArray.length; i++) {
+      await handleFile(fileArray[i]);
+      setUploadCount(i + 1);
+    }
+
+    setUploading(false);
+    // Reset file input so the same file can be re-uploaded
+    if (fileInput.current) {
+      fileInput.current.value = "";
     }
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setDragOver(false);
-    const file = e.dataTransfer.files[0];
-    if (file) handleFile(file);
+    if (e.dataTransfer.files.length > 0) {
+      handleFiles(e.dataTransfer.files);
+    }
   };
+
+  const existingUrls = value ? value.split(",").filter(Boolean) : [];
 
   const removeImage = (url: string) => {
     const filtered = existingUrls.filter((u) => u !== url);
     onChange(filtered.join(","));
+    setError("");
   };
 
   return (
@@ -79,11 +112,12 @@ export default function ImageUploader({ value, onChange, multiple = false }: Pro
         <span className="text-xs text-gray-500">Images are uploaded to Cloudinary</span>
       </div>
 
+      {/* Image previews */}
       {existingUrls.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {existingUrls.map((url, i) => (
             <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden border border-safariborder group">
-              <img src={url} alt="Uploaded image" className="w-full h-full object-cover" />
+              <img src={url} alt={`Uploaded image ${i + 1}`} className="w-full h-full object-cover" />
               <button
                 type="button"
                 onClick={() => removeImage(url)}
@@ -97,13 +131,16 @@ export default function ImageUploader({ value, onChange, multiple = false }: Pro
         </div>
       )}
 
+      {/* Upload area */}
       <div
         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
-        onClick={() => fileInput.current?.click()}
+        onClick={() => !uploading && fileInput.current?.click()}
         className={`relative flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed cursor-pointer transition-all ${
-          dragOver
+          uploading
+            ? "border-neon/50 bg-neon/5 cursor-wait"
+            : dragOver
             ? "border-neon bg-neon/5"
             : "border-safariborder hover:border-neon/50 bg-safarigray/50"
         } h-32`}
@@ -114,18 +151,29 @@ export default function ImageUploader({ value, onChange, multiple = false }: Pro
           accept="image/*"
           multiple={multiple}
           className="hidden"
+          disabled={uploading}
           onChange={(e) => {
             const files = e.target.files;
-            if (files) {
-              Array.from(files).forEach((file) => handleFile(file));
+            if (files && files.length > 0) {
+              handleFiles(files);
             }
           }}
         />
 
         {uploading ? (
-          <div className="flex items-center gap-2 text-neon">
+          <div className="flex flex-col items-center gap-2 text-neon">
             <div className="w-5 h-5 border-2 border-neon border-t-transparent rounded-full animate-spin" />
-            <span className="text-sm font-medium">Uploading...</span>
+            <span className="text-sm font-medium">
+              Uploading {uploadTotal > 1 ? `${uploadCount}/${uploadTotal}` : ""}...
+            </span>
+            {uploadTotal > 1 && (
+              <div className="w-32 h-1.5 bg-safariborder rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-neon rounded-full transition-all duration-300"
+                  style={{ width: `${(uploadCount / uploadTotal) * 100}%` }}
+                />
+              </div>
+            )}
           </div>
         ) : (
           <>
@@ -142,7 +190,12 @@ export default function ImageUploader({ value, onChange, multiple = false }: Pro
         )}
       </div>
 
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && (
+        <div className="flex items-start gap-2 text-red-500">
+          <AlertCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+          <p className="text-xs">{error}</p>
+        </div>
+      )}
     </div>
   );
 }
