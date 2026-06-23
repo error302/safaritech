@@ -88,6 +88,10 @@ model Order {
   couponId          String?
   couponCode        String?
   coupon            Coupon?  @relation(fields: [couponId], references: [id])
+  // Delivery zone snapshot — recorded at checkout for audit/print
+  deliveryZone      String   @default("")
+  deliveryType      String   @default("DELIVERY") // DELIVERY | PICKUP
+  pickupPoint       String?  // address text when type=PICKUP
   createdAt         DateTime @default(now())
   updatedAt         DateTime @default(now()) @updatedAt
 
@@ -298,4 +302,19 @@ model Streak {
   lastStudyDate  DateTime?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+}
+
+// --- Delivery Zones ---
+// Admin-configurable delivery destinations and pickup points.
+// type=DELIVERY means we ship there for `fee`; type=PICKUP means customer collects at `pickupPoint` (fee usually 0).
+model DeliveryZone {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  type        String   @default("DELIVERY") // DELIVERY | PICKUP
+  fee         Int      @default(0) // in Kenyan Shillings (whole shillings, not cents)
+  pickupPoint String?  // address text shown at checkout + on order
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

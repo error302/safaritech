@@ -45,7 +45,7 @@ const defaults: Record<string, string> = {
   hero_cta_secondary_text: "View Phones",
   hero_cta_secondary_link: "/shop?cat=smartphones",
   trust_badges:
-    '[{"title":"M-Pesa & PayPal","desc":"Instant & secure","icon":"Smartphone"},{"title":"Free Delivery","desc":"Nairobi wide","icon":"Truck"},{"title":"7-Day Returns","desc":"No questions asked","icon":"RotateCcw"},{"title":"1-Year Warranty","desc":"On all devices","icon":"ShieldCheck"}]',
+    '[{"title":"M-Pesa & PayPal","desc":"Instant & secure","icon":"Smartphone"},{"title":"Nationwide Delivery","desc":"Fees vary by location","icon":"Truck"},{"title":"7-Day Returns","desc":"No questions asked","icon":"RotateCcw"},{"title":"1-Year Warranty","desc":"On all devices","icon":"ShieldCheck"}]',
   // Footer & Nav
   footer_description:
     "Kenya's premier electronics marketplace. Quality gadgets, unbeatable prices, delivered nationwide.",

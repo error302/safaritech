@@ -19,6 +19,7 @@ import {
   X,
   ExternalLink,
   Layers,
+  Truck,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -26,6 +27,7 @@ const navItems = [
   { icon: LayoutDashboard, label: "Overview", href: "/admin" },
   { icon: Package, label: "Products", href: "/admin/products" },
   { icon: Layers, label: "Categories", href: "/admin/categories" },
+  { icon: Truck, label: "Delivery Zones", href: "/admin/delivery" },
   { icon: ShoppingCart, label: "Orders", href: "/admin/orders" },
   { icon: Users, label: "Users", href: "/admin/users" },
   { icon: FileText, label: "Blog", href: "/admin/blog" },

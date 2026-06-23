@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ShoppingCart, CreditCard, Smartphone, Lock, ArrowLeft, Tag, X, CheckCircle, Loader2 } from 'lucide-react'
+import { ShoppingCart, CreditCard, Smartphone, Lock, ArrowLeft, Tag, X, CheckCircle, Loader2, Truck, MapPin, Store } from 'lucide-react'
 import { trpc } from '@/utils/trpc'
 import { useSession } from 'next-auth/react'
 
@@ -16,6 +16,7 @@ export default function Checkout() {
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number } | null>(null)
   const [couponError, setCouponError] = useState('')
   const [error, setError] = useState('')
+  const [zoneId, setZoneId] = useState<string>('')
   const [formData, setFormData] = useState({
     firstName: session?.user?.name?.split(' ')[0] || '',
     lastName: session?.user?.name?.split(' ').slice(1).join(' ') || '',
@@ -29,9 +30,14 @@ export default function Checkout() {
 
   // Use tRPC server-side cart instead of Zustand
   const { data: cart, isLoading: cartLoading } = trpc.cart.getCart.useQuery()
+  const { data: zones } = trpc.delivery.getActive.useQuery()
   const items = cart?.items ?? []
   const cartTotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
-  const shipping = cartTotal > 10000 ? 0 : 500
+
+  // Look up selected zone to compute shipping + adapt UI
+  const selectedZone = zones?.find(z => z.id === zoneId)
+  const isPickup = selectedZone?.type === 'PICKUP'
+  const shipping = selectedZone ? selectedZone.fee : (cartTotal > 10000 ? 0 : 500)
   const discount = appliedCoupon ? appliedCoupon.discount : 0
   const finalTotal = cartTotal + shipping - discount
 
@@ -113,12 +119,13 @@ export default function Checkout() {
         lastName: formData.lastName,
         email: formData.email,
         phone: formData.phone,
-        address: formData.address,
-        city: formData.city,
-        county: formData.county,
+        address: isPickup ? 'Pickup' : formData.address,
+        city: isPickup ? 'Pickup' : formData.city,
+        county: isPickup ? 'Pickup' : formData.county,
       },
       paymentMethod,
       couponCode: appliedCoupon?.code,
+      zoneId: zoneId || undefined,
     })
   }
 
@@ -187,26 +194,81 @@ export default function Checkout() {
               </div>
             </div>
 
-            {/* Shipping */}
+            {/* Delivery Method — zone selector */}
+            <div className="rounded-lg md:rounded-xl border border-safariborder bg-safarigray p-4 md:p-6">
+              <h2 className="mb-3 md:mb-4 text-base md:text-lg font-semibold text-white flex items-center gap-2">
+                <Truck className="h-5 w-5 text-neon" />
+                Delivery Method
+              </h2>
+              <div className="space-y-3">
+                <div>
+                  <label htmlFor="zone" className="mb-1.5 block text-sm font-medium text-gray-700 md:text-gray-300">
+                    Select your location
+                  </label>
+                  <select
+                    id="zone"
+                    value={zoneId}
+                    onChange={(e) => setZoneId(e.target.value)}
+                    className="w-full rounded-lg border border-safariborder bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-white focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors"
+                  >
+                    <option value="">Choose delivery or pickup option</option>
+                    {zones?.map((z) => (
+                      <option key={z.id} value={z.id}>
+                        {z.name} — {z.type === 'PICKUP' ? 'Pickup (Free)' : `KSh ${z.fee.toLocaleString()}`}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="mt-1.5 text-xs text-gray-500">
+                    Delivery fees are based on your location. Pickup is free at our Mombasa collection point.
+                  </p>
+                </div>
+
+                {/* Pickup point info */}
+                {selectedZone && isPickup && (
+                  <div className="p-3 md:p-4 rounded-lg border border-neon/30 bg-neon/5">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <Store className="h-4 w-4 text-neon" />
+                      <span className="text-sm font-semibold text-white">Pickup Point</span>
+                    </div>
+                    <p className="text-xs md:text-sm text-gray-400 leading-relaxed">{selectedZone.pickupPoint}</p>
+                    <p className="text-[11px] mt-2 text-gray-500">No delivery fee. Collect your order at the address above.</p>
+                  </div>
+                )}
+
+                {/* Delivery fee notice */}
+                {selectedZone && !isPickup && (
+                  <div className="p-3 md:p-4 rounded-lg border border-safariborder bg-safaridark">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Truck className="h-4 w-4 text-neon" />
+                      <span className="text-gray-300">Delivery fee: <span className="font-semibold text-white">KSh {selectedZone.fee.toLocaleString()}</span></span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Shipping Address — hidden for pickup zones */}
+            {(!selectedZone || !isPickup) && (
             <div className="rounded-lg md:rounded-xl border border-safariborder bg-safarigray p-4 md:p-6">
               <h2 className="mb-3 md:mb-4 text-base md:text-lg font-semibold text-white">Shipping Address</h2>
               <div className="space-y-3 md:space-y-4">
                 <div>
                   <label htmlFor="address" className="mb-1.5 block text-sm font-medium text-gray-700 md:text-gray-300">Street Address</label>
-                  <input id="address" type="text" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} required className="w-full rounded-lg border border-safariborder bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors" />
+                  <input id="address" type="text" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} required={!isPickup} className="w-full rounded-lg border border-safariborder bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors" />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                   <div>
                     <label htmlFor="city" className="mb-1.5 block text-sm font-medium text-gray-700 md:text-gray-300">City/Town</label>
-                    <input id="city" type="text" value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} required className="w-full rounded-lg border border-safariborder bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors" />
+                    <input id="city" type="text" value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} required={!isPickup} className="w-full rounded-lg border border-safariborder bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors" />
                   </div>
                   <div>
                     <label htmlFor="county" className="mb-1.5 block text-sm font-medium text-gray-700 md:text-gray-300">County</label>
-                    <input id="county" type="text" value={formData.county} onChange={(e) => setFormData({ ...formData, county: e.target.value })} required className="w-full rounded-lg border border-safariborder bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors" />
+                    <input id="county" type="text" value={formData.county} onChange={(e) => setFormData({ ...formData, county: e.target.value })} required={!isPickup} className="w-full rounded-lg border border-safariborder bg-safarigray px-3 md:px-4 py-2.5 text-sm md:text-base text-white placeholder-gray-400 focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-colors" />
                   </div>
                 </div>
               </div>
             </div>
+            )}
 
             {/* Payment */}
             <div className="rounded-lg md:rounded-xl border border-safariborder bg-safarigray p-4 md:p-6">
@@ -299,7 +361,10 @@ export default function Checkout() {
                   </div>
                 )}
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Shipping</span>
+                  <span className="text-gray-500 flex items-center gap-1">
+                    {isPickup ? <Store className="h-3.5 w-3.5" /> : <Truck className="h-3.5 w-3.5" />}
+                    {isPickup ? 'Pickup' : 'Delivery'}
+                  </span>
                   <span className="text-white">{shipping === 0 ? 'FREE' : `KSh ${shipping.toLocaleString()}`}</span>
                 </div>
                 <div className="border-t border-safariborder pt-2 flex justify-between text-lg font-bold">

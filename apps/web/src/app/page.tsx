@@ -76,7 +76,7 @@ const iconMap: Record<string, LucideIcon> = {
 // Default trust badges (used when no settings are loaded yet)
 const defaultTrustBadges = [
   { title: "M-Pesa & PayPal", desc: "Instant & secure", icon: "Smartphone" },
-  { title: "Free Delivery", desc: "Nairobi wide", icon: "Truck" },
+  { title: "Nationwide Delivery", desc: "Fees vary by location", icon: "Truck" },
   { title: "7-Day Returns", desc: "No questions asked", icon: "RotateCcw" },
   { title: "1-Year Warranty", desc: "On all devices", icon: "ShieldCheck" },
 ];

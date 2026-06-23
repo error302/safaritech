@@ -22,6 +22,7 @@ export const orderRouter = router({
       }),
       paymentMethod: z.enum(['mpesa', 'card', 'paypal']),
       couponCode: z.string().optional(),
+      zoneId: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       // Validate stock availability before creating order
@@ -78,17 +79,35 @@ export const orderRouter = router({
         }
       }
 
-      const shipping = subtotal > 10000 ? 0 : 500
+      // Look up delivery zone — use zone fee if provided, else fall back to legacy flat fee
+      let shipping = subtotal > 10000 ? 0 : 500
+      let deliveryZone = ''
+      let deliveryType = 'DELIVERY'
+      let pickupPoint: string | null = null
+
+      if (input.zoneId) {
+        const zone = await ctx.prisma.deliveryZone.findFirst({
+          where: { id: input.zoneId, isActive: true },
+        })
+        if (!zone) {
+          throw new Error('Selected delivery zone is not available. Please refresh and try again.')
+        }
+        shipping = zone.fee
+        deliveryZone = zone.name
+        deliveryType = zone.type
+        pickupPoint = zone.type === 'PICKUP' ? zone.pickupPoint : null
+      }
+
       const total = subtotal + shipping - discount
 
-      // Create shipping address
+      // Create shipping address (skip for pickup — use placeholder)
       const address = await ctx.prisma.address.create({
         data: {
           userId: ctx.session.user.id,
-          label: 'Shipping',
-          line1: input.shippingAddress.address,
-          city: input.shippingAddress.city,
-          state: input.shippingAddress.county,
+          label: deliveryType === 'PICKUP' ? 'Pickup' : 'Shipping',
+          line1: deliveryType === 'PICKUP' ? (pickupPoint || 'Pickup') : input.shippingAddress.address,
+          city: deliveryType === 'PICKUP' ? 'Pickup' : input.shippingAddress.city,
+          state: deliveryType === 'PICKUP' ? 'Pickup' : input.shippingAddress.county,
           postal: '00000',
           country: 'Kenya',
           phone: input.shippingAddress.phone,
@@ -108,6 +127,9 @@ export const orderRouter = router({
           status: 'PENDING',
           shippingAddressId: address.id,
           couponCode: input.couponCode?.toUpperCase() || null,
+          deliveryZone,
+          deliveryType,
+          pickupPoint,
         },
       })
 

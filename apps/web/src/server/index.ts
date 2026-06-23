@@ -10,6 +10,7 @@ import { wishlistRouter } from './routers/wishlist'
 import { blogRouter } from './routers/blog'
 import { siteSettingRouter } from './routers/siteSetting'
 import { contactRouter } from './routers/contact'
+import { deliveryRouter } from './routers/delivery'
 
 export const appRouter = router({
   product: productRouter,
@@ -23,6 +24,7 @@ export const appRouter = router({
   blog: blogRouter,
   siteSetting: siteSettingRouter,
   contact: contactRouter,
+  delivery: deliveryRouter,
 })
 
 export type AppRouter = typeof appRouter
