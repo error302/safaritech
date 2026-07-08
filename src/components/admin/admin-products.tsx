@@ -19,6 +19,8 @@ interface AdminProduct {
   brand: { name: string; slug: string };
   category: { name: string; slug: string };
   imageUrl: string | null;
+  condition: string | null;
+  warrantyMonths: number | null;
 }
 
 interface Brand {
@@ -233,6 +235,7 @@ function ProductEditor({ product, brands, categories, onClose, onSaved, adminFet
     shape: "phone",
     accent: "oklch(0.40 0.08 165)",
     imageUrl: product?.imageUrl ?? "",
+    condition: product?.condition ?? "NEW",
     features: "",
     specs: "",
   });
@@ -250,6 +253,8 @@ function ProductEditor({ product, brands, categories, onClose, onSaved, adminFet
         originalPrice: form.originalPrice > 0 ? form.originalPrice : null,
         tag: form.tag || null,
         imageUrl: form.imageUrl || null,
+        condition: form.condition || "NEW",
+        warrantyMonths: (form.condition || "NEW") === "NEW" ? 12 : 3,
         features: form.features ? form.features.split("\n").filter(Boolean) : [],
         specs: form.specs ? Object.fromEntries(form.specs.split("\n").filter(Boolean).map((l) => { const [k, ...v] = l.split(":"); return [k.trim(), v.join(":").trim()]; })) : {},
       };
@@ -320,6 +325,17 @@ function ProductEditor({ product, brands, categories, onClose, onSaved, adminFet
             <Field label="Tag (Best seller, Deal, etc.)">
               <input value={form.tag} onChange={(e) => setForm({ ...form, tag: e.target.value })}
                 className="admin-input" placeholder="Best seller" />
+            </Field>
+            <Field label="Condition (sets warranty period)">
+              <select
+                value={form.condition}
+                onChange={(e) => setForm({ ...form, condition: e.target.value })}
+                className="admin-input"
+              >
+                <option value="NEW">New — 12-month warranty</option>
+                <option value="EXUK">Ex-UK — 3-month warranty</option>
+                <option value="REFURBISHED">Refurbished — 3-month warranty</option>
+              </select>
             </Field>
             <Field label="Stock count">
               <input type="number" value={form.stockCount} onChange={(e) => setForm({ ...form, stockCount: Number(e.target.value) })}

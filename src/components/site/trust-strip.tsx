@@ -12,7 +12,7 @@ export function TrustStrip() {
     { title: get("trust.1.title", "M-Pesa & PayPal"), desc: get("trust.1.desc", "Pay your way — instant STK push, or secure card checkout.") },
     { title: get("trust.2.title", "Nationwide delivery"), desc: get("trust.2.desc", "Same-day Nairobi, 48-hour everywhere else across all 47 counties.") },
     { title: get("trust.3.title", "7-day returns"), desc: get("trust.3.desc", "Not the right fit? Send it back, no questions, full refund.") },
-    { title: get("trust.4.title", "1-year warranty"), desc: get("trust.4.desc", "Every device covered. Authorised service, zero hidden fees.") },
+    { title: get("trust.4.title", "Warranty on every device"), desc: get("trust.4.desc", "12 months on new, 3 months on ex-UK & refurbished. Authorised service, zero hidden fees.") },
   ];
 
   return (

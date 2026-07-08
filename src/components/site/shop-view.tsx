@@ -5,6 +5,7 @@ import { Filter, X, Search, ChevronDown, ArrowUpRight, Star, Plus, SlidersHorizo
 import { useViewRouter } from "./view-router";
 import { useCart, formatKsh } from "./cart-context";
 import { ProductImage } from "./product-image";
+import { ConditionBadge } from "./condition-badge";
 import { Product, Brand, Category } from "./types";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { cn } from "@/lib/utils";
@@ -39,6 +40,7 @@ export function ShopView({ initialQuery }: { initialQuery?: Record<string, strin
   const [search, setSearch] = React.useState(initialQuery?.q ?? "");
   const [category, setCategory] = React.useState<string | undefined>(initialQuery?.category);
   const [brand, setBrand] = React.useState<string | undefined>(initialQuery?.brand);
+  const [condition, setCondition] = React.useState<string | undefined>(initialQuery?.condition);
   const [sort, setSort] = React.useState<string>("newest");
   const [minPrice, setMinPrice] = React.useState<number | undefined>();
   const [maxPrice, setMaxPrice] = React.useState<number | undefined>();
@@ -52,12 +54,13 @@ export function ShopView({ initialQuery }: { initialQuery?: Record<string, strin
     if (search.trim()) params.set("q", search.trim());
     if (category) params.set("category", category);
     if (brand) params.set("brand", brand);
+    if (condition) params.set("condition", condition);
     if (sort) params.set("sort", sort);
     if (minPrice !== undefined) params.set("min", String(minPrice));
     if (maxPrice !== undefined) params.set("max", String(maxPrice));
     params.set("pageSize", "24");
     return params.toString();
-  }, [search, category, brand, sort, minPrice, maxPrice]);
+  }, [search, category, brand, condition, sort, minPrice, maxPrice]);
 
   // Debounced fetch
   React.useEffect(() => {
@@ -79,12 +82,13 @@ export function ShopView({ initialQuery }: { initialQuery?: Record<string, strin
   }, [buildQuery]);
 
   const facets = data?.facets;
-  const hasActiveFilters = !!(category || brand || search || minPrice || maxPrice);
+  const hasActiveFilters = !!(category || brand || condition || search || minPrice || maxPrice);
 
   const clearAll = () => {
     setSearch("");
     setCategory(undefined);
     setBrand(undefined);
+    setCondition(undefined);
     setMinPrice(undefined);
     setMaxPrice(undefined);
   };
@@ -177,6 +181,16 @@ export function ShopView({ initialQuery }: { initialQuery?: Record<string, strin
               value={brand}
               onChange={(v) => setBrand(v)}
             />
+            <FilterGroup
+              label="Condition"
+              options={[
+                { value: "NEW", label: "New (12-month warranty)" },
+                { value: "EXUK", label: "Ex-UK (3-month warranty)" },
+                { value: "REFURBISHED", label: "Refurbished (3-month warranty)" },
+              ]}
+              value={condition}
+              onChange={(v) => setCondition(v)}
+            />
             {hasActiveFilters && (
               <button
                 onClick={clearAll}
@@ -206,6 +220,16 @@ export function ShopView({ initialQuery }: { initialQuery?: Record<string, strin
                 options={(facets?.brands ?? []).map((b) => ({ value: b.slug, label: b.name }))}
                 value={brand}
                 onChange={(v) => setBrand(v)}
+              />
+              <FilterGroup
+                label="Condition"
+                options={[
+                  { value: "NEW", label: "New (12-month warranty)" },
+                  { value: "EXUK", label: "Ex-UK (3-month warranty)" },
+                  { value: "REFURBISHED", label: "Refurbished (3-month warranty)" },
+                ]}
+                value={condition}
+                onChange={(v) => setCondition(v)}
               />
 
               {facets?.priceRange && (
@@ -264,6 +288,16 @@ export function ShopView({ initialQuery }: { initialQuery?: Record<string, strin
                     <FilterChip
                       label={facets?.brands.find((b) => b.slug === brand)?.name ?? brand}
                       onRemove={() => setBrand(undefined)}
+                    />
+                  )}
+                  {condition && (
+                    <FilterChip
+                      label={
+                        condition === "NEW" ? "New" :
+                        condition === "EXUK" ? "Ex-UK" :
+                        condition === "REFURBISHED" ? "Refurbished" : condition
+                      }
+                      onRemove={() => setCondition(undefined)}
                     />
                   )}
                   {search && (
@@ -457,10 +491,7 @@ function ShopProductCard({ product, index }: { product: Product; index: number }
           >
             {product.brand?.name}
           </button>
-          <div className="flex items-center gap-0.5 text-[10px] text-muted-foreground shrink-0">
-            <Star className="h-2.5 w-2.5 fill-accent text-accent" />
-            <span className="font-medium text-foreground">{product.rating}</span>
-          </div>
+          <ConditionBadge condition={product.condition} size="sm" />
         </div>
 
         <button

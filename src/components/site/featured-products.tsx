@@ -5,6 +5,7 @@ import { ArrowRight, Star, Plus } from "lucide-react";
 import { useViewRouter } from "./view-router";
 import { useCart, formatKsh } from "./cart-context";
 import { ProductImage } from "./product-image";
+import { ConditionBadge } from "./condition-badge";
 import { Product } from "./types";
 
 interface Props {
@@ -162,11 +163,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
           >
             {product.brand?.name} · {product.category?.name}
           </button>
-          <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
-            <Star className="h-3 w-3 fill-accent text-accent" />
-            <span className="font-medium text-foreground">{product.rating}</span>
-            <span>· {product.reviews.toLocaleString()}</span>
-          </div>
+          <ConditionBadge condition={product.condition} size="sm" />
         </div>
 
         <button

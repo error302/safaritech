@@ -26,6 +26,9 @@ export async function GET(req: NextRequest) {
     const brand = params.get("brand");
     if (brand) where.brand = { slug: brand };
 
+    const condition = params.get("condition");
+    if (condition) where.condition = condition;
+
     const q = params.get("q")?.trim();
     if (q) {
       where.OR = [

@@ -5,6 +5,7 @@ import { ArrowRight, Star, Plus, ArrowUpRight } from "lucide-react";
 import { useViewRouter } from "./view-router";
 import { useCart, formatKsh } from "./cart-context";
 import { ProductImage } from "./product-image";
+import { ConditionBadge } from "./condition-badge";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { Product } from "./types";
 
@@ -130,10 +131,7 @@ function ArrivalCard({ product, index }: { product: Product; index: number }) {
           >
             {product.brand?.name}
           </button>
-          <div className="flex items-center gap-0.5 text-[10px] text-muted-foreground shrink-0">
-            <Star className="h-2.5 w-2.5 fill-accent text-accent" />
-            <span className="font-medium text-foreground">{product.rating}</span>
-          </div>
+          <ConditionBadge condition={product.condition} size="sm" />
         </div>
 
         <button

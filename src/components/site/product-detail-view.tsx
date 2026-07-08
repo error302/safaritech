@@ -16,6 +16,7 @@ import {
 import { useViewRouter } from "./view-router";
 import { useCart, formatKsh } from "./cart-context";
 import { ProductImage } from "./product-image";
+import { ConditionBadge, WarrantyBadge, getCondition } from "./condition-badge";
 import { Product } from "./types";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { cn } from "@/lib/utils";
@@ -187,8 +188,8 @@ export function ProductDetailView({ slug }: { slug: string }) {
               <div className="absolute top-4 left-4 font-mono text-[10px] uppercase tracking-widest text-foreground/60">
                 {p.brand?.name}
               </div>
-              <div className="absolute top-4 right-4 font-mono text-[10px] uppercase tracking-widest text-foreground/60">
-                N°{String(p.id).slice(-4)}
+              <div className="absolute top-4 right-4">
+                <ConditionBadge condition={p.condition} size="md" />
               </div>
               {p.tag && (
                 <div className="absolute bottom-4 left-4">
@@ -267,6 +268,15 @@ export function ProductDetailView({ slug }: { slug: string }) {
               )}
             </div>
 
+            {/* Condition + warranty */}
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <ConditionBadge condition={p.condition} size="md" />
+              <WarrantyBadge warrantyMonths={p.warrantyMonths ?? 12} condition={p.condition} size="md" />
+              <span className="text-[11px] text-muted-foreground">
+                {getCondition(p.condition).description}
+              </span>
+            </div>
+
             {/* Summary */}
             <p className="mt-6 text-base md:text-lg text-foreground leading-relaxed font-display tracking-tight">
               {p.summary}
@@ -341,7 +351,7 @@ export function ProductDetailView({ slug }: { slug: string }) {
               {[
                 { icon: Truck, title: "Fast delivery", desc: "Same-day Nairobi" },
                 { icon: RotateCcw, title: "7-day returns", desc: "No questions" },
-                { icon: ShieldCheck, title: "1-year warranty", desc: "Authorised" },
+                { icon: ShieldCheck, title: `${p.warrantyMonths ?? 12}-month warranty`, desc: getCondition(p.condition).label },
               ].map((t) => (
                 <div
                   key={t.title}

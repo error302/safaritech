@@ -40,6 +40,7 @@ interface SeedProduct {
   features: string[]; specs: Record<string, string>;
   inStock: boolean; stockCount: number; featured: boolean;
   shape: string; accent: string; imageUrl: string;
+  condition?: "NEW" | "EXUK" | "REFURBISHED"; // defaults to NEW
 }
 
 const PRODUCTS: SeedProduct[] = [
@@ -52,6 +53,7 @@ const PRODUCTS: SeedProduct[] = [
     specs: { Display: "6.1-inch Super Retina XDR, ProMotion 120Hz", Chip: "A17 Pro, 6-core CPU, 6-core GPU", Camera: "48MP main + 12MP ultra-wide + 12MP telephoto", Battery: "Up to 23 hours video", Storage: "256GB / 512GB / 1TB", Weight: "187 g" },
     inStock: true, stockCount: 18, featured: true, shape: "phone", accent: "oklch(0.40 0.08 165)",
     imageUrl: "https://sfile.chatglm.cn/images-ppt/d8637fc84e2e.jpg",
+    condition: "EXUK",
   },
   {
     name: "MacBook Air M3", slug: "macbook-air-m3", brandSlug: "apple", categorySlug: "laptops",
@@ -72,6 +74,7 @@ const PRODUCTS: SeedProduct[] = [
     specs: { Display: "6.8-inch QHD+ AMOLED, 120Hz", Chip: "Snapdragon 8 Gen 3 for Galaxy", Camera: "200MP main + 50MP 5x + 10MP 3x + 12MP UW", Battery: "5000 mAh", Storage: "256GB / 512GB / 1TB", Weight: "232 g" },
     inStock: true, stockCount: 14, featured: true, shape: "phone", accent: "oklch(0.55 0.06 240)",
     imageUrl: "https://sfile.chatglm.cn/images-ppt/ff53088a5a80.jpeg",
+    condition: "EXUK",
   },
   {
     name: "Sony WH-1000XM5", slug: "sony-wh-1000xm5", brandSlug: "sony", categorySlug: "audio",
@@ -82,6 +85,7 @@ const PRODUCTS: SeedProduct[] = [
     specs: { Driver: "30 mm carbon fibre composite", Battery: "30 hours (NC on)", Connectivity: "Bluetooth 5.2, LDAC, AAC, SBC", Weight: "250 g", Charging: "USB-C", Colors: "Black, Silver, Midnight Blue" },
     inStock: true, stockCount: 22, featured: true, shape: "audio", accent: "oklch(0.65 0.15 25)",
     imageUrl: "https://sfile.chatglm.cn/images-ppt/cf1f86eacbd1.jpg",
+    condition: "REFURBISHED",
   },
   {
     name: "Apple Watch Series 10", slug: "apple-watch-series-10", brandSlug: "apple", categorySlug: "wearables",
@@ -122,6 +126,7 @@ const PRODUCTS: SeedProduct[] = [
     specs: { Display: "13.4-inch 3.5K OLED, 60Hz", Chip: "Intel Core Ultra 7 155H", Memory: "16GB / 32GB LPDDR5x", Storage: "512GB / 1TB SSD", Battery: "Up to 13 hours", Weight: "1.24 kg" },
     inStock: true, stockCount: 5, featured: true, shape: "laptop", accent: "oklch(0.55 0.10 75)",
     imageUrl: "https://sfile.chatglm.cn/images-ppt/a1d0898a6720.jpg",
+    condition: "REFURBISHED",
   },
   {
     name: "iPad Pro M4 11-inch", slug: "ipad-pro-m4-11", brandSlug: "apple", categorySlug: "smartphones",
@@ -132,6 +137,7 @@ const PRODUCTS: SeedProduct[] = [
     specs: { Display: "11-inch Ultra Retina XDR tandem OLED", Chip: "Apple M4", Storage: "256GB / 512GB / 1TB / 2TB", Camera: "12MP wide + LiDAR", Battery: "Up to 10 hours", Weight: "444 g" },
     inStock: true, stockCount: 11, featured: false, shape: "phone", accent: "oklch(0.40 0.08 165)",
     imageUrl: "https://sfile.chatglm.cn/images-ppt/912c83905a14.png",
+    condition: "EXUK",
   },
   {
     name: "AirPods Pro 2", slug: "airpods-pro-2", brandSlug: "apple", categorySlug: "audio",
@@ -152,6 +158,7 @@ const PRODUCTS: SeedProduct[] = [
     specs: { Display: "7.6-inch inner / 6.3-inch outer, 120Hz", Chip: "Snapdragon 8 Gen 3 for Galaxy", Camera: "50MP main + 12MP UW + 10MP tele", Battery: "4400 mAh", Storage: "256GB / 512GB / 1TB", Weight: "239 g" },
     inStock: true, stockCount: 6, featured: false, shape: "phone", accent: "oklch(0.55 0.06 240)",
     imageUrl: "https://sfile.chatglm.cn/images-ppt/a343ddb0348e.jpg",
+    condition: "EXUK",
   },
   {
     name: "Sony Bravia X90L 65-inch", slug: "sony-bravia-x90l-65", brandSlug: "sony", categorySlug: "audio",
@@ -162,6 +169,7 @@ const PRODUCTS: SeedProduct[] = [
     specs: { Display: "65-inch 4K HDR, 120Hz", Processor: "Cognitive Processor XR", HDR: "HDR10, Dolby Vision, HLG", HDMI: "4x HDMI 2.1 (4K 120Hz, VRR, ALLM)", Audio: "Acoustic Multi-Audio, 30W", Weight: "22.4 kg with stand" },
     inStock: true, stockCount: 4, featured: false, shape: "audio", accent: "oklch(0.65 0.15 25)",
     imageUrl: "https://sfile.chatglm.cn/images-ppt/967656014638.jpg",
+    condition: "EXUK",
   },
   {
     name: "Nintendo Switch OLED", slug: "nintendo-switch-oled", brandSlug: "nintendo", categorySlug: "gaming",
@@ -182,6 +190,7 @@ const PRODUCTS: SeedProduct[] = [
     specs: { Display: "6.7-inch LTPO OLED, 120Hz", Chip: "Google Tensor G3", Camera: "50MP main + 48MP UW + 48MP 5x tele", Battery: "5050 mAh", Storage: "128GB / 256GB / 512GB", Weight: "213 g" },
     inStock: true, stockCount: 8, featured: false, shape: "phone", accent: "oklch(0.55 0.10 75)",
     imageUrl: "https://sfile.chatglm.cn/images-ppt/ae6d369b0530.jpg",
+    condition: "EXUK",
   },
   {
     name: "Xiaomi Redmi Note 13 Pro", slug: "xiaomi-redmi-note-13-pro", brandSlug: "xiaomi", categorySlug: "smartphones",
@@ -212,6 +221,7 @@ const PRODUCTS: SeedProduct[] = [
     specs: { Display: "14-inch 2.8K OLED, 120Hz", Chip: "Intel Core Ultra 7 165U vPro", Memory: "16GB / 32GB LPDDR5x", Storage: "512GB / 1TB SSD", Battery: "Up to 17 hours", Weight: "1.09 kg" },
     inStock: true, stockCount: 6, featured: false, shape: "laptop", accent: "oklch(0.50 0.05 240)",
     imageUrl: "https://sfile.chatglm.cn/images-ppt/dfebb4acd6f6.jpg",
+    condition: "EXUK",
   },
   {
     name: "Tecno Camon 30 Premier", slug: "tecno-camon-30-premier", brandSlug: "tecno", categorySlug: "smartphones",
@@ -232,6 +242,7 @@ const PRODUCTS: SeedProduct[] = [
     specs: { Display: "14-inch 2.8K OLED, 120Hz touch", Chip: "Intel Core Ultra 7 155H", Memory: "16GB / 32GB LPDDR5x", Storage: "1TB / 2TB SSD", Battery: "Up to 13 hours", Weight: "1.34 kg" },
     inStock: true, stockCount: 7, featured: false, shape: "laptop", accent: "oklch(0.50 0.06 240)",
     imageUrl: "https://sfile.chatglm.cn/images-ppt/0d60522ae4fc.jpg",
+    condition: "REFURBISHED",
   },
   {
     name: "Apple Magic Keyboard for iPad Pro", slug: "apple-magic-keyboard-ipad-pro", brandSlug: "apple", categorySlug: "accessories",
@@ -295,8 +306,8 @@ const SITE_SETTINGS: { key: string; value: string; category: string }[] = [
   { key: "trust.2.desc", value: JSON.stringify("Same-day Nairobi, 48-hour everywhere else across all 47 counties."), category: "trust" },
   { key: "trust.3.title", value: JSON.stringify("7-day returns"), category: "trust" },
   { key: "trust.3.desc", value: JSON.stringify("Not the right fit? Send it back, no questions, full refund."), category: "trust" },
-  { key: "trust.4.title", value: JSON.stringify("1-year warranty"), category: "trust" },
-  { key: "trust.4.desc", value: JSON.stringify("Every device covered. Authorised service, zero hidden fees."), category: "trust" },
+  { key: "trust.4.title", value: JSON.stringify("Warranty on every device"), category: "trust" },
+  { key: "trust.4.desc", value: JSON.stringify("12 months on new, 3 months on ex-UK & refurbished. Authorised service, zero hidden fees."), category: "trust" },
 
   // Contact
   { key: "contact.address", value: JSON.stringify("Westlands Business Centre, Waiyaki Way, Nairobi"), category: "contact" },
@@ -394,7 +405,10 @@ async function main() {
   let productCount = 0;
   const productMap: Record<string, string> = {};
   for (const p of PRODUCTS) {
-    const { brandSlug, categorySlug, features, specs, ...rest } = p;
+    const { brandSlug, categorySlug, features, specs, condition, ...rest } = p;
+    // Derive warranty months from condition: NEW=12, EXUK/REFURBISHED=3
+    const cond = condition ?? "NEW";
+    const warrantyMonths = cond === "NEW" ? 12 : 3;
     const created = await db.product.create({
       data: {
         ...rest,
@@ -402,6 +416,8 @@ async function main() {
         categoryId: catMap[categorySlug],
         features: JSON.stringify(features),
         specs: JSON.stringify(specs),
+        condition: cond,
+        warrantyMonths,
       },
     });
     productMap[p.slug] = created.id;

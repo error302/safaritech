@@ -93,6 +93,8 @@ model Product {
   shape          String
   accent         String
   imageUrl       String?  // real product photo; null = use SVG fallback
+  condition      String   @default("NEW") // NEW | EXUK | REFURBISHED
+  warrantyMonths Int      @default(12) // NEW=12, EXUK/REFURBISHED=3
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -106,6 +108,7 @@ model Product {
   @@index([categoryId])
   @@index([featured])
   @@index([slug])
+  @@index([condition])
 }
 
 model Review {

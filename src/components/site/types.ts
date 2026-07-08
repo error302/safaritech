@@ -40,6 +40,9 @@ export interface Product {
   featured: boolean;
   shape: string;
   accent: string;
+  imageUrl?: string | null;
+  condition?: string | null;
+  warrantyMonths?: number;
   brand?: Pick<Brand, "name" | "slug" | "accent">;
   category?: Pick<Category, "name" | "slug" | "accent" | "shape">;
   reviews_rel?: Review[];

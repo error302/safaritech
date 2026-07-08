@@ -5,6 +5,7 @@ import { ArrowRight, Star, Plus, ArrowUpRight, Tag } from "lucide-react";
 import { useViewRouter } from "./view-router";
 import { useCart, formatKsh } from "./cart-context";
 import { ProductImage } from "./product-image";
+import { ConditionBadge } from "./condition-badge";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { Product } from "./types";
 
@@ -137,10 +138,7 @@ function DealCard({ product, index }: { product: Product; index: number }) {
           >
             {product.brand?.name} · {product.category?.name}
           </button>
-          <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
-            <Star className="h-3 w-3 fill-accent text-accent" />
-            <span className="font-medium text-foreground">{product.rating}</span>
-          </div>
+          <ConditionBadge condition={product.condition} size="sm" />
         </div>
 
         <button
