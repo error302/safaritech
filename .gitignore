@@ -52,3 +52,15 @@ prompt
 server.log
 # Skills directory
 /skills/
+# Database (SQLite — never commit)
+db/
+*.db
+*.db-journal
+
+# User uploads (runtime data)
+public/uploads/
+!public/uploads/.gitkeep
+
+# Tool results & temp
+tool-results/
+.zscripts/
