@@ -61,6 +61,8 @@ const FOOTER_COLS: FooterCol[] = [
 export function SiteFooter() {
   const { navigate, route } = useViewRouter();
   const { get } = useSettings();
+  const logoUrl = get("site.logoUrl", "");
+  const siteName = get("site.name", "Safaritech");
 
   const handleClick = (link: FooterLink) => (e?: React.MouseEvent) => {
     e?.preventDefault();
@@ -92,11 +94,19 @@ export function SiteFooter() {
               className="flex items-center gap-2.5 group"
               aria-label="Safaritech home"
             >
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-background/20 bg-background/5 text-background">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <path d="M5 20 L12 4 L19 20 L12 15 Z" fill="currentColor"/>
-                </svg>
-              </span>
+              {logoUrl ? (
+                <img
+                  src={logoUrl}
+                  alt={siteName}
+                  className="h-9 w-9 rounded-lg object-cover border border-background/20"
+                />
+              ) : (
+                <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-background/20 bg-background/5 text-background">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M5 20 L12 4 L19 20 L12 15 Z" fill="currentColor"/>
+                  </svg>
+                </span>
+              )}
               <span className="font-display text-xl tracking-display font-medium text-background">
                 Safari<span className="italic font-semibold text-accent">tech</span>
               </span>
