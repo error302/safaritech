@@ -1,30 +1,18 @@
 "use client";
 
-import Link from "next/link";
+import * as React from "react";
 import { ArrowUpRight } from "lucide-react";
+import { useViewRouter } from "./view-router";
+import { Brand } from "./types";
 
-interface Brand {
-  name: string;
-  popular?: boolean;
-  category: string;
+interface Props {
+  brands: Brand[];
+  loading?: boolean;
 }
 
-const BRANDS: Brand[] = [
-  { name: "Apple", popular: true, category: "Smartphones · Laptops · Audio" },
-  { name: "Samsung", popular: true, category: "Smartphones · TVs · Audio" },
-  { name: "Sony", popular: true, category: "Audio · Gaming · Cameras" },
-  { name: "JBL", popular: true, category: "Speakers · Headphones" },
-  { name: "HP", category: "Laptops · Printers" },
-  { name: "Dell", category: "Laptops · Monitors" },
-  { name: "Lenovo", category: "Laptops · Tablets" },
-  { name: "Xiaomi", popular: true, category: "Phones · Smart home" },
-  { name: "Infinix", popular: true, category: "Smartphones" },
-  { name: "Tecno", category: "Smartphones" },
-  { name: "Google", category: "Pixel · Nest" },
-  { name: "Nintendo", category: "Switch · Games" },
-];
+export function Brands({ brands, loading }: Props) {
+  const { navigate } = useViewRouter();
 
-export function Brands() {
   return (
     <section id="brands" className="py-20 md:py-28 bg-secondary/30 border-y border-border">
       <div className="container-premium">
@@ -46,16 +34,15 @@ export function Brands() {
                 and authentic serial verification.
               </p>
               <div className="mt-7 flex items-center gap-4">
-                <Link
-                  href="#collections"
+                <button
+                  onClick={() => navigate({ view: "shop" })}
                   className="group inline-flex items-center gap-2 h-10 px-5 rounded-full bg-foreground text-background text-sm font-medium hover:bg-foreground/90 transition-colors btn-shimmer"
                 >
                   Browse all brands
                   <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </Link>
+                </button>
               </div>
 
-              {/* mini stats */}
               <div className="mt-10 grid grid-cols-2 gap-6 max-w-sm">
                 <div>
                   <div className="num-display text-2xl text-foreground font-medium">100%</div>
@@ -72,9 +59,23 @@ export function Brands() {
           {/* Right — brand grid */}
           <div className="lg:col-span-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {BRANDS.map((b, i) => (
-                <BrandCard key={b.name} brand={b} index={i} />
-              ))}
+              {loading
+                ? Array.from({ length: 9 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="p-5 rounded-xl border border-border bg-card animate-pulse h-24"
+                    />
+                  ))
+                : brands.map((b, i) => (
+                    <BrandCard
+                      key={b.id}
+                      brand={b}
+                      index={i}
+                      onClick={() =>
+                        navigate({ view: "shop", query: { brand: b.slug } })
+                      }
+                    />
+                  ))}
             </div>
           </div>
         </div>
@@ -83,11 +84,19 @@ export function Brands() {
   );
 }
 
-function BrandCard({ brand, index }: { brand: Brand; index: number }) {
+function BrandCard({
+  brand,
+  index,
+  onClick,
+}: {
+  brand: Brand;
+  index: number;
+  onClick: () => void;
+}) {
   return (
-    <Link
-      href="#collections"
-      className="reveal group relative flex items-center justify-between gap-4 p-5 rounded-xl border border-border bg-card hover:border-foreground/30 hover:shadow-[var(--shadow-soft)] transition-all duration-500"
+    <button
+      onClick={onClick}
+      className="reveal group relative flex w-full items-center justify-between gap-4 p-5 rounded-xl border border-border bg-card hover:border-foreground/30 hover:shadow-[var(--shadow-soft)] transition-all duration-500 text-left"
       data-delay={(index % 3) * 60}
     >
       <div>
@@ -101,11 +110,9 @@ function BrandCard({ brand, index }: { brand: Brand; index: number }) {
             </span>
           )}
         </div>
-        <div className="mt-1 text-xs text-muted-foreground">
-          {brand.category}
-        </div>
+        <div className="mt-1 text-xs text-muted-foreground">{brand.category}</div>
       </div>
       <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-all duration-500 group-hover:text-foreground group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-    </Link>
+    </button>
   );
 }

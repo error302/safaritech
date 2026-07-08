@@ -2,40 +2,51 @@
 
 import * as React from "react";
 import { SiteNavbar } from "@/components/site/site-navbar";
-import { Hero } from "@/components/site/hero";
-import { TrustStrip } from "@/components/site/trust-strip";
-import { BrandMarquee } from "@/components/site/brand-marquee";
-import { Collections } from "@/components/site/collections";
-import { FeaturedProducts } from "@/components/site/featured-products";
-import { Brands } from "@/components/site/brands";
-import { Process } from "@/components/site/process";
-import { Features } from "@/components/site/features";
-import { Stats } from "@/components/site/stats";
-import { Testimonials } from "@/components/site/testimonials";
-import { Newsletter } from "@/components/site/newsletter";
 import { SiteFooter } from "@/components/site/site-footer";
-import { useScrollReveal } from "@/hooks/use-scroll-reveal";
+import { CartDrawer } from "@/components/site/cart-drawer";
+import {
+  ViewRouterProvider,
+  useViewRouter,
+} from "@/components/site/view-router";
+import { CartProvider } from "@/components/site/cart-context";
+import { HomeView } from "@/components/site/home-view";
+import { ShopView } from "@/components/site/shop-view";
+import { ProductDetailView } from "@/components/site/product-detail-view";
+import { CartView } from "@/components/site/cart-view";
 
-export default function Home() {
-  useScrollReveal();
+function ViewSwitch() {
+  const { route } = useViewRouter();
+
+  // Key by route identity so each view gets a fresh mount when navigating
+  // between different products (prevents stale state).
+  const key =
+    route.view === "product"
+      ? `product-${route.slug}`
+      : route.view === "shop"
+      ? `shop-${JSON.stringify(route.query ?? {})}`
+      : route.view;
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <SiteNavbar />
-      <main className="flex-1">
-        <Hero />
-        <TrustStrip />
-        <BrandMarquee />
-        <Collections />
-        <FeaturedProducts />
-        <Brands />
-        <Process />
-        <Features />
-        <Stats />
-        <Testimonials />
-        <Newsletter />
-      </main>
-      <SiteFooter />
-    </div>
+    <main className="flex-1" key={key}>
+      {route.view === "home" && <HomeView />}
+      {route.view === "shop" && <ShopView initialQuery={route.query} />}
+      {route.view === "product" && route.slug && <ProductDetailView slug={route.slug} />}
+      {route.view === "cart" && <CartView />}
+    </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <ViewRouterProvider>
+      <CartProvider>
+        <div className="min-h-screen flex flex-col bg-background">
+          <SiteNavbar />
+          <ViewSwitch />
+          <SiteFooter />
+          <CartDrawer />
+        </div>
+      </CartProvider>
+    </ViewRouterProvider>
   );
 }

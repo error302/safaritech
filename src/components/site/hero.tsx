@@ -1,11 +1,12 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useViewRouter } from "./view-router";
 
 export function Hero() {
+  const { navigate } = useViewRouter();
   return (
     <section className="relative pt-28 md:pt-36 pb-16 md:pb-24 overflow-hidden grain">
       {/* Soft ambient backdrop */}
@@ -61,8 +62,8 @@ export function Hero() {
 
             {/* CTAs */}
             <div className="reveal mt-9 md:mt-10 flex flex-col sm:flex-row gap-3 sm:items-center" data-delay="260">
-              <Link
-                href="#collections"
+              <button
+                onClick={() => navigate({ view: "shop" })}
                 className={cn(
                   "group inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full",
                   "bg-foreground text-background hover:bg-foreground/90 transition-all",
@@ -71,14 +72,14 @@ export function Hero() {
               >
                 Explore the collection
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </Link>
-              <Link
-                href="#brands"
+              </button>
+              <button
+                onClick={() => navigate({ view: "shop" })}
                 className="group inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full border border-border bg-card/40 hover:bg-card transition-all text-sm font-medium text-foreground"
               >
                 Shop by brand
                 <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </Link>
+              </button>
             </div>
 
             {/* Mini stat strip */}
@@ -178,9 +179,13 @@ function HeroVisual() {
               Spring/Summer 2026
             </div>
           </div>
-          <div className="h-8 w-8 rounded-full bg-foreground text-background inline-flex items-center justify-center">
+          <button
+            onClick={() => navigate({ view: "product", slug: "iphone-15-pro" })}
+            aria-label="View featured product"
+            className="h-8 w-8 rounded-full bg-foreground text-background inline-flex items-center justify-center hover:bg-foreground/90 transition-colors"
+          >
             <ArrowUpRight className="h-4 w-4" />
-          </div>
+          </button>
         </div>
       </div>
 

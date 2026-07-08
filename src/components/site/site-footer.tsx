@@ -1,52 +1,83 @@
 "use client";
 
-import Link from "next/link";
-import { Instagram, Twitter, Facebook, Youtube, ArrowUpRight } from "lucide-react";
+import * as React from "react";
+import { Instagram, Twitter, Facebook, Youtube } from "lucide-react";
+import { useViewRouter, ViewRoute } from "./view-router";
 
-const FOOTER_COLS = [
+interface FooterLink {
+  label: string;
+  route: ViewRoute;
+}
+
+interface FooterCol {
+  title: string;
+  links: FooterLink[];
+}
+
+const FOOTER_COLS: FooterCol[] = [
   {
     title: "Shop",
     links: [
-      { label: "Smartphones", href: "#collections" },
-      { label: "Laptops", href: "#collections" },
-      { label: "Audio", href: "#collections" },
-      { label: "Gaming", href: "#collections" },
-      { label: "Wearables", href: "#collections" },
-      { label: "Accessories", href: "#collections" },
+      { label: "Smartphones", route: { view: "shop", query: { category: "smartphones" } } },
+      { label: "Laptops", route: { view: "shop", query: { category: "laptops" } } },
+      { label: "Audio", route: { view: "shop", query: { category: "audio" } } },
+      { label: "Gaming", route: { view: "shop", query: { category: "gaming" } } },
+      { label: "Wearables", route: { view: "shop", query: { category: "wearables" } } },
+      { label: "Accessories", route: { view: "shop", query: { category: "accessories" } } },
     ],
   },
   {
     title: "Company",
     links: [
-      { label: "About us", href: "#" },
-      { label: "Press", href: "#" },
-      { label: "Careers", href: "#" },
-      { label: "Stores", href: "#" },
-      { label: "Blog", href: "#" },
+      { label: "About us", route: { view: "home", query: { _scroll: "features" } } },
+      { label: "Press", route: { view: "home" } },
+      { label: "Careers", route: { view: "home" } },
+      { label: "Stories", route: { view: "home", query: { _scroll: "testimonials" } } },
+      { label: "Blog", route: { view: "home" } },
     ],
   },
   {
     title: "Support",
     links: [
-      { label: "FAQ", href: "#" },
-      { label: "Shipping", href: "#" },
-      { label: "Returns", href: "#" },
-      { label: "Track order", href: "#" },
-      { label: "Warranty", href: "#" },
-      { label: "Contact us", href: "#contact" },
+      { label: "FAQ", route: { view: "home" } },
+      { label: "Shipping", route: { view: "home" } },
+      { label: "Returns", route: { view: "home" } },
+      { label: "Track order", route: { view: "home" } },
+      { label: "Warranty", route: { view: "home" } },
+      { label: "Contact us", route: { view: "home", query: { _scroll: "contact" } } },
     ],
   },
   {
     title: "Legal",
     links: [
-      { label: "Privacy policy", href: "#" },
-      { label: "Terms of service", href: "#" },
-      { label: "Cookie policy", href: "#" },
+      { label: "Privacy policy", route: { view: "home" } },
+      { label: "Terms of service", route: { view: "home" } },
+      { label: "Cookie policy", route: { view: "home" } },
     ],
   },
 ];
 
 export function SiteFooter() {
+  const { navigate, route } = useViewRouter();
+
+  const handleClick = (link: FooterLink) => (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    if (link.route.view === "home" && link.route.query?._scroll) {
+      if (route.view !== "home") {
+        navigate({ view: "home" });
+        setTimeout(() => {
+          const el = document.getElementById(link.route.query!._scroll as string);
+          el?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
+      } else {
+        const el = document.getElementById(link.route.query._scroll as string);
+        el?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    } else {
+      navigate(link.route);
+    }
+  };
+
   return (
     <footer className="bg-foreground text-background">
       <div className="container-premium py-16 md:py-20">
@@ -54,7 +85,11 @@ export function SiteFooter() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
           {/* Brand block */}
           <div className="lg:col-span-4">
-            <Link href="/" className="flex items-center gap-2.5 group" aria-label="Safaritech home">
+            <button
+              onClick={() => navigate({ view: "home" })}
+              className="flex items-center gap-2.5 group"
+              aria-label="Safaritech home"
+            >
               <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-background/20 bg-background/5 text-background">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M5 20 L12 4 L19 20 L12 15 Z" fill="currentColor"/>
@@ -63,14 +98,13 @@ export function SiteFooter() {
               <span className="font-display text-xl tracking-display font-medium text-background">
                 Safari<span className="italic font-semibold text-accent">tech</span>
               </span>
-            </Link>
+            </button>
 
             <p className="mt-5 text-sm text-background/70 leading-relaxed max-w-sm">
               Kenya&apos;s premier electronics marketplace. Curated, authentic,
               delivered nationwide — since 2019.
             </p>
 
-            {/* Contact details */}
             <div className="mt-7 space-y-2 text-sm text-background/80">
               <div className="flex items-start gap-2.5">
                 <span className="font-mono text-[10px] uppercase tracking-widest text-background/50 mt-0.5 w-16 shrink-0">
@@ -96,17 +130,16 @@ export function SiteFooter() {
               </div>
             </div>
 
-            {/* Socials */}
             <div className="mt-7 flex items-center gap-2">
               {[Instagram, Twitter, Facebook, Youtube].map((Icon, i) => (
-                <Link
+                <a
                   key={i}
                   href="#"
                   aria-label="Social link"
                   className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-background/15 bg-background/5 text-background/70 hover:text-background hover:border-background/30 transition-all"
                 >
                   <Icon className="h-4 w-4" strokeWidth={1.5} />
-                </Link>
+                </a>
               ))}
             </div>
           </div>
@@ -121,12 +154,13 @@ export function SiteFooter() {
                 <ul className="mt-4 space-y-2.5">
                   {col.links.map((l) => (
                     <li key={l.label}>
-                      <Link
-                        href={l.href}
+                      <a
+                        href="#"
+                        onClick={handleClick(l)}
                         className="text-sm text-background/80 hover:text-background transition-colors link-underline"
                       >
                         {l.label}
-                      </Link>
+                      </a>
                     </li>
                   ))}
                 </ul>

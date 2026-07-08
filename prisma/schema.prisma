@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// Safaritech catalog schema — premium electronics marketplace
+// SQLite for dev; production-ready shape (swap datasource for Postgres).
 
 generator client {
   provider = "prisma-client-js"
@@ -21,12 +18,78 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
-model Post {
+model Brand {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  popular     Boolean   @default(false)
+  category    String    // short descriptor: "Smartphones · Laptops · Audio"
+  description String?
+  accent      String    // oklch color string for theming cards
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  tagline     String
+  count       String    // "320+ devices"
+  accent      String
+  shape       String    // phone | laptop | audio | gaming | watch | accessory
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
+
+model Product {
+  id             String   @id @default(cuid())
+  name           String
+  slug           String   @unique
+  brandId        String
+  categoryId     String
+  price          Int      // in KES
+  originalPrice  Int?
+  rating         Float    @default(4.8)
+  reviews        Int      @default(0)
+  tag            String?  // "Best seller", "New arrival", "Deal", "Editor's pick", "Restocked"
+  summary        String   // one-line value prop
+  description    String   // long-form marketing copy
+  features       String   // JSON-stringified array of strings
+  specs          String   // JSON-stringified object
+  inStock        Boolean  @default(true)
+  stockCount     Int      @default(10)
+  featured       Boolean  @default(false) // appears in "This week's picks"
+  shape          String   // phone | laptop | audio | watch | gaming | accessory (for SVG)
+  accent         String   // per-product accent color
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  brand          Brand     @relation(fields: [brandId], references: [id])
+  category       Category  @relation(fields: [categoryId], references: [id])
+  reviews_rel    Review[]
+
+  @@index([brandId])
+  @@index([categoryId])
+  @@index([featured])
+  @@index([slug])
+}
+
+model Review {
   id        String   @id @default(cuid())
+  productId String
+  author    String
+  role      String
+  location  String
+  rating    Int
   title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  String
+  body      String
+  verified  Boolean  @default(true)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
 }
