@@ -1,0 +1,11 @@
+<svg width="200" height="40" viewBox="0 0 200 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <!-- Icon: minimal geometric compass/wayfinder -->
+    <rect x="1" y="1" width="38" height="38" rx="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+    <path d="M12 28 L20 12 L28 28 L20 23 Z" fill="currentColor"/>
+    <!-- Wordmark -->
+    <text x="48" y="27" font-family="Georgia, serif" font-size="22" font-weight="500" letter-spacing="-0.5" fill="currentColor">
+      <tspan>Safari</tspan><tspan font-weight="700" fill="currentColor" style="font-style: italic;">tech</tspan>
+    </text>
+  </g>
+</svg>
