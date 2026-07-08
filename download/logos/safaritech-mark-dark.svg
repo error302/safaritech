@@ -1,0 +1,49 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!--
+    Safaritech Logo Mark — Dark Mode Variant
+    Light emerald + bright brass on dark charcoal background.
+  -->
+  <defs>
+    <linearGradient id="emeraldGradDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#10B981"/>
+    </linearGradient>
+    <linearGradient id="brassGradDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBBF24"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Dark background (for dark mode) -->
+  <rect width="512" height="512" rx="96" fill="#0F0F1A"/>
+
+  <!-- Outer ring -->
+  <circle cx="256" cy="256" r="200" stroke="url(#emeraldGradDark)" stroke-width="3" fill="none" opacity="0.15"/>
+  <circle cx="256" cy="256" r="180" stroke="url(#emeraldGradDark)" stroke-width="6" fill="none"/>
+
+  <!-- North point (brass) -->
+  <path d="M 256 96 L 286 246 L 256 256 Z" fill="url(#brassGradDark)"/>
+  <!-- South -->
+  <path d="M 256 416 L 226 266 L 256 256 Z" fill="url(#emeraldGradDark)"/>
+  <!-- East -->
+  <path d="M 416 256 L 266 226 L 256 256 Z" fill="url(#emeraldGradDark)"/>
+  <!-- West -->
+  <path d="M 96 256 L 246 286 L 256 256 Z" fill="url(#emeraldGradDark)"/>
+
+  <!-- Center node -->
+  <circle cx="256" cy="256" r="28" fill="url(#emeraldGradDark)"/>
+  <circle cx="256" cy="256" r="14" fill="#0F0F1A"/>
+  <circle cx="256" cy="256" r="6" fill="url(#brassGradDark)"/>
+
+  <!-- Circuit traces -->
+  <line x1="256" y1="256" x2="256" y2="200" stroke="url(#emeraldGradDark)" stroke-width="2" opacity="0.3"/>
+  <line x1="256" y1="256" x2="312" y2="256" stroke="url(#emeraldGradDark)" stroke-width="2" opacity="0.3"/>
+  <line x1="256" y1="256" x2="256" y2="312" stroke="url(#emeraldGradDark)" stroke-width="2" opacity="0.3"/>
+  <line x1="256" y1="256" x2="200" y2="256" stroke="url(#emeraldGradDark)" stroke-width="2" opacity="0.3"/>
+
+  <!-- Cardinal nodes -->
+  <circle cx="256" cy="180" r="5" fill="url(#brassGradDark)"/>
+  <circle cx="332" cy="256" r="5" fill="url(#emeraldGradDark)"/>
+  <circle cx="256" cy="332" r="5" fill="url(#emeraldGradDark)"/>
+  <circle cx="180" cy="256" r="5" fill="url(#emeraldGradDark)"/>
+</svg>

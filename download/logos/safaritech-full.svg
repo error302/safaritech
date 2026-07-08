@@ -1,0 +1,49 @@
+<svg width="640" height="160" viewBox="0 0 640 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!--
+    Safaritech Full Logo — Icon + Wordmark
+    Editorial serif wordmark (Fraunces-style) + geometric compass mark.
+
+    Usage: Navbar, footer, press materials.
+    Scales cleanly from 32px favicon to billboard.
+  -->
+  <defs>
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F5132"/>
+      <stop offset="100%" stop-color="#0A3D24"/>
+    </linearGradient>
+    <linearGradient id="brassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D4A017"/>
+      <stop offset="100%" stop-color="#B8860B"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Icon (scaled to fit 160x160) -->
+  <g transform="translate(0, 0)">
+    <circle cx="80" cy="80" r="60" stroke="url(#emeraldGrad)" stroke-width="1" fill="none" opacity="0.15"/>
+    <circle cx="80" cy="80" r="54" stroke="url(#emeraldGrad)" stroke-width="3" fill="none"/>
+
+    <!-- North point (brass) -->
+    <path d="M 80 32 L 89 74 L 80 80 Z" fill="url(#brassGrad)"/>
+    <!-- South -->
+    <path d="M 80 128 L 71 86 L 80 80 Z" fill="url(#emeraldGrad)"/>
+    <!-- East -->
+    <path d="M 128 80 L 86 71 L 80 80 Z" fill="url(#emeraldGrad)"/>
+    <!-- West -->
+    <path d="M 32 80 L 74 89 L 80 80 Z" fill="url(#emeraldGrad)"/>
+
+    <!-- Center node -->
+    <circle cx="80" cy="80" r="9" fill="url(#emeraldGrad)"/>
+    <circle cx="80" cy="80" r="4.5" fill="#FAFAF8"/>
+    <circle cx="80" cy="80" r="2" fill="url(#brassGrad)"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="170" y="95" font-family="Georgia, 'Times New Roman', serif" font-size="48" font-weight="500" letter-spacing="-1.5" fill="#1A1A2E">
+    <tspan>Safari</tspan><tspan font-style="italic" font-weight="600" fill="url(#emeraldGrad)">tech</tspan>
+  </text>
+
+  <!-- Tagline (optional, smaller) -->
+  <text x="172" y="120" font-family="ui-monospace, 'Courier New', monospace" font-size="9" font-weight="500" letter-spacing="2.5" fill="#6B7280" opacity="0.7">
+    TECH THAT MOVES KENYA
+  </text>
+</svg>

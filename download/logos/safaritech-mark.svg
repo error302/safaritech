@@ -1,0 +1,50 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!--
+    Safaritech Logo Mark — "The Wayfinder"
+    A geometric compass-star combining navigation (safari = journey)
+    with a circuit-node center (tech). Designed for premium minimalism.
+
+    Palette: Emerald #0F5132 / Brass #B8860B / Ink #1A1A2E
+  -->
+  <defs>
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F5132"/>
+      <stop offset="100%" stop-color="#0A3D24"/>
+    </linearGradient>
+    <linearGradient id="brassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D4A017"/>
+      <stop offset="100%" stop-color="#B8860B"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Outer ring — the compass housing -->
+  <circle cx="256" cy="256" r="200" stroke="url(#emeraldGrad)" stroke-width="3" fill="none" opacity="0.15"/>
+  <circle cx="256" cy="256" r="180" stroke="url(#emeraldGrad)" stroke-width="6" fill="none"/>
+
+  <!-- Compass star — 4-point navigation arrow -->
+  <!-- North point (brass gold — the accent direction) -->
+  <path d="M 256 96 L 286 246 L 256 256 Z" fill="url(#brassGrad)"/>
+  <!-- South point -->
+  <path d="M 256 416 L 226 266 L 256 256 Z" fill="url(#emeraldGrad)"/>
+  <!-- East point -->
+  <path d="M 416 256 L 266 226 L 256 256 Z" fill="url(#emeraldGrad)"/>
+  <!-- West point -->
+  <path d="M 96 256 L 246 286 L 256 256 Z" fill="url(#emeraldGrad)"/>
+
+  <!-- Circuit-node center — the tech element -->
+  <circle cx="256" cy="256" r="28" fill="url(#emeraldGrad)"/>
+  <circle cx="256" cy="256" r="14" fill="#FAFAF8"/>
+  <circle cx="256" cy="256" r="6" fill="url(#brassGrad)"/>
+
+  <!-- Circuit traces radiating from center (subtle tech detail) -->
+  <line x1="256" y1="256" x2="256" y2="200" stroke="url(#emeraldGrad)" stroke-width="2" opacity="0.3"/>
+  <line x1="256" y1="256" x2="312" y2="256" stroke="url(#emeraldGrad)" stroke-width="2" opacity="0.3"/>
+  <line x1="256" y1="256" x2="256" y2="312" stroke="url(#emeraldGrad)" stroke-width="2" opacity="0.3"/>
+  <line x1="256" y1="256" x2="200" y2="256" stroke="url(#emeraldGrad)" stroke-width="2" opacity="0.3"/>
+
+  <!-- Cardinal nodes (circuit-style) -->
+  <circle cx="256" cy="180" r="5" fill="url(#brassGrad)"/>
+  <circle cx="332" cy="256" r="5" fill="url(#emeraldGrad)"/>
+  <circle cx="256" cy="332" r="5" fill="url(#emeraldGrad)"/>
+  <circle cx="180" cy="256" r="5" fill="url(#emeraldGrad)"/>
+</svg>
