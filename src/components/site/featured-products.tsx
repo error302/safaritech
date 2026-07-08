@@ -4,7 +4,7 @@ import * as React from "react";
 import { ArrowRight, Star, Plus } from "lucide-react";
 import { useViewRouter } from "./view-router";
 import { useCart, formatKsh } from "./cart-context";
-import { DeviceShape } from "./device-shape";
+import { ProductImage } from "./product-image";
 import { Product } from "./types";
 
 interface Props {
@@ -127,10 +127,13 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
               backgroundSize: "32px 32px",
             }}
           />
-          <DeviceShape
+          <ProductImage
+            imageUrl={product.imageUrl}
             shape={product.shape}
             accent={product.accent}
+            alt={product.name}
             className="absolute inset-0 w-full h-full"
+            fit="contain"
           />
 
           <div className="absolute top-3 left-3 right-3 flex items-start justify-between">

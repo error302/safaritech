@@ -10,12 +10,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  CUSTOMER
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  INITIATED
+  PAID
+  FAILED
+  REFUNDED
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String?
+  password  String?  // hashed; null for OAuth-only users
+  role      Role     @default(CUSTOMER)
+  phone     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  orders     Order[]
+  cartItems  CartItem[]
 }
 
 model Brand {
@@ -23,9 +51,9 @@ model Brand {
   name        String    @unique
   slug        String    @unique
   popular     Boolean   @default(false)
-  category    String    // short descriptor: "Smartphones · Laptops · Audio"
+  category    String
   description String?
-  accent      String    // oklch color string for theming cards
+  accent      String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   products    Product[]
@@ -36,9 +64,9 @@ model Category {
   name        String    @unique
   slug        String    @unique
   tagline     String
-  count       String    // "320+ devices"
+  count       String
   accent      String
-  shape       String    // phone | laptop | audio | gaming | watch | accessory
+  shape       String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   products    Product[]
@@ -50,26 +78,29 @@ model Product {
   slug           String   @unique
   brandId        String
   categoryId     String
-  price          Int      // in KES
+  price          Int
   originalPrice  Int?
   rating         Float    @default(4.8)
   reviews        Int      @default(0)
-  tag            String?  // "Best seller", "New arrival", "Deal", "Editor's pick", "Restocked"
-  summary        String   // one-line value prop
-  description    String   // long-form marketing copy
-  features       String   // JSON-stringified array of strings
+  tag            String?
+  summary        String
+  description    String
+  features       String   // JSON-stringified array
   specs          String   // JSON-stringified object
   inStock        Boolean  @default(true)
   stockCount     Int      @default(10)
-  featured       Boolean  @default(false) // appears in "This week's picks"
-  shape          String   // phone | laptop | audio | watch | gaming | accessory (for SVG)
-  accent         String   // per-product accent color
+  featured       Boolean  @default(false)
+  shape          String
+  accent         String
+  imageUrl       String?  // real product photo; null = use SVG fallback
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
   brand          Brand     @relation(fields: [brandId], references: [id])
   category       Category  @relation(fields: [categoryId], references: [id])
   reviews_rel    Review[]
+  cartItems      CartItem[]
+  orderItems     OrderItem[]
 
   @@index([brandId])
   @@index([categoryId])
@@ -92,4 +123,108 @@ model Review {
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId])
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  userId    String?
+  sessionId String?
+  productId String
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([sessionId])
+}
+
+model Order {
+  id              String         @id @default(cuid())
+  orderNumber     String         @unique
+  userId          String?
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  shippingAddress String?
+  city            String?
+  county          String?
+  notes           String?
+
+  subtotal        Int
+  discount        Int            @default(0)
+  shipping        Int            @default(0)
+  total           Int
+
+  couponCode      String?
+  couponId        String?
+
+  paymentMethod   String         @default("mpesa")
+  paymentStatus   PaymentStatus  @default(PENDING)
+  mpesaRequestId  String?
+  mpesaCheckoutId String?
+
+  status          OrderStatus    @default(PENDING)
+
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  user            User?          @relation(fields: [userId], references: [id])
+  items           OrderItem[]
+
+  @@index([userId])
+  @@index([orderNumber])
+  @@index([status])
+  @@index([paymentStatus])
+}
+
+model OrderItem {
+  id         String  @id @default(cuid())
+  orderId    String
+  productId  String
+  productName String
+  brandName  String
+  unitPrice  Int
+  quantity   Int
+  lineTotal  Int
+  imageUrl   String?
+  shape      String
+  accent     String
+
+  order      Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product    Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+}
+
+model Coupon {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  description String?
+  type        String   @default("percentage") // percentage | fixed
+  value       Float    // percentage: 10 = 10% off; fixed: 5000 = KSh 5000 off
+  minOrder    Int      @default(0)
+  maxDiscount Int?     // cap for percentage type
+  active      Boolean  @default(true)
+  usageLimit  Int?     // total times it can be used
+  usedCount   Int      @default(0)
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([code])
+  @@index([active])
+}
+
+/// Key-value store for all dynamic site content — CMS without a CMS.
+/// Frontend fetches /api/settings on mount and replaces hardcoded strings.
+model SiteSetting {
+  key       String   @id
+  value     String   // JSON-encoded value (string, number, boolean, array)
+  category  String   @default("general") // general | hero | footer | contact | nav | seo
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
 }

@@ -4,8 +4,9 @@ import * as React from "react";
 import { Filter, X, Search, ChevronDown, ArrowUpRight, Star, Plus, SlidersHorizontal } from "lucide-react";
 import { useViewRouter } from "./view-router";
 import { useCart, formatKsh } from "./cart-context";
-import { DeviceShape } from "./device-shape";
+import { ProductImage } from "./product-image";
 import { Product, Brand, Category } from "./types";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { cn } from "@/lib/utils";
 
 interface ShopResponse {
@@ -30,6 +31,9 @@ const SORTS = [
 
 export function ShopView({ initialQuery }: { initialQuery?: Record<string, string> }) {
   const { navigate } = useViewRouter();
+  const [data, setData] = React.useState<ShopResponse | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  useScrollReveal([loading, data]);
 
   // Local filter state, initialised from URL hash query
   const [search, setSearch] = React.useState(initialQuery?.q ?? "");
@@ -40,8 +44,6 @@ export function ShopView({ initialQuery }: { initialQuery?: Record<string, strin
   const [maxPrice, setMaxPrice] = React.useState<number | undefined>();
   const [showFilters, setShowFilters] = React.useState(false);
 
-  const [data, setData] = React.useState<ShopResponse | null>(null);
-  const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
   // Build query string for fetch
@@ -426,10 +428,13 @@ function ShopProductCard({ product, index }: { product: Product; index: number }
               background: `linear-gradient(140deg, ${product.accent}22 0%, ${product.accent}10 50%, transparent 100%)`,
             }}
           />
-          <DeviceShape
+          <ProductImage
+            imageUrl={product.imageUrl}
             shape={product.shape}
             accent={product.accent}
+            alt={product.name}
             className="absolute inset-0 w-full h-full"
+            fit="contain"
           />
           {product.tag && (
             <span className="absolute top-2 left-2 inline-flex items-center gap-1.5 rounded-full bg-background/90 backdrop-blur-sm border border-border px-2 py-0.5 font-mono text-[9px] uppercase tracking-widest text-foreground/80">

@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Instagram, Twitter, Facebook, Youtube } from "lucide-react";
 import { useViewRouter, ViewRoute } from "./view-router";
+import { useSettings } from "./settings-context";
 
 interface FooterLink {
   label: string;
@@ -59,6 +60,7 @@ const FOOTER_COLS: FooterCol[] = [
 
 export function SiteFooter() {
   const { navigate, route } = useViewRouter();
+  const { get } = useSettings();
 
   const handleClick = (link: FooterLink) => (e?: React.MouseEvent) => {
     e?.preventDefault();
@@ -101,8 +103,7 @@ export function SiteFooter() {
             </button>
 
             <p className="mt-5 text-sm text-background/70 leading-relaxed max-w-sm">
-              Kenya&apos;s premier electronics marketplace. Curated, authentic,
-              delivered nationwide — since 2019.
+              {get("footer.tagline", "Kenya's premier electronics marketplace. Curated, authentic, delivered nationwide — since 2019.")}
             </p>
 
             <div className="mt-7 space-y-2 text-sm text-background/80">
@@ -110,22 +111,22 @@ export function SiteFooter() {
                 <span className="font-mono text-[10px] uppercase tracking-widest text-background/50 mt-0.5 w-16 shrink-0">
                   Visit
                 </span>
-                <span>Westlands Business Centre, Waiyaki Way, Nairobi</span>
+                <span>{get("contact.address", "Westlands Business Centre, Waiyaki Way, Nairobi")}</span>
               </div>
               <div className="flex items-start gap-2.5">
                 <span className="font-mono text-[10px] uppercase tracking-widest text-background/50 mt-0.5 w-16 shrink-0">
                   Call
                 </span>
-                <a href="tel:+254700000000" className="hover:text-background transition-colors link-underline">
-                  +254 700 000 000
+                <a href={`tel:${get("contact.phone", "+254700000000").replace(/\s/g, "")}`} className="hover:text-background transition-colors link-underline">
+                  {get("contact.phone", "+254 700 000 000")}
                 </a>
               </div>
               <div className="flex items-start gap-2.5">
                 <span className="font-mono text-[10px] uppercase tracking-widest text-background/50 mt-0.5 w-16 shrink-0">
                   Email
                 </span>
-                <a href="mailto:hello@safaritech.co.ke" className="hover:text-background transition-colors link-underline">
-                  hello@safaritech.co.ke
+                <a href={`mailto:${get("contact.email", "hello@safaritech.co.ke")}`} className="hover:text-background transition-colors link-underline">
+                  {get("contact.email", "hello@safaritech.co.ke")}
                 </a>
               </div>
             </div>
@@ -175,7 +176,7 @@ export function SiteFooter() {
         {/* Bottom row */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-background/60">
-            <span>© 2026 Safaritech Ltd. All rights reserved.</span>
+            <span>{get("footer.copyright", "© 2026 Safaritech Ltd. All rights reserved.")}</span>
             <span className="hidden md:inline-flex items-center gap-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse-soft" />
               All systems operational
@@ -196,6 +197,12 @@ export function SiteFooter() {
                 </span>
               ))}
             </div>
+            <button
+              onClick={() => navigate({ view: "admin" })}
+              className="ml-4 font-mono text-[10px] uppercase tracking-widest text-background/30 hover:text-background/70 transition-colors"
+            >
+              Admin
+            </button>
           </div>
         </div>
 

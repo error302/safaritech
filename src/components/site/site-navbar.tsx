@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useViewRouter, ViewRoute } from "./view-router";
 import { useCart } from "./cart-context";
+import { useSettings } from "./settings-context";
 
 interface NavLink {
   label: string;
@@ -28,6 +29,9 @@ export function SiteNavbar() {
   const [mounted, setMounted] = React.useState(false);
   const { navigate, route } = useViewRouter();
   const { count, open: openCart } = useCart();
+  const { get } = useSettings();
+  const logoUrl = get("site.logoUrl", "");
+  const siteName = get("site.name", "Safaritech");
 
   React.useEffect(() => {
     setMounted(true);
@@ -74,14 +78,26 @@ export function SiteNavbar() {
           className="flex items-center gap-2.5 group"
           aria-label="Safaritech home"
         >
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-foreground">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path d="M5 20 L12 4 L19 20 L12 15 Z" fill="currentColor"/>
-            </svg>
-          </span>
-          <span className="font-display text-xl tracking-display font-medium text-foreground">
-            Safari<span className="italic font-semibold text-accent">tech</span>
-          </span>
+          {logoUrl ? (
+            <img src={logoUrl} alt={siteName} className="h-9 w-auto" />
+          ) : (
+            <>
+              <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-foreground">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M5 20 L12 4 L19 20 L12 15 Z" fill="currentColor"/>
+                </svg>
+              </span>
+              <span className="font-display text-xl tracking-display font-medium text-foreground">
+                {siteName.startsWith("Safari") ? (
+                  <>
+                    Safari<span className="italic font-semibold text-accent">{siteName.slice(5)}</span>
+                  </>
+                ) : (
+                  siteName
+                )}
+              </span>
+            </>
+          )}
         </button>
 
         {/* Desktop nav */}

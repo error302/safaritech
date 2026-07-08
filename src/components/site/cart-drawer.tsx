@@ -4,7 +4,7 @@ import * as React from "react";
 import { X, Plus, Minus, Trash2, ShoppingBag, ArrowRight, ShieldCheck } from "lucide-react";
 import { useCart, formatKsh } from "./cart-context";
 import { useViewRouter } from "./view-router";
-import { DeviceShape } from "./device-shape";
+import { ProductImage } from "./product-image";
 import { cn } from "@/lib/utils";
 
 export function CartDrawer() {
@@ -125,10 +125,13 @@ export function CartDrawer() {
                         background: `linear-gradient(140deg, ${item.accent}22 0%, ${item.accent}10 50%, transparent 100%)`,
                       }}
                     >
-                      <DeviceShape
+                      <ProductImage
+                        imageUrl={null}
                         shape={item.shape}
                         accent={item.accent}
+                        alt={item.name}
                         className="absolute inset-0 w-full h-full"
+                        fit="contain"
                       />
                     </div>
 

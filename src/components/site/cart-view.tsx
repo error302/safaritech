@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { useViewRouter } from "./view-router";
 import { useCart, formatKsh } from "./cart-context";
-import { DeviceShape } from "./device-shape";
+import { ProductImage } from "./product-image";
 import { cn } from "@/lib/utils";
 
 export function CartView() {
@@ -23,17 +23,82 @@ export function CartView() {
   const { items, setQuantity, removeItem, subtotal, clear, count } = useCart();
   const [placed, setPlaced] = React.useState(false);
   const [placing, setPlacing] = React.useState(false);
+  const [orderNumber, setOrderNumber] = React.useState("");
+  const [mpesaMock, setMpesaMock] = React.useState(false);
+  const [error, setError] = React.useState("");
+  const [couponCode, setCouponCode] = React.useState("");
+  const [couponStatus, setCouponStatus] = React.useState<{ valid: boolean; discount: number; reason?: string } | null>(null);
+  const [couponLoading, setCouponLoading] = React.useState(false);
 
-  const shipping = subtotal > 100000 ? 0 : 650;
-  const total = subtotal + shipping;
+  const discount = couponStatus?.valid ? couponStatus.discount : 0;
+  const shipping = subtotal - discount > 100000 ? 0 : 650;
+  const total = subtotal - discount + shipping;
 
-  const placeOrder = () => {
+  const validateCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    setCouponStatus(null);
+    try {
+      const res = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: couponCode, subtotal }),
+      });
+      const json = await res.json();
+      setCouponStatus(json);
+    } catch {
+      setCouponStatus({ valid: false, discount: 0, reason: "Failed to validate" });
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const placeOrder = async () => {
     setPlacing(true);
-    setTimeout(() => {
-      setPlacing(false);
+    setError("");
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: items.map((i) => ({
+            slug: i.slug,
+            name: i.name,
+            brand: i.brand,
+            price: i.price,
+            quantity: i.quantity,
+          })),
+          customer: {
+            name: "Guest Customer",
+            email: "",
+            phone: "+254700000000", // In production, collect from a form
+          },
+          couponCode: couponStatus?.valid ? couponCode : undefined,
+          shipping,
+          subtotal,
+        }),
+      });
+
+      if (!res.ok) {
+        const j = await res.json();
+        throw new Error(j.error || `HTTP ${res.status}`);
+      }
+
+      const json = await res.json();
+
+      if (!json.mpesa.success) {
+        throw new Error(json.mpesa.error || "M-Pesa STK push failed");
+      }
+
+      setMpesaMock(json.mpesa.mock ?? false);
+      setOrderNumber(json.order.orderNumber);
       setPlaced(true);
       clear();
-    }, 1400);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to place order");
+    } finally {
+      setPlacing(false);
+    }
   };
 
   if (placed) {
@@ -53,9 +118,9 @@ export function CartView() {
               <span className="italic font-normal text-accent">Your order is on its way.</span>
             </h1>
             <p className="mt-5 text-base text-muted-foreground leading-relaxed reveal" data-delay="160">
-              We&apos;ve sent a confirmation to your phone via M-Pesa. Our team will
-              call within the hour to confirm delivery details. Same-day Nairobi,
-              48 hours nationwide.
+              {mpesaMock
+                ? "We've recorded your order. M-Pesa is running in demo mode — add your Daraja credentials to .env to enable real STK push prompts. Our team will contact you to confirm payment and delivery."
+                : "We've sent an STK push prompt to your phone via M-Pesa. Approve the prompt to complete payment. Same-day Nairobi, 48 hours nationwide."}
             </p>
             <div className="mt-8 flex items-center justify-center gap-3 reveal" data-delay="240">
               <button
@@ -78,7 +143,7 @@ export function CartView() {
                 Order reference
               </div>
               <div className="mt-1 font-mono text-base text-foreground">
-                SFT-{Date.now().toString(36).toUpperCase().slice(-8)}
+                {orderNumber}
               </div>
               <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
                 <Truck className="h-3.5 w-3.5 text-accent" />
@@ -181,10 +246,13 @@ export function CartView() {
                           background: `linear-gradient(140deg, ${item.accent}22 0%, ${item.accent}10 50%, transparent 100%)`,
                         }}
                       >
-                        <DeviceShape
+                        <ProductImage
+                          imageUrl={null}
                           shape={item.shape}
                           accent={item.accent}
+                          alt={item.name}
                           className="absolute inset-0 w-full h-full"
+                          fit="contain"
                         />
                       </div>
                       <div className="min-w-0">
@@ -287,6 +355,14 @@ export function CartView() {
                     {formatKsh(subtotal)}
                   </dd>
                 </div>
+                {discount > 0 && (
+                  <div className="flex items-center justify-between">
+                    <dt className="text-accent">Discount ({couponCode.toUpperCase()})</dt>
+                    <dd className="num-display text-accent font-medium">
+                      −{formatKsh(discount)}
+                    </dd>
+                  </div>
+                )}
                 <div className="flex items-center justify-between">
                   <dt className="text-muted-foreground">Shipping</dt>
                   <dd className="num-display text-foreground">
@@ -305,10 +381,40 @@ export function CartView() {
                 <div className="flex items-center justify-between">
                   <dt className="text-muted-foreground">VAT (incl.)</dt>
                   <dd className="num-display text-muted-foreground">
-                    {formatKsh(Math.round(subtotal * 0.16 / 1.16))}
+                    {formatKsh(Math.round((subtotal - discount) * 0.16 / 1.16))}
                   </dd>
                 </div>
               </dl>
+
+              {/* Coupon */}
+              <div className="mt-4 pt-4 border-t border-border">
+                <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
+                  Coupon code
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => { setCouponCode(e.target.value); setCouponStatus(null); }}
+                    placeholder="WELCOME10"
+                    className="flex-1 h-9 px-3 rounded-lg bg-background border border-border text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-accent/30"
+                  />
+                  <button
+                    onClick={validateCoupon}
+                    disabled={couponLoading || !couponCode.trim()}
+                    className="h-9 px-4 rounded-lg border border-border bg-card text-xs font-medium hover:bg-secondary transition-colors disabled:opacity-50"
+                  >
+                    {couponLoading ? "…" : "Apply"}
+                  </button>
+                </div>
+                {couponStatus && (
+                  <div className={`mt-2 text-xs ${couponStatus.valid ? "text-accent" : "text-destructive"}`}>
+                    {couponStatus.valid
+                      ? `✓ ${formatKsh(couponStatus.discount)} discount applied`
+                      : `✗ ${couponStatus.reason ?? "Invalid coupon"}`}
+                  </div>
+                )}
+              </div>
 
               <div className="mt-5 pt-5 border-t border-border flex items-baseline justify-between">
                 <span className="font-display text-base text-foreground">Total</span>
@@ -337,6 +443,12 @@ export function CartView() {
                   </button>
                 </div>
               </div>
+
+              {error && (
+                <div className="mt-4 p-3 rounded-lg bg-destructive/5 border border-destructive/20 text-sm text-destructive">
+                  {error}
+                </div>
+              )}
 
               {/* Checkout */}
               <button

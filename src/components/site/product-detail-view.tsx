@@ -15,8 +15,9 @@ import {
 } from "lucide-react";
 import { useViewRouter } from "./view-router";
 import { useCart, formatKsh } from "./cart-context";
-import { DeviceShape } from "./device-shape";
+import { ProductImage } from "./product-image";
 import { Product } from "./types";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { cn } from "@/lib/utils";
 
 interface ProductResponse {
@@ -28,6 +29,7 @@ export function ProductDetailView({ slug }: { slug: string }) {
   const { addItem } = useCart();
   const [data, setData] = React.useState<ProductResponse | null>(null);
   const [loading, setLoading] = React.useState(true);
+  useScrollReveal([loading, data]);
   const [error, setError] = React.useState<string | null>(null);
   const [qty, setQty] = React.useState(1);
   const [added, setAdded] = React.useState(false);
@@ -173,10 +175,13 @@ export function ProductDetailView({ slug }: { slug: string }) {
                   backgroundSize: "32px 32px",
                 }}
               />
-              <DeviceShape
+              <ProductImage
+                imageUrl={p.imageUrl}
                 shape={p.shape}
                 accent={p.accent}
+                alt={p.name}
                 className="absolute inset-0 w-full h-full"
+                fit="contain"
               />
               {/* Corner labels */}
               <div className="absolute top-4 left-4 font-mono text-[10px] uppercase tracking-widest text-foreground/60">
@@ -211,10 +216,13 @@ export function ProductDetailView({ slug }: { slug: string }) {
                     background: `linear-gradient(140deg, ${p.accent}22 0%, ${p.accent}10 50%, transparent 100%)`,
                   }}
                 >
-                  <DeviceShape
+                  <ProductImage
+                    imageUrl={p.imageUrl}
                     shape={p.shape}
                     accent={p.accent}
-                    className="absolute inset-0 w-full h-full opacity-80"
+                    alt={`${p.name} thumbnail ${i + 1}`}
+                    className="absolute inset-0 w-full h-full"
+                    fit="contain"
                   />
                 </div>
               ))}
@@ -496,10 +504,13 @@ function RelatedCard({ product }: { product: Product }) {
             background: `linear-gradient(140deg, ${product.accent}22 0%, ${product.accent}10 50%, transparent 100%)`,
           }}
         />
-        <DeviceShape
+        <ProductImage
+          imageUrl={product.imageUrl}
           shape={product.shape}
           accent={product.accent}
+          alt={product.name}
           className="absolute inset-0 w-full h-full"
+          fit="contain"
         />
       </div>
       <div className="p-3">

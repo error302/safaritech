@@ -4,9 +4,12 @@ import * as React from "react";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useViewRouter } from "./view-router";
+import { useSettings } from "./settings-context";
 
 export function Hero() {
   const { navigate } = useViewRouter();
+  const { get } = useSettings();
+
   return (
     <section className="relative pt-28 md:pt-36 pb-16 md:pb-24 overflow-hidden grain">
       {/* Soft ambient backdrop */}
@@ -18,7 +21,6 @@ export function Hero() {
             "radial-gradient(60rem 60rem at 80% -10%, oklch(0.40 0.08 165 / 0.08), transparent 60%), radial-gradient(50rem 50rem at 0% 80%, oklch(0.55 0.10 75 / 0.06), transparent 55%)",
         }}
       />
-      {/* Fine grid lines */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-10 opacity-[0.04]"
@@ -40,24 +42,22 @@ export function Hero() {
                 <span className="absolute inset-0 rounded-full bg-accent/40 animate-pulse-soft" style={{ animationDelay: "0.4s" }} />
               </span>
               <span className="text-[11px] md:text-xs uppercase tracking-[0.22em] font-medium text-muted-foreground">
-                Kenya&apos;s Premier Electronics Marketplace
+                {get("hero.badge", "Kenya's Premier Electronics Marketplace")}
               </span>
             </div>
 
             {/* H1 */}
             <h1 className="reveal font-display tracking-tightest text-foreground text-[clamp(2.5rem,7vw,5.5rem)] leading-[0.95] font-medium" data-delay="80">
-              <span className="block">Tech that</span>
-              <span className="block">moves Kenya,</span>
+              <span className="block">{get("hero.titleLine1", "Tech that")}</span>
+              <span className="block">{get("hero.titleLine2", "moves Kenya,")}</span>
               <span className="block italic font-normal text-accent">
-                curated for the world.
+                {get("hero.titleLine3", "curated for the world.")}
               </span>
             </h1>
 
             {/* Subhead */}
             <p className="reveal mt-7 md:mt-9 max-w-xl text-base md:text-lg text-muted-foreground leading-relaxed" data-delay="180">
-              Smartphones, laptops, audio and gaming gear from Apple, Samsung, Sony
-              and twenty-plus authorized brands. Pay with M-Pesa. Delivered, nationwide,
-              with a one-year warranty on every device.
+              {get("hero.subtitle", "Smartphones, laptops, audio and gaming gear from Apple, Samsung, Sony and twenty-plus authorized brands. Pay with M-Pesa. Delivered, nationwide, with a one-year warranty on every device.")}
             </p>
 
             {/* CTAs */}
@@ -70,14 +70,14 @@ export function Hero() {
                   "btn-shimmer text-sm font-medium"
                 )}
               >
-                Explore the collection
+                {get("hero.ctaPrimary", "Explore the collection")}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </button>
               <button
                 onClick={() => navigate({ view: "shop" })}
                 className="group inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full border border-border bg-card/40 hover:bg-card transition-all text-sm font-medium text-foreground"
               >
-                Shop by brand
+                {get("hero.ctaSecondary", "Shop by brand")}
                 <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </button>
             </div>
@@ -85,9 +85,9 @@ export function Hero() {
             {/* Mini stat strip */}
             <div className="reveal mt-12 md:mt-14 grid grid-cols-3 gap-4 md:gap-8 max-w-lg border-t border-border pt-6" data-delay="340">
               {[
-                { num: "50K+", label: "Customers served" },
-                { num: "20+", label: "Authorized brands" },
-                { num: "1 yr", label: "Warranty, every device" },
+                { num: get("hero.stat1Num", "50K+"), label: get("hero.stat1Label", "Customers served") },
+                { num: get("hero.stat2Num", "20+"), label: get("hero.stat2Label", "Authorized brands") },
+                { num: get("hero.stat3Num", "1 yr"), label: get("hero.stat3Label", "Warranty, every device") },
               ].map((s) => (
                 <div key={s.label}>
                   <div className="num-display text-2xl md:text-3xl font-medium text-foreground">
@@ -112,11 +112,11 @@ export function Hero() {
 }
 
 function HeroVisual() {
+  const { navigate } = useViewRouter();
   return (
     <div className="relative aspect-[4/5] md:aspect-[3/4] lg:aspect-[4/5] w-full max-w-md mx-auto lg:max-w-none lg:ml-auto">
       {/* Primary editorial card */}
       <div className="absolute inset-0 rounded-2xl overflow-hidden border border-border bg-card shadow-[var(--shadow-lift)]">
-        {/* Gradient field */}
         <div
           className="absolute inset-0"
           style={{
@@ -124,7 +124,6 @@ function HeroVisual() {
               "linear-gradient(140deg, oklch(0.96 0.01 95) 0%, oklch(0.92 0.02 165) 50%, oklch(0.85 0.05 165) 100%)",
           }}
         />
-        {/* Inner shape — abstract device silhouette */}
         <svg
           viewBox="0 0 400 500"
           className="absolute inset-0 w-full h-full"
@@ -133,39 +132,27 @@ function HeroVisual() {
           preserveAspectRatio="xMidYMid slice"
           aria-hidden="true"
         >
-          {/* horizon line */}
           <line x1="40" y1="380" x2="360" y2="380" stroke="oklch(0.30 0.05 165 / 0.25)" strokeWidth="1" />
-
-          {/* abstract phone */}
           <rect x="140" y="120" width="120" height="240" rx="22" fill="oklch(0.18 0.02 240 / 0.85)" />
           <rect x="148" y="132" width="104" height="200" rx="6" fill="oklch(0.65 0.10 165 / 0.4)" />
           <circle cx="200" cy="346" r="4" fill="oklch(0.96 0.005 95 / 0.5)" />
-
-          {/* screen content */}
           <circle cx="200" cy="180" r="22" fill="oklch(0.96 0.005 95 / 0.85)" />
           <rect x="170" y="220" width="60" height="6" rx="3" fill="oklch(0.96 0.005 95 / 0.7)" />
           <rect x="178" y="234" width="44" height="4" rx="2" fill="oklch(0.96 0.005 95 / 0.5)" />
-
-          {/* earbuds shape */}
           <circle cx="80" cy="380" r="14" fill="oklch(0.18 0.02 240 / 0.7)" />
           <circle cx="320" cy="380" r="14" fill="oklch(0.18 0.02 240 / 0.7)" />
           <rect x="76" y="394" width="8" height="40" rx="4" fill="oklch(0.18 0.02 240 / 0.5)" />
           <rect x="316" y="394" width="8" height="40" rx="4" fill="oklch(0.18 0.02 240 / 0.5)" />
-
-          {/* abstract watch */}
           <rect x="46" y="120" width="56" height="80" rx="10" fill="oklch(0.18 0.02 240 / 0.85)" />
           <rect x="42" y="135" width="64" height="6" rx="3" fill="oklch(0.18 0.02 240 / 0.6)" />
           <rect x="42" y="180" width="64" height="6" rx="3" fill="oklch(0.18 0.02 240 / 0.6)" />
           <circle cx="74" cy="160" r="14" fill="oklch(0.55 0.10 75 / 0.8)" />
-
-          {/* caption markers */}
           <line x1="40" y1="50" x2="100" y2="50" stroke="oklch(0.30 0.05 165 / 0.4)" strokeWidth="1" />
           <text x="40" y="42" fontFamily="ui-monospace, monospace" fontSize="9" fill="oklch(0.30 0.05 165 / 0.7)" letterSpacing="1">
             VOL.07 — 2026
           </text>
         </svg>
 
-        {/* corner labels */}
         <div className="absolute top-4 left-4 font-mono text-[10px] uppercase tracking-widest text-foreground/60">
           Edition · Nairobi
         </div>

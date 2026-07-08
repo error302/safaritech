@@ -6,10 +6,12 @@ import * as React from "react";
  * Reveal-on-scroll hook based on IntersectionObserver.
  * Adds the `is-visible` class to elements with `.reveal` when they enter viewport.
  * Respects prefers-reduced-motion (handled in CSS).
+ *
+ * @param deps — dependency array; when changed, re-scans for new .reveal elements
  */
-export function useScrollReveal() {
+export function useScrollReveal(deps: unknown[] = []) {
   React.useEffect(() => {
-    const els = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
+    const els = Array.from(document.querySelectorAll<HTMLElement>(".reveal:not(.is-visible)"));
     if (els.length === 0) return;
 
     if (typeof IntersectionObserver === "undefined") {
@@ -34,5 +36,6 @@ export function useScrollReveal() {
 
     els.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
 }
