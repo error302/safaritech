@@ -32,9 +32,9 @@ export async function GET(req: NextRequest) {
     const q = params.get("q")?.trim();
     if (q) {
       where.OR = [
-        { name: { contains: q } },
-        { summary: { contains: q } },
-        { description: { contains: q } },
+        { name: { contains: q, mode: "insensitive" } },
+        { summary: { contains: q, mode: "insensitive" } },
+        { description: { contains: q, mode: "insensitive" } },
       ];
     }
 

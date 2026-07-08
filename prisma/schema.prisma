@@ -1,13 +1,11 @@
-// Safaritech catalog schema — premium electronics marketplace
-// SQLite for dev; production-ready shape (swap datasource for Postgres).
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 enum Role {
