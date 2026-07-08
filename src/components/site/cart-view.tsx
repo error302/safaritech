@@ -30,9 +30,50 @@ export function CartView() {
   const [couponStatus, setCouponStatus] = React.useState<{ valid: boolean; discount: number; reason?: string } | null>(null);
   const [couponLoading, setCouponLoading] = React.useState(false);
 
+  // Customer checkout form state
+  const [customer, setCustomer] = React.useState({
+    name: "",
+    phone: "",
+    email: "",
+    address: "",
+    city: "",
+    county: "",
+    notes: "",
+  });
+  const [formErrors, setFormErrors] = React.useState<Record<string, string>>({});
+
   const discount = couponStatus?.valid ? couponStatus.discount : 0;
   const shipping = subtotal - discount > 100000 ? 0 : 650;
   const total = subtotal - discount + shipping;
+
+  const validateCustomer = (): boolean => {
+    const errs: Record<string, string> = {};
+    if (!customer.name.trim()) errs.name = "Full name is required";
+    if (!customer.phone.trim()) {
+      errs.phone = "Phone number is required";
+    } else if (!/^(\+?254|0)[17]\d{8}$/.test(customer.phone.replace(/\s/g, ""))) {
+      errs.phone = "Enter a valid Kenyan phone (e.g. 0712345678 or +254712345678)";
+    }
+    if (customer.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) {
+      errs.email = "Enter a valid email or leave blank";
+    }
+    if (!customer.address.trim()) errs.address = "Delivery address is required";
+    if (!customer.city.trim()) errs.city = "City is required";
+    setFormErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const updateCustomer = (field: keyof typeof customer, value: string) => {
+    setCustomer((prev) => ({ ...prev, [field]: value }));
+    // Clear field error on edit
+    if (formErrors[field]) {
+      setFormErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
+    }
+  };
 
   const validateCoupon = async () => {
     if (!couponCode.trim()) return;
@@ -54,8 +95,17 @@ export function CartView() {
   };
 
   const placeOrder = async () => {
-    setPlacing(true);
     setError("");
+    if (!validateCustomer()) {
+      setError("Please complete the delivery details above before placing your order.");
+      // Scroll to the first error field
+      setTimeout(() => {
+        const firstError = document.querySelector("[data-error='true']");
+        firstError?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 100);
+      return;
+    }
+    setPlacing(true);
     try {
       const res = await fetch("/api/orders", {
         method: "POST",
@@ -69,9 +119,13 @@ export function CartView() {
             quantity: i.quantity,
           })),
           customer: {
-            name: "Guest Customer",
-            email: "",
-            phone: "+254700000000", // In production, collect from a form
+            name: customer.name.trim(),
+            email: customer.email.trim(),
+            phone: customer.phone.trim(),
+            address: customer.address.trim(),
+            city: customer.city.trim(),
+            county: customer.county.trim(),
+            notes: customer.notes.trim(),
           },
           couponCode: couponStatus?.valid ? couponCode : undefined,
           shipping,
@@ -341,12 +395,113 @@ export function CartView() {
             </div>
           </div>
 
+          {/* Customer delivery details form */}
+          <div className="lg:col-span-8 reveal" data-delay="120">
+            <div className="rounded-2xl border border-border bg-card p-6 md:p-7">
+              <div className="flex items-center gap-3 mb-1">
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-foreground text-background font-mono text-xs font-medium">
+                  1
+                </span>
+                <h2 className="font-display text-xl text-foreground tracking-tight">
+                  Delivery details
+                </h2>
+              </div>
+              <p className="text-xs text-muted-foreground mb-6 ml-10">
+                We&apos;ll send your M-Pesa STK push to this phone number. All fields marked * are required.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <CheckoutField
+                  label="Full name *"
+                  value={customer.name}
+                  onChange={(v) => updateCustomer("name", v)}
+                  error={formErrors.name}
+                  placeholder="Wanjiru Kamau"
+                  autoComplete="name"
+                />
+                <CheckoutField
+                  label="Phone number (M-Pesa) *"
+                  value={customer.phone}
+                  onChange={(v) => updateCustomer("phone", v)}
+                  error={formErrors.phone}
+                  placeholder="0712 345 678"
+                  autoComplete="tel"
+                  type="tel"
+                />
+                <CheckoutField
+                  label="Email (optional)"
+                  value={customer.email}
+                  onChange={(v) => updateCustomer("email", v)}
+                  error={formErrors.email}
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  type="email"
+                />
+                <CheckoutField
+                  label="City *"
+                  value={customer.city}
+                  onChange={(v) => updateCustomer("city", v)}
+                  error={formErrors.city}
+                  placeholder="Nairobi"
+                  autoComplete="address-level2"
+                />
+                <div className="sm:col-span-2">
+                  <CheckoutField
+                    label="Delivery address *"
+                    value={customer.address}
+                    onChange={(v) => updateCustomer("address", v)}
+                    error={formErrors.address}
+                    placeholder="House no, street, estate, landmark…"
+                    autoComplete="street-address"
+                  />
+                </div>
+                <CheckoutField
+                  label="County"
+                  value={customer.county}
+                  onChange={(v) => updateCustomer("county", v)}
+                  placeholder="Nairobi County"
+                />
+                <div className="sm:col-span-2">
+                  <label className="block">
+                    <span className="block text-xs font-medium text-muted-foreground mb-1.5">
+                      Delivery notes (optional)
+                    </span>
+                    <textarea
+                      value={customer.notes}
+                      onChange={(e) => updateCustomer("notes", e.target.value)}
+                      rows={2}
+                      placeholder="E.g. call before delivery, gate code, leave with security…"
+                      className="w-full px-3 py-2 rounded-lg bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 resize-y"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div className="mt-5 pt-5 border-t border-border flex items-start gap-3">
+                <ShieldCheck className="h-4 w-4 text-accent shrink-0 mt-0.5" strokeWidth={1.5} />
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Your details are used only to fulfil this order. We never share
+                  customer data with third parties. Payment is handled securely via
+                  M-Pesa Daraja STK push — we never see your PIN.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Summary */}
           <div className="lg:col-span-4 reveal" data-delay="160">
             <div className="sticky top-28 rounded-2xl border border-border bg-card p-6 md:p-7">
-              <h2 className="font-display text-xl text-foreground tracking-tight">
-                Order summary
-              </h2>
+              <div className="flex items-center gap-3 mb-1">
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-foreground text-background font-mono text-xs font-medium">
+                  2
+                </span>
+                <h2 className="font-display text-xl text-foreground tracking-tight">
+                  Review &amp; pay
+                </h2>
+              </div>
+              <p className="text-xs text-muted-foreground mb-5 ml-10">
+                M-Pesa STK push · No card required
+              </p>
 
               <dl className="mt-5 space-y-3 text-sm">
                 <div className="flex items-center justify-between">
@@ -491,5 +646,47 @@ export function CartView() {
         </div>
       </div>
     </div>
+  );
+}
+
+function CheckoutField({
+  label,
+  value,
+  onChange,
+  error,
+  placeholder,
+  autoComplete,
+  type = "text",
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  error?: string;
+  placeholder?: string;
+  autoComplete?: string;
+  type?: string;
+}) {
+  return (
+    <label className="block" data-error={!!error}>
+      <span className="block text-xs font-medium text-muted-foreground mb-1.5">
+        {label}
+      </span>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        className={cn(
+          "w-full h-10 px-3 rounded-lg bg-background border text-sm focus:outline-none focus:ring-2 transition-all",
+          error
+            ? "border-destructive/50 focus:ring-destructive/20"
+            : "border-border focus:ring-accent/30 focus:border-accent/40"
+        )}
+      />
+      {error && (
+        <span className="block mt-1 text-[11px] text-destructive">{error}</span>
+      )}
+    </label>
   );
 }

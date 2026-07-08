@@ -21,26 +21,10 @@ const TESTIMONIALS: Testimonial[] = [
   },
   {
     quote:
-      "Bought a MacBook for my daughter's university. The team walked me through financing, set it up in-store, and even helped with AppleCare. Five stars feels insufficient.",
-    name: "David Otieno",
-    role: "Parent · Kisumu",
-    location: "Kisumu",
-    rating: 5,
-  },
-  {
-    quote:
       "I run a small creative agency in Mombasa. We've bought twelve devices from Safaritech over two years — every single one authentic, every warranty honoured. They've earned our trust.",
     name: "Aisha Mwinyi",
     role: "Founder, Tide Studio",
     location: "Mombasa",
-    rating: 5,
-  },
-  {
-    quote:
-      "The PS5 I ordered arrived in Nakuru the next morning. Original seal, two controllers, the game I wanted. I'd given up on Kenyan retailers — Safaritech restored it.",
-    name: "Brian Kiprotich",
-    role: "Software Engineer",
-    location: "Nakuru",
     rating: 5,
   },
 ];

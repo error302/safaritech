@@ -1,33 +1,47 @@
 "use client";
 
 import * as React from "react";
-import { Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { Lock, ArrowRight, Eye, EyeOff, Mail, AlertCircle } from "lucide-react";
 import { useAdminAuth } from "./admin-auth";
 import { useViewRouter } from "../site/view-router";
 
 export function AdminLogin() {
-  const { login } = useAdminAuth();
+  const { login, loginWithToken } = useAdminAuth();
   const { navigate } = useViewRouter();
+  const [email, setEmail] = React.useState("admin@safaritech.co.ke");
   const [password, setPassword] = React.useState("");
   const [show, setShow] = React.useState(false);
   const [error, setError] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    if (!password) {
-      setError("Enter the admin password");
+    if (!email.trim() || !password) {
+      setError("Enter your email and password");
       return;
     }
-    const ok = login(password);
-    if (!ok) {
-      setError("Incorrect password. Try again.");
-      setPassword("");
+    setLoading(true);
+    try {
+      // Try NextAuth credentials login first
+      const ok = await login(email.trim(), password);
+      if (!ok) {
+        // Fallback to legacy token login
+        const legacyOk = loginWithToken(password);
+        if (!legacyOk) {
+          setError("Invalid email or password. Try the demo credentials below.");
+          setPassword("");
+        }
+      }
+    } catch {
+      setError("Login failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 py-12">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <button
@@ -52,45 +66,84 @@ export function AdminLogin() {
             Admin access
           </h1>
           <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-            Enter the admin password to manage products, orders, coupons, and site content.
+            Sign in with your admin credentials to manage products, orders, coupons, and site content.
           </p>
 
           <form onSubmit={onSubmit} className="mt-6 space-y-3">
-            <div className="relative">
-              <input
-                type={show ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Admin password"
-                autoFocus
-                className="w-full h-11 px-4 pr-10 rounded-xl bg-background border border-border text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent/40 transition-all"
-              />
-              <button
-                type="button"
-                onClick={() => setShow((v) => !v)}
-                aria-label={show ? "Hide password" : "Show password"}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
+            <div>
+              <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@safaritech.co.ke"
+                  autoComplete="email"
+                  autoFocus
+                  className="w-full h-11 pl-10 pr-4 rounded-xl bg-background border border-border text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent/40 transition-all"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <input
+                  type={show ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                  className="w-full h-11 pl-10 pr-10 rounded-xl bg-background border border-border text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent/40 transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShow((v) => !v)}
+                  aria-label={show ? "Hide password" : "Show password"}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
 
             {error && (
-              <p className="text-xs text-destructive">{error}</p>
+              <div className="flex items-center gap-2 p-2.5 rounded-lg bg-destructive/5 border border-destructive/20 text-xs text-destructive">
+                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                {error}
+              </div>
             )}
 
             <button
               type="submit"
-              className="group w-full h-11 inline-flex items-center justify-center gap-2 rounded-xl bg-foreground text-background text-sm font-medium hover:bg-foreground/90 transition-colors btn-shimmer"
+              disabled={loading}
+              className="group w-full h-11 inline-flex items-center justify-center gap-2 rounded-xl bg-foreground text-background text-sm font-medium hover:bg-foreground/90 transition-colors btn-shimmer disabled:opacity-50"
             >
-              Sign in
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              {loading ? (
+                <>
+                  <span className="inline-flex h-3 w-3 rounded-full border-2 border-background/40 border-t-background animate-spin" />
+                  Signing in…
+                </>
+              ) : (
+                <>
+                  Sign in
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </>
+              )}
             </button>
           </form>
 
           <div className="mt-5 p-3 rounded-lg bg-secondary/50 border border-border">
-            <p className="text-[11px] font-mono text-muted-foreground">
-              <span className="text-accent">Demo password:</span> safaritech-admin-2026
+            <p className="text-[11px] font-mono text-muted-foreground leading-relaxed">
+              <span className="text-accent">Demo credentials:</span><br />
+              Email: admin@safaritech.co.ke<br />
+              Password: safaritech-admin-2026
             </p>
           </div>
         </div>

@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Plus, Search, Edit2, Trash2, X, Save, AlertCircle } from "lucide-react";
 import { useAdminAuth } from "./admin-auth";
+import { ImageUpload } from "./image-upload";
 import { cn } from "@/lib/utils";
 
 interface AdminProduct {
@@ -320,14 +321,23 @@ function ProductEditor({ product, brands, categories, onClose, onSaved, adminFet
               <input value={form.tag} onChange={(e) => setForm({ ...form, tag: e.target.value })}
                 className="admin-input" placeholder="Best seller" />
             </Field>
-            <Field label="Image URL">
-              <input value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-                className="admin-input" placeholder="https://…" />
-            </Field>
             <Field label="Stock count">
               <input type="number" value={form.stockCount} onChange={(e) => setForm({ ...form, stockCount: Number(e.target.value) })}
                 className="admin-input" />
             </Field>
+          </div>
+
+          {/* Image upload — full width */}
+          <div className="sm:col-span-2">
+            <ImageUpload
+              label="Product image"
+              value={form.imageUrl}
+              onChange={(url) => setForm({ ...form, imageUrl: url })}
+              adminFetch={adminFetch}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Shape (for SVG fallback)">
               <select value={form.shape} onChange={(e) => setForm({ ...form, shape: e.target.value })} className="admin-input">
                 {["phone", "laptop", "audio", "gaming", "watch", "accessory"].map((s) => <option key={s} value={s}>{s}</option>)}

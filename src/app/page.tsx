@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { SessionProvider } from "next-auth/react";
 import { SiteNavbar } from "@/components/site/site-navbar";
 import { SiteFooter } from "@/components/site/site-footer";
 import { CartDrawer } from "@/components/site/cart-drawer";
@@ -55,14 +56,16 @@ function AdminView() {
 
 export default function Home() {
   return (
-    <ViewRouterProvider>
-      <SettingsProvider>
-        <CartProvider>
-          <AdminAuthProvider>
-            <ViewSwitch />
-          </AdminAuthProvider>
-        </CartProvider>
-      </SettingsProvider>
-    </ViewRouterProvider>
+    <SessionProvider>
+      <ViewRouterProvider>
+        <SettingsProvider>
+          <CartProvider>
+            <AdminAuthProvider>
+              <ViewSwitch />
+            </AdminAuthProvider>
+          </CartProvider>
+        </SettingsProvider>
+      </ViewRouterProvider>
+    </SessionProvider>
   );
 }

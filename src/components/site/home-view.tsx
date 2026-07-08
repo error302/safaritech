@@ -6,10 +6,11 @@ import { TrustStrip } from "./trust-strip";
 import { BrandMarquee } from "./brand-marquee";
 import { Collections } from "./collections";
 import { FeaturedProducts } from "./featured-products";
+import { DealsRow } from "./deals-row";
+import { NewArrivals } from "./new-arrivals";
 import { Brands } from "./brands";
 import { Process } from "./process";
 import { Features } from "./features";
-import { Stats } from "./stats";
 import { Testimonials } from "./testimonials";
 import { Newsletter } from "./newsletter";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
@@ -17,6 +18,8 @@ import { Product, Brand, Category } from "./types";
 
 interface HomeData {
   featured: Product[];
+  newArrivals: Product[];
+  deals: Product[];
   brands: Brand[];
   categories: Category[];
 }
@@ -30,13 +33,19 @@ export function HomeView() {
     let cancelled = false;
     Promise.all([
       fetch("/api/products?featured=true&take=8", { cache: "no-store" }).then((r) => r.json()),
+      fetch("/api/products?sort=newest&take=8", { cache: "no-store" }).then((r) => r.json()),
+      fetch("/api/shop?sort=newest&pageSize=24", { cache: "no-store" }).then((r) => r.json()),
       fetch("/api/brands", { cache: "no-store" }).then((r) => r.json()),
       fetch("/api/categories", { cache: "no-store" }).then((r) => r.json()),
     ])
-      .then(([feat, brandRes, catRes]) => {
+      .then(([feat, newArr, shopRes, brandRes, catRes]) => {
         if (!cancelled) {
           setData({
             featured: feat.products ?? [],
+            newArrivals: (newArr.products ?? []).filter(
+              (p: Product) => !p.featured
+            ),
+            deals: shopRes.products ?? [],
             brands: brandRes.brands ?? [],
             categories: catRes.categories ?? [],
           });
@@ -51,10 +60,9 @@ export function HomeView() {
     };
   }, []);
 
-  // Re-trigger reveal whenever data arrives (newly rendered elements need observation)
+  // Re-trigger reveal whenever data arrives
   React.useEffect(() => {
     if (!loading) {
-      // Small delay to let DOM settle, then add is-visible to any .reveal not yet observed
       const t = setTimeout(() => {
         const els = document.querySelectorAll<HTMLElement>(".reveal:not(.is-visible)");
         els.forEach((el) => {
@@ -75,10 +83,11 @@ export function HomeView() {
       <BrandMarquee />
       <Collections categories={data?.categories ?? []} loading={loading} />
       <FeaturedProducts products={data?.featured ?? []} loading={loading} />
+      <DealsRow products={data?.deals ?? []} loading={loading} />
+      <NewArrivals products={data?.newArrivals ?? []} loading={loading} />
       <Brands brands={data?.brands ?? []} loading={loading} />
       <Process />
       <Features />
-      <Stats />
       <Testimonials />
       <Newsletter />
     </>
