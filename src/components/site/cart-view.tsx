@@ -60,8 +60,10 @@ export function CartView() {
     } else if (!/^(\+?254|0)[17]\d{8}$/.test(customer.phone.replace(/\s/g, ""))) {
       errs.phone = "Enter a valid Kenyan phone (e.g. 0712345678 or +254712345678)";
     }
-    if (customer.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) {
-      errs.email = "Enter a valid email or leave blank";
+    if (!customer.email.trim()) {
+      errs.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email.trim())) {
+      errs.email = "Enter a valid email";
     }
     if (!customer.address.trim()) errs.address = "Delivery address is required";
     if (!customer.city.trim()) errs.city = "City is required";
@@ -476,7 +478,7 @@ export function CartView() {
                   type="tel"
                 />
                 <CheckoutField
-                  label="Email (optional)"
+                  label="Email *"
                   value={customer.email}
                   onChange={(v) => updateCustomer("email", v)}
                   error={formErrors.email}
