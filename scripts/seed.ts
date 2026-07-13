@@ -1,8 +1,9 @@
 /**
  * Safaritech seed v2 — products with real images, site settings, coupons, admin user
- * Run with: bun run db:push && bun run scripts/seed.ts
+ * Run with: npm run db:seed
  */
 import { PrismaClient } from "@prisma/client";
+import { hashPassword } from "../src/lib/password";
 
 const db = new PrismaClient();
 
@@ -374,16 +375,21 @@ async function main() {
   await db.siteSetting.deleteMany();
   await db.user.deleteMany();
 
-  // Admin user
-  await db.user.create({
-    data: {
-      email: "admin@safaritech.co.ke",
-      name: "Safaritech Admin",
-      password: "$2a$10$placeholderhashforthedemoadminuser2026xx", // replace with real bcrypt hash
-      role: "ADMIN",
-    },
-  });
-  console.log("+ admin user (admin@safaritech.co.ke)");
+  const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (adminEmail && adminPassword) {
+    await db.user.create({
+      data: {
+        email: adminEmail,
+        name: "Safaritech Admin",
+        password: hashPassword(adminPassword),
+        role: "ADMIN",
+      },
+    });
+    console.log(`+ admin user (${adminEmail})`);
+  } else {
+    console.log("- admin user skipped (set ADMIN_EMAIL and ADMIN_PASSWORD)");
+  }
 
   // Categories
   const catMap: Record<string, string> = {};
@@ -429,8 +435,17 @@ async function main() {
   for (const r of REVIEWS) {
     const productId = productMap[r.productIdSlug];
     if (!productId) continue;
-    const { productIdSlug, ...reviewData } = r;
-    await db.review.create({ data: { ...reviewData, productId } });
+    await db.review.create({
+      data: {
+        productId,
+        author: r.author,
+        role: r.role,
+        location: r.location,
+        rating: r.rating,
+        title: r.title,
+        body: r.body,
+      },
+    });
   }
   console.log(`+ ${REVIEWS.length} reviews`);
 

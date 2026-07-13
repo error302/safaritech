@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { Upload, X, Loader2, ImageIcon, Link2, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -84,12 +85,14 @@ export function ImageUpload({ value, onChange, adminFetch, label = "Image" }: Pr
         <div className="relative h-20 w-20 shrink-0 rounded-lg border border-border bg-secondary/30 overflow-hidden">
           {value ? (
             <>
-              <img
+              <Image
                 src={value}
                 alt="Preview"
+                fill
+                sizes="80px"
                 className="h-full w-full object-cover"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = "none";
+                  e.currentTarget.style.display = "none";
                 }}
               />
               <button

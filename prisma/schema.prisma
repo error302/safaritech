@@ -164,8 +164,13 @@ model Order {
 
   paymentMethod   String         @default("mpesa")
   paymentStatus   PaymentStatus  @default(PENDING)
-  mpesaRequestId  String?
-  mpesaCheckoutId String?
+  accessTokenHash String         @unique
+  mpesaRequestId  String?        @unique
+  mpesaCheckoutId String?        @unique
+  mpesaReceiptNumber String?     @unique
+  paidAmount      Int?
+  paidPhone       String?
+  paidAt          DateTime?
 
   status          OrderStatus    @default(PENDING)
 
@@ -228,4 +233,11 @@ model SiteSetting {
   updatedAt DateTime @updatedAt
 
   @@index([category])
+}
+
+model RateLimitBucket {
+  key       String   @id
+  count     Int
+  resetAt   DateTime
+  updatedAt DateTime @updatedAt
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Filter, X, Search, ChevronDown, ArrowUpRight, Star, Plus, SlidersHorizontal } from "lucide-react";
+import { Filter, X, Search, ChevronDown, Plus, SlidersHorizontal } from "lucide-react";
 import { useViewRouter } from "./view-router";
 import { useCart, formatKsh } from "./cart-context";
 import { ProductImage } from "./product-image";
@@ -521,6 +521,7 @@ function ShopProductCard({ product, index }: { product: Product; index: number }
                 name: product.name,
                 brand: product.brand?.name ?? "",
                 price: product.price,
+                originalPrice: product.originalPrice,
                 shape: product.shape,
                 accent: product.accent,
               })

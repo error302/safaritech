@@ -95,18 +95,13 @@ export function ConditionBadge({
 /**
  * Warranty badge — shows just the warranty period (e.g. "12-month warranty")
  */
-export function WarrantyBadge({
-  warrantyMonths,
-  condition,
-  size = "sm",
-  className,
-}: {
+export function WarrantyBadge(props: {
   warrantyMonths: number;
   condition?: string | null | undefined;
   size?: "sm" | "md";
   className?: string;
 }) {
-  const condConfig = getCondition(condition);
+  const { warrantyMonths, size = "sm", className } = props;
   const isLong = warrantyMonths >= 12;
 
   const sizeClasses = {

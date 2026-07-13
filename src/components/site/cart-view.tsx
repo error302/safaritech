@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import {
-  ArrowLeft,
   ArrowRight,
   Plus,
   Minus,
@@ -17,6 +16,7 @@ import { useViewRouter } from "./view-router";
 import { useCart, formatKsh } from "./cart-context";
 import { ProductImage } from "./product-image";
 import { cn } from "@/lib/utils";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 
 export function CartView() {
   const { navigate } = useViewRouter();
@@ -25,10 +25,16 @@ export function CartView() {
   const [placing, setPlacing] = React.useState(false);
   const [orderNumber, setOrderNumber] = React.useState("");
   const [mpesaMock, setMpesaMock] = React.useState(false);
+  const [failedOrder, setFailedOrder] = React.useState<{
+    id: string;
+    orderNumber: string;
+    accessToken: string;
+  } | null>(null);
   const [error, setError] = React.useState("");
   const [couponCode, setCouponCode] = React.useState("");
   const [couponStatus, setCouponStatus] = React.useState<{ valid: boolean; discount: number; reason?: string } | null>(null);
   const [couponLoading, setCouponLoading] = React.useState(false);
+  useScrollReveal([items.length, placed]);
 
   // Customer checkout form state
   const [customer, setCustomer] = React.useState({
@@ -54,8 +60,10 @@ export function CartView() {
     } else if (!/^(\+?254|0)[17]\d{8}$/.test(customer.phone.replace(/\s/g, ""))) {
       errs.phone = "Enter a valid Kenyan phone (e.g. 0712345678 or +254712345678)";
     }
-    if (customer.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) {
-      errs.email = "Enter a valid email or leave blank";
+    if (!customer.email.trim()) {
+      errs.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email.trim())) {
+      errs.email = "Enter a valid email";
     }
     if (!customer.address.trim()) errs.address = "Delivery address is required";
     if (!customer.city.trim()) errs.city = "City is required";
@@ -83,7 +91,13 @@ export function CartView() {
       const res = await fetch("/api/coupons/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: couponCode, subtotal }),
+        body: JSON.stringify({
+          code: couponCode,
+          items: items.map((item) => ({
+            slug: item.slug,
+            quantity: item.quantity,
+          })),
+        }),
       });
       const json = await res.json();
       setCouponStatus(json);
@@ -113,9 +127,6 @@ export function CartView() {
         body: JSON.stringify({
           items: items.map((i) => ({
             slug: i.slug,
-            name: i.name,
-            brand: i.brand,
-            price: i.price,
             quantity: i.quantity,
           })),
           customer: {
@@ -128,17 +139,25 @@ export function CartView() {
             notes: customer.notes.trim(),
           },
           couponCode: couponStatus?.valid ? couponCode : undefined,
-          shipping,
-          subtotal,
         }),
       });
 
-      if (!res.ok) {
-        const j = await res.json();
-        throw new Error(j.error || `HTTP ${res.status}`);
-      }
-
       const json = await res.json();
+      if (!res.ok) {
+        if (json.order?.id && json.order?.orderNumber && json.accessToken) {
+          const pendingOrder = {
+            id: json.order.id,
+            orderNumber: json.order.orderNumber,
+            accessToken: json.accessToken,
+          };
+          setFailedOrder(pendingOrder);
+          sessionStorage.setItem(
+            `safaritech.order.${pendingOrder.id}`,
+            pendingOrder.accessToken
+          );
+        }
+        throw new Error(json.error || `HTTP ${res.status}`);
+      }
 
       if (!json.mpesa.success) {
         throw new Error(json.mpesa.error || "M-Pesa STK push failed");
@@ -146,10 +165,40 @@ export function CartView() {
 
       setMpesaMock(json.mpesa.mock ?? false);
       setOrderNumber(json.order.orderNumber);
+      sessionStorage.setItem(`safaritech.order.${json.order.id}`, json.accessToken);
       setPlaced(true);
       clear();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to place order");
+    } finally {
+      setPlacing(false);
+    }
+  };
+
+  const retryPayment = async () => {
+    if (!failedOrder) return;
+    setError("");
+    setPlacing(true);
+    try {
+      const res = await fetch("/api/checkout/mpesa", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-order-token": failedOrder.accessToken,
+        },
+        body: JSON.stringify({ orderId: failedOrder.id }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "M-Pesa STK push failed");
+      }
+      setMpesaMock(json.mock ?? false);
+      setOrderNumber(json.orderNumber ?? failedOrder.orderNumber);
+      setFailedOrder(null);
+      setPlaced(true);
+      clear();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "M-Pesa STK push failed");
     } finally {
       setPlacing(false);
     }
@@ -169,11 +218,11 @@ export function CartView() {
             <h1 className="font-display tracking-tightest text-foreground text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.05] mt-3 font-medium reveal" data-delay="80">
               Asante sana.
               <br />
-              <span className="italic font-normal text-accent">Your order is on its way.</span>
+              <span className="italic font-normal text-accent">Approve the M-Pesa prompt.</span>
             </h1>
             <p className="mt-5 text-base text-muted-foreground leading-relaxed reveal" data-delay="160">
               {mpesaMock
-                ? "We've recorded your order. M-Pesa is running in demo mode — add your Daraja credentials to .env to enable real STK push prompts. Our team will contact you to confirm payment and delivery."
+                ? "This development order used the explicitly enabled M-Pesa mock. No real payment was collected."
                 : "We've sent an STK push prompt to your phone via M-Pesa. Approve the prompt to complete payment. Same-day Nairobi, 48 hours nationwide."}
             </p>
             <div className="mt-8 flex items-center justify-center gap-3 reveal" data-delay="240">
@@ -429,7 +478,7 @@ export function CartView() {
                   type="tel"
                 />
                 <CheckoutField
-                  label="Email (optional)"
+                  label="Email *"
                   value={customer.email}
                   onChange={(v) => updateCustomer("email", v)}
                   error={formErrors.email}
@@ -583,18 +632,12 @@ export function CartView() {
                 <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-3">
                   Payment method
                 </div>
-                <div className="grid grid-cols-2 gap-2">
+                <div>
                   <button
-                    className="flex items-center gap-2 p-3 rounded-xl border border-foreground/40 bg-foreground/5 text-foreground text-xs font-medium"
+                    className="w-full flex items-center gap-2 p-3 rounded-xl border border-foreground/40 bg-foreground/5 text-foreground text-xs font-medium"
                   >
                     <Smartphone className="h-4 w-4 text-accent" strokeWidth={1.5} />
                     M-Pesa
-                  </button>
-                  <button
-                    className="flex items-center gap-2 p-3 rounded-xl border border-border bg-card text-muted-foreground text-xs font-medium"
-                  >
-                    <ShieldCheck className="h-4 w-4" strokeWidth={1.5} />
-                    Card
                   </button>
                 </div>
               </div>
@@ -607,7 +650,7 @@ export function CartView() {
 
               {/* Checkout */}
               <button
-                onClick={placeOrder}
+                onClick={failedOrder ? retryPayment : placeOrder}
                 disabled={placing}
                 className={cn(
                   "mt-6 group w-full h-12 inline-flex items-center justify-center gap-2 rounded-full bg-foreground text-background text-sm font-medium hover:bg-foreground/90 transition-colors btn-shimmer",
@@ -621,7 +664,9 @@ export function CartView() {
                   </>
                 ) : (
                   <>
-                    Place order · {formatKsh(total)}
+                    {failedOrder
+                      ? `Retry M-Pesa · ${failedOrder.orderNumber}`
+                      : `Place order · ${formatKsh(total)}`}
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                   </>
                 )}

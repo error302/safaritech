@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { Instagram, Twitter, Facebook, Youtube } from "lucide-react";
 import { useViewRouter, ViewRoute } from "./view-router";
 import { useSettings } from "./settings-context";
@@ -30,30 +31,19 @@ const FOOTER_COLS: FooterCol[] = [
   {
     title: "Company",
     links: [
-      { label: "About us", route: { view: "home", query: { _scroll: "features" } } },
-      { label: "Press", route: { view: "home" } },
-      { label: "Careers", route: { view: "home" } },
-      { label: "Stories", route: { view: "home", query: { _scroll: "testimonials" } } },
-      { label: "Blog", route: { view: "home" } },
+      { label: "Why Safaritech", route: { view: "trust" } },
+      { label: "How it works", route: { view: "trust" } },
+      { label: "Customer stories", route: { view: "trust" } },
     ],
   },
   {
     title: "Support",
     links: [
-      { label: "FAQ", route: { view: "home" } },
-      { label: "Shipping", route: { view: "home" } },
-      { label: "Returns", route: { view: "home" } },
-      { label: "Track order", route: { view: "home" } },
-      { label: "Warranty", route: { view: "home" } },
+      { label: "FAQ", route: { view: "trust" } },
+      { label: "Shipping", route: { view: "trust" } },
+      { label: "Returns", route: { view: "trust" } },
+      { label: "Warranty", route: { view: "trust" } },
       { label: "Contact us", route: { view: "home", query: { _scroll: "contact" } } },
-    ],
-  },
-  {
-    title: "Legal",
-    links: [
-      { label: "Privacy policy", route: { view: "home" } },
-      { label: "Terms of service", route: { view: "home" } },
-      { label: "Cookie policy", route: { view: "home" } },
     ],
   },
 ];
@@ -63,6 +53,12 @@ export function SiteFooter() {
   const { get } = useSettings();
   const logoUrl = get("site.logoUrl", "");
   const siteName = get("site.name", "Safaritech");
+  const socialLinks = [
+    { label: "Instagram", href: get("social.instagram", ""), Icon: Instagram },
+    { label: "X", href: get("social.twitter", ""), Icon: Twitter },
+    { label: "Facebook", href: get("social.facebook", ""), Icon: Facebook },
+    { label: "YouTube", href: get("social.youtube", ""), Icon: Youtube },
+  ].filter((link) => link.href.startsWith("https://"));
 
   const handleClick = (link: FooterLink) => (e?: React.MouseEvent) => {
     e?.preventDefault();
@@ -92,12 +88,14 @@ export function SiteFooter() {
             <button
               onClick={() => navigate({ view: "home" })}
               className="flex items-center gap-2.5 group"
-              aria-label="Safaritech home"
+              aria-label={`${siteName} home`}
             >
               {logoUrl ? (
-                <img
+                <Image
                   src={logoUrl}
                   alt={siteName}
+                  width={36}
+                  height={36}
                   className="h-9 w-9 rounded-lg object-cover border border-background/20"
                 />
               ) : (
@@ -141,22 +139,26 @@ export function SiteFooter() {
               </div>
             </div>
 
-            <div className="mt-7 flex items-center gap-2">
-              {[Instagram, Twitter, Facebook, Youtube].map((Icon, i) => (
+            {socialLinks.length > 0 && (
+              <div className="mt-7 flex items-center gap-2">
+              {socialLinks.map(({ Icon, href, label }) => (
                 <a
-                  key={i}
-                  href="#"
-                  aria-label="Social link"
+                  key={label}
+                  href={href}
+                  aria-label={label}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-background/15 bg-background/5 text-background/70 hover:text-background hover:border-background/30 transition-all"
                 >
                   <Icon className="h-4 w-4" strokeWidth={1.5} />
                 </a>
               ))}
-            </div>
+              </div>
+            )}
           </div>
 
           {/* Link columns */}
-          <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-8">
             {FOOTER_COLS.map((col) => (
               <div key={col.title}>
                 <h3 className="font-mono text-[10px] uppercase tracking-[0.22em] text-background/50">

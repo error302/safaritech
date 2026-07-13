@@ -7,6 +7,7 @@ export interface CartItem {
   name: string;
   brand: string;
   price: number; // KES
+  originalPrice?: number | null;
   quantity: number;
   shape: string;
   accent: string;

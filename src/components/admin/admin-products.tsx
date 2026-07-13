@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { Plus, Search, Edit2, Trash2, X, Save, AlertCircle } from "lucide-react";
 import { useAdminAuth } from "./admin-auth";
 import { ImageUpload } from "./image-upload";
@@ -135,9 +136,11 @@ export function AdminProducts() {
                       <div className="flex items-center gap-3">
                         {p.imageUrl ? (
                            
-                          <img
+                          <Image
                             src={p.imageUrl}
                             alt={p.name}
+                            width={40}
+                            height={40}
                             className="h-10 w-10 rounded-lg object-cover border border-border"
                           />
                         ) : (

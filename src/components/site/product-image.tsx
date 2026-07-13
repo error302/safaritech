@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { DeviceShape } from "./device-shape";
 
 interface Props {
@@ -23,13 +24,15 @@ export function ProductImage({ imageUrl, shape, accent, alt, className, fit = "c
   if (imageUrl && !imgError) {
     return (
        
-      <img
+      <Image
         src={imageUrl}
         alt={alt}
+        width={800}
+        height={800}
         className={className}
         style={{ objectFit: fit }}
         onError={() => setImgError(true)}
-        loading="lazy"
+        sizes="(max-width: 768px) 50vw, 25vw"
       />
     );
   }

@@ -4,8 +4,8 @@ import * as React from "react";
 
 /** Parsed view route */
 export interface ViewRoute {
-  /** view name: home | shop | product | cart | checkout | admin */
-  view: "home" | "shop" | "product" | "cart" | "checkout" | "admin";
+  /** view name: home | shop | product | cart | checkout | trust | admin */
+  view: "home" | "shop" | "product" | "cart" | "checkout" | "trust" | "admin";
   /** for product view, the slug */
   slug?: string;
   /** for shop view, parsed query params */
@@ -37,6 +37,7 @@ function parseHash(hash: string): ViewRoute {
 
   if (parts[0] === "cart") return { view: "cart" };
   if (parts[0] === "checkout") return { view: "checkout" };
+  if (parts[0] === "why-safaritech") return { view: "trust" };
   if (parts[0] === "admin") return { view: "admin" };
 
   return { view: "home" };
@@ -58,6 +59,8 @@ function toHash(route: ViewRoute): string {
       return "#/cart";
     case "checkout":
       return "#/checkout";
+    case "trust":
+      return "#/why-safaritech";
     case "admin":
       return "#/admin";
     default:

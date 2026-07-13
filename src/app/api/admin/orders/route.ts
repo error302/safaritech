@@ -1,15 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-
-function checkAuth(req: NextRequest): boolean {
-  const token = req.headers.get("x-admin-token");
-  const expected = process.env.ADMIN_TOKEN;
-  return !!expected && token === expected;
-}
+import { requireAdmin } from "@/lib/admin-auth";
 
 /** GET /api/admin/orders — list all orders with items */
-export async function GET(req: NextRequest) {
-  if (!checkAuth(req)) {
+export async function GET() {
+  if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {

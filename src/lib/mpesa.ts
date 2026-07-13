@@ -2,15 +2,14 @@
  * M-Pesa Daraja STK Push integration
  *
  * Environment variables (set in .env):
- *   MPESA_ENV=sandbox|production
+ *   MPESA_ENVIRONMENT=sandbox|production
  *   MPESA_CONSUMER_KEY=...
  *   MPESA_CONSUMER_SECRET=...
  *   MPESA_SHORTCODE=174379          (sandbox default)
  *   MPESA_PASSKEY=...
  *   MPESA_CALLBACK_URL=https://yourdomain.com/api/webhooks/mpesa
- *
- * If credentials are missing, the functions fall back to a mock mode
- * that simulates a successful STK push — useful for development.
+ *   MPESA_CALLBACK_SECRET=...
+ *   MPESA_ALLOW_MOCK=true             (development only)
  */
 
 interface DarajaTokenResponse {
@@ -27,16 +26,20 @@ interface StkPushResponse {
 }
 
 function isConfigured(): boolean {
+  const environment = process.env.MPESA_ENVIRONMENT;
   return !!(
+    (environment === "sandbox" || environment === "production") &&
     process.env.MPESA_CONSUMER_KEY &&
     process.env.MPESA_CONSUMER_SECRET &&
     process.env.MPESA_SHORTCODE &&
-    process.env.MPESA_PASSKEY
+    process.env.MPESA_PASSKEY &&
+    process.env.MPESA_CALLBACK_URL &&
+    process.env.MPESA_CALLBACK_SECRET
   );
 }
 
 function getBaseUrl(): string {
-  return process.env.MPESA_ENV === "production"
+  return process.env.MPESA_ENVIRONMENT === "production"
     ? "https://api.safaricom.co.ke"
     : "https://sandbox.safaricom.co.ke";
 }
@@ -61,8 +64,7 @@ export async function getMpesaAccessToken(): Promise<string> {
   });
 
   if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`Daraja OAuth failed: ${res.status} ${body}`);
+    throw new Error(`Daraja OAuth failed with status ${res.status}`);
   }
 
   const data: DarajaTokenResponse = await res.json();
@@ -87,7 +89,7 @@ function generatePassword(): { password: string; timestamp: string } {
 
 /** Normalize a Kenyan phone number to 254XXXXXXXXX format */
 export function normalizePhone(phone: string): string {
-  let p = phone.replace(/\s+/g, "").replace(/^\+/, "");
+  let p = phone.replace(/[^\d+]/g, "").replace(/^\+/, "");
 
   // Convert 07XX / 01XX to 2547XX / 2541XX
   if (p.startsWith("0")) {
@@ -97,13 +99,8 @@ export function normalizePhone(phone: string): string {
   else if (p.startsWith("7") || p.startsWith("1")) {
     p = "254" + p;
   }
-  // Already 254...
-  else if (p.startsWith("254")) {
-    // ok
-  }
-  // Handle +254 already stripped
-  else {
-    p = "254" + p;
+  if (!/^254[17]\d{8}$/.test(p)) {
+    throw new Error("Enter a valid Kenyan mobile phone number");
   }
 
   return p;
@@ -120,7 +117,6 @@ export interface StkPushResult {
 
 /**
  * Initiate an STK Push prompt to the customer's phone.
- * Falls back to mock mode if M-Pesa credentials are not configured.
  */
 export async function initiateStkPush(params: {
   phone: string;
@@ -130,27 +126,43 @@ export async function initiateStkPush(params: {
 }): Promise<StkPushResult> {
   const { phone, amount, accountReference, transactionDesc } = params;
 
-  // Mock mode — simulate success for development
   if (!isConfigured()) {
-    console.warn(
-      "[M-Pesa] Running in MOCK mode. Set MPESA_CONSUMER_KEY, MPESA_CONSUMER_SECRET, " +
-        "MPESA_SHORTCODE, MPESA_PASSKEY in .env to enable real Daraja STK Push."
-    );
-    await new Promise((r) => setTimeout(r, 1500)); // simulate network
+    if (
+      process.env.NODE_ENV !== "production" &&
+      process.env.MPESA_ALLOW_MOCK === "true"
+    ) {
+      return {
+        success: true,
+        merchantRequestId: `MOCK-MR-${Date.now()}`,
+        checkoutRequestId: `MOCK-CR-${Date.now()}`,
+        customerMessage: "Development mock STK push sent.",
+        mock: true,
+      };
+    }
     return {
-      success: true,
-      merchantRequestId: `MOCK-MR-${Date.now()}`,
-      checkoutRequestId: `MOCK-CR-${Date.now()}`,
-      customerMessage: "Mock STK push sent. (Configure M-Pesa credentials for real prompts.)",
-      mock: true,
+      success: false,
+      error: "M-Pesa is not configured",
     };
   }
 
   try {
+    if (!Number.isSafeInteger(amount) || amount <= 0) {
+      return { success: false, error: "Invalid payment amount" };
+    }
+
     const token = await getMpesaAccessToken();
     const { password, timestamp } = generatePassword();
     const partyA = normalizePhone(phone);
     const shortcode = process.env.MPESA_SHORTCODE!;
+
+    const callbackUrl = new URL(process.env.MPESA_CALLBACK_URL!);
+    if (
+      process.env.MPESA_ENVIRONMENT === "production" &&
+      callbackUrl.protocol !== "https:"
+    ) {
+      return { success: false, error: "M-Pesa callback URL must use HTTPS" };
+    }
+    callbackUrl.searchParams.set("token", process.env.MPESA_CALLBACK_SECRET!);
 
     const body = {
       BusinessShortCode: shortcode,
@@ -161,7 +173,7 @@ export async function initiateStkPush(params: {
       PartyA: partyA,
       PartyB: shortcode,
       PhoneNumber: partyA,
-      CallBackURL: process.env.MPESA_CALLBACK_URL || "https://safaritech.co.ke/api/webhooks/mpesa",
+      CallBackURL: callbackUrl.toString(),
       AccountReference: accountReference.slice(0, 12),
       TransactionDesc: transactionDesc.slice(0, 13),
     };

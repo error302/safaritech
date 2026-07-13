@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ArrowRight, Star, Plus, ArrowUpRight } from "lucide-react";
+import { Plus, ArrowUpRight } from "lucide-react";
 import { useViewRouter } from "./view-router";
 import { useCart, formatKsh } from "./cart-context";
 import { ProductImage } from "./product-image";
@@ -161,6 +161,7 @@ function ArrivalCard({ product, index }: { product: Product; index: number }) {
                 name: product.name,
                 brand: product.brand?.name ?? "",
                 price: product.price,
+                originalPrice: product.originalPrice,
                 shape: product.shape,
                 accent: product.accent,
               })

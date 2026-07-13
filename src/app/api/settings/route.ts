@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/admin-auth";
+import { mutationSecurityResponse } from "@/lib/request-security";
+import { settingsPayloadSchema } from "@/lib/admin-validation";
 
 /**
  * GET /api/settings — returns all site settings as a flat key-value map.
@@ -29,36 +32,42 @@ export async function GET(req: NextRequest) {
 
 /**
  * PUT /api/settings — bulk update site settings.
- * Admin-only (simple token check via header X-Admin-Token).
+ * Admin-only via the server-side NextAuth session.
  *
  * Body: { settings: { "hero.titleLine1": "New title", ... }, category: "hero" }
  */
 export async function PUT(req: NextRequest) {
   try {
-    const token = req.headers.get("x-admin-token");
-    const expected = process.env.ADMIN_TOKEN;
-    if (!expected || token !== expected) {
+    if (!(await requireAdmin())) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    const blocked = await mutationSecurityResponse(req, "admin-settings", 60, 60_000);
+    if (blocked) return blocked;
 
-    const body = await req.json();
-    const settings: Record<string, unknown> = body.settings;
-    if (!settings || typeof settings !== "object") {
-      return NextResponse.json({ error: "Missing settings" }, { status: 400 });
+    const parsed = settingsPayloadSchema.safeParse(await req.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid settings" }, { status: 400 });
     }
 
-    const category = (body.category as string) || "general";
+    await db.$transaction(
+      Object.entries(parsed.data.settings).map(([key, value]) => {
+        const serialized = JSON.stringify(value);
+        return db.siteSetting.upsert({
+          where: { key },
+          update: { value: serialized, category: parsed.data.category },
+          create: {
+            key,
+            value: serialized,
+            category: parsed.data.category,
+          },
+        });
+      })
+    );
 
-    for (const [key, value] of Object.entries(settings)) {
-      const serialized = JSON.stringify(value);
-      await db.siteSetting.upsert({
-        where: { key },
-        update: { value: serialized, category },
-        create: { key, value: serialized, category },
-      });
-    }
-
-    return NextResponse.json({ success: true, updated: Object.keys(settings).length });
+    return NextResponse.json({
+      success: true,
+      updated: Object.keys(parsed.data.settings).length,
+    });
   } catch (err) {
     console.error("[/api/settings PUT]", err);
     return NextResponse.json({ error: "Failed" }, { status: 500 });

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Menu, X, Search, ShoppingBag, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -17,8 +18,7 @@ interface NavLink {
 const NAV_LINKS: NavLink[] = [
   { label: "Shop", route: { view: "shop" } },
   { label: "Brands", route: { view: "home", query: { _scroll: "brands" } } },
-  { label: "Why Safaritech", route: { view: "home", query: { _scroll: "features" } } },
-  { label: "Stories", route: { view: "home", query: { _scroll: "testimonials" } } },
+  { label: "Why Safaritech", route: { view: "trust" } },
   { label: "Contact", route: { view: "home", query: { _scroll: "contact" } } },
 ];
 
@@ -76,12 +76,14 @@ export function SiteNavbar() {
         <button
           onClick={() => navigate({ view: "home" })}
           className="flex items-center gap-2.5 group"
-          aria-label="Safaritech home"
+          aria-label={`${siteName} home`}
         >
           {logoUrl ? (
-            <img
+            <Image
               src={logoUrl}
               alt={siteName}
+              width={36}
+              height={36}
               className="h-9 w-9 rounded-lg object-cover border border-border"
             />
           ) : (

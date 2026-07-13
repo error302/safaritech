@@ -81,7 +81,11 @@ export function Testimonials() {
                     {t.role} · {t.location}
                   </div>
                 </div>
-                <div className="flex items-center gap-0.5" aria-label={`${t.rating} out of 5 stars`}>
+                <div
+                  className="flex items-center gap-0.5"
+                  role="img"
+                  aria-label={`${t.rating} out of 5 stars`}
+                >
                   {Array.from({ length: t.rating }).map((_, s) => (
                     <Star key={s} className="h-3 w-3 fill-accent text-accent" />
                   ))}
