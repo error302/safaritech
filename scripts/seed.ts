@@ -1,6 +1,6 @@
 /**
  * Safaritech seed v2 — products with real images, site settings, coupons, admin user
- * Run with: bun run db:push && bun run scripts/seed.ts
+ * Run with: npm run db:seed
  */
 import { PrismaClient } from "@prisma/client";
 import { hashPassword } from "../src/lib/password";
