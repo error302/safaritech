@@ -52,7 +52,7 @@ export function CartDrawer() {
       />
 
       {/* Drawer */}
-      <aside
+      <div
         ref={drawerRef}
         role="dialog"
         aria-label="Shopping cart"
@@ -110,9 +110,6 @@ export function CartDrawer() {
           <>
             <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
               {items.map((item) => {
-                const discount = item.originalPrice
-                  ? Math.round((1 - item.price / item.originalPrice) * 100)
-                  : 0;
                 return (
                   <div
                     key={item.slug}
@@ -206,7 +203,7 @@ export function CartDrawer() {
             </div>
           </>
         )}
-      </aside>
+      </div>
     </>
   );
 }

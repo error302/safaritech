@@ -6,9 +6,9 @@ import { useAdminAuth } from "./admin-auth";
 import { useViewRouter } from "../site/view-router";
 
 export function AdminLogin() {
-  const { login, loginWithToken } = useAdminAuth();
+  const { login } = useAdminAuth();
   const { navigate } = useViewRouter();
-  const [email, setEmail] = React.useState("admin@safaritech.co.ke");
+  const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [show, setShow] = React.useState(false);
   const [error, setError] = React.useState("");
@@ -23,15 +23,10 @@ export function AdminLogin() {
     }
     setLoading(true);
     try {
-      // Try NextAuth credentials login first
       const ok = await login(email.trim(), password);
       if (!ok) {
-        // Fallback to legacy token login
-        const legacyOk = loginWithToken(password);
-        if (!legacyOk) {
-          setError("Invalid email or password. Try the demo credentials below.");
-          setPassword("");
-        }
+        setError("Invalid email or password.");
+        setPassword("");
       }
     } catch {
       setError("Login failed. Please try again.");
@@ -138,14 +133,6 @@ export function AdminLogin() {
               )}
             </button>
           </form>
-
-          <div className="mt-5 p-3 rounded-lg bg-secondary/50 border border-border">
-            <p className="text-[11px] font-mono text-muted-foreground leading-relaxed">
-              <span className="text-accent">Demo credentials:</span><br />
-              Email: admin@safaritech.co.ke<br />
-              Password: safaritech-admin-2026
-            </p>
-          </div>
         </div>
 
         <button

@@ -2,16 +2,12 @@
 
 import * as React from "react";
 import { Hero } from "./hero";
-import { TrustStrip } from "./trust-strip";
 import { BrandMarquee } from "./brand-marquee";
 import { Collections } from "./collections";
 import { FeaturedProducts } from "./featured-products";
 import { DealsRow } from "./deals-row";
 import { NewArrivals } from "./new-arrivals";
 import { Brands } from "./brands";
-import { Process } from "./process";
-import { Features } from "./features";
-import { Testimonials } from "./testimonials";
 import { Newsletter } from "./newsletter";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { Product, Brand, Category } from "./types";
@@ -79,16 +75,12 @@ export function HomeView() {
   return (
     <>
       <Hero />
-      <TrustStrip />
-      <BrandMarquee />
       <Collections categories={data?.categories ?? []} loading={loading} />
       <FeaturedProducts products={data?.featured ?? []} loading={loading} />
       <DealsRow products={data?.deals ?? []} loading={loading} />
       <NewArrivals products={data?.newArrivals ?? []} loading={loading} />
       <Brands brands={data?.brands ?? []} loading={loading} />
-      <Process />
-      <Features />
-      <Testimonials />
+      <BrandMarquee />
       <Newsletter />
     </>
   );

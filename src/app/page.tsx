@@ -16,6 +16,7 @@ import { HomeView } from "@/components/site/home-view";
 import { ShopView } from "@/components/site/shop-view";
 import { ProductDetailView } from "@/components/site/product-detail-view";
 import { CartView } from "@/components/site/cart-view";
+import { TrustView } from "@/components/site/trust-view";
 import { AdminLogin } from "@/components/admin/admin-login";
 import { AdminShell } from "@/components/admin/admin-shell";
 
@@ -42,6 +43,7 @@ function ViewSwitch() {
         {route.view === "shop" && <ShopView initialQuery={route.query} />}
         {route.view === "product" && route.slug && <ProductDetailView slug={route.slug} />}
         {route.view === "cart" && <CartView />}
+        {route.view === "trust" && <TrustView />}
       </main>
       <SiteFooter />
       <CartDrawer />

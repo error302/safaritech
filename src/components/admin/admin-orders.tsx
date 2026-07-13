@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Search, ChevronDown, ChevronRight, X } from "lucide-react";
+import Image from "next/image";
+import { Search, ChevronDown, ChevronRight } from "lucide-react";
 import { useAdminAuth } from "./admin-auth";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +18,7 @@ interface AdminOrder {
   total: number;
   status: string;
   paymentStatus: string;
+  paymentMethod: string;
   couponCode: string | null;
   createdAt: string;
   items: {
@@ -63,7 +65,6 @@ const PAYMENT_COLORS: Record<string, string> = {
 };
 
 const ORDER_STATUSES = ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"];
-const PAYMENT_STATUSES = ["PENDING", "INITIATED", "PAID", "FAILED", "REFUNDED"];
 
 export function AdminOrders() {
   const { adminFetch } = useAdminAuth();
@@ -103,15 +104,6 @@ export function AdminOrders() {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
-    });
-    load();
-  };
-
-  const updatePayment = async (id: string, paymentStatus: string) => {
-    await adminFetch(`/api/admin/orders/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ paymentStatus }),
     });
     load();
   };
@@ -210,7 +202,13 @@ export function AdminOrders() {
                           <div key={item.id} className="flex items-center gap-3 text-sm">
                             {item.imageUrl && (
                                
-                              <img src={item.imageUrl} alt={item.productName} className="h-8 w-8 rounded object-cover border border-border" />
+                              <Image
+                                src={item.imageUrl}
+                                alt={item.productName}
+                                width={32}
+                                height={32}
+                                className="h-8 w-8 rounded object-cover border border-border"
+                              />
                             )}
                             <div className="flex-1 min-w-0">
                               <span className="text-foreground truncate">{item.productName}</span>
@@ -275,16 +273,9 @@ export function AdminOrders() {
                           {ORDER_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
                         </select>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Payment:</span>
-                        <select
-                          value={o.paymentStatus}
-                          onChange={(e) => updatePayment(o.id, e.target.value)}
-                          className="h-8 px-3 rounded-lg bg-background border border-border text-xs font-medium focus:outline-none focus:ring-2 focus:ring-accent/30"
-                        >
-                          {PAYMENT_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
-                        </select>
-                      </div>
+                      <span className={cn("inline-flex px-2 py-1 rounded text-[10px] font-mono uppercase tracking-widest border", PAYMENT_COLORS[o.paymentStatus] ?? "")}>
+                        Payment: {o.paymentStatus}
+                      </span>
                     </div>
                   </div>
                 )}

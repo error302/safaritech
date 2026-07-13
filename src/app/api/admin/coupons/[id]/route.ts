@@ -1,25 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-
-function checkAuth(req: NextRequest): boolean {
-  const token = req.headers.get("x-admin-token");
-  const expected = process.env.ADMIN_TOKEN;
-  return !!expected && token === expected;
-}
+import { requireAdmin } from "@/lib/admin-auth";
+import { mutationSecurityResponse } from "@/lib/request-security";
+import { couponUpdateSchema } from "@/lib/admin-validation";
 
 /** PUT /api/admin/coupons/[id] — update coupon */
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  if (!checkAuth(req)) {
+  if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const blocked = await mutationSecurityResponse(req, "admin-coupons", 60, 60_000);
+  if (blocked) return blocked;
   try {
     const { id } = await params;
-    const body = await req.json();
-    if (body.code) body.code = body.code.toUpperCase().trim();
-    const coupon = await db.coupon.update({ where: { id }, data: body });
+    const parsed = couponUpdateSchema.safeParse(await req.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid coupon update" }, { status: 400 });
+    }
+    const coupon = await db.coupon.update({ where: { id }, data: parsed.data });
     return NextResponse.json({ coupon });
   } catch (err) {
     console.error("[/api/admin/coupons/[id] PUT]", err);
@@ -32,9 +33,11 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  if (!checkAuth(req)) {
+  if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const blocked = await mutationSecurityResponse(req, "admin-coupons", 60, 60_000);
+  if (blocked) return blocked;
   try {
     const { id } = await params;
     await db.coupon.delete({ where: { id } });

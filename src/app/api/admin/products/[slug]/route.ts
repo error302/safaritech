@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-
-function checkAuth(req: NextRequest): boolean {
-  const token = req.headers.get("x-admin-token");
-  const expected = process.env.ADMIN_TOKEN;
-  return !!expected && token === expected;
-}
+import { requireAdmin } from "@/lib/admin-auth";
+import { mutationSecurityResponse } from "@/lib/request-security";
+import { productPayloadSchema } from "@/lib/admin-validation";
 
 /**
  * GET /api/admin/products/[slug] — single product (admin)
@@ -16,7 +13,7 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  if (!checkAuth(req)) {
+  if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
@@ -48,35 +45,40 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  if (!checkAuth(req)) {
+  if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const blocked = await mutationSecurityResponse(req, "admin-products", 60, 60_000);
+  if (blocked) return blocked;
   try {
     const { slug } = await params;
-    const body = await req.json();
-    const { brandSlug, categorySlug, features, specs, ...rest } = body;
+    const parsed = productPayloadSchema.safeParse(await req.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid product details" }, { status: 400 });
+    }
+    const { brandSlug, categorySlug, features, specs, ...rest } = parsed.data;
 
     const existing = await db.product.findUnique({ where: { slug } });
     if (!existing) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    const data: Record<string, unknown> = { ...rest };
-    if (features !== undefined) data.features = JSON.stringify(features);
-    if (specs !== undefined) data.specs = JSON.stringify(specs);
-
-    if (brandSlug) {
-      const brand = await db.brand.findUnique({ where: { slug: brandSlug } });
-      if (brand) data.brandId = brand.id;
-    }
-    if (categorySlug) {
-      const category = await db.category.findUnique({ where: { slug: categorySlug } });
-      if (category) data.categoryId = category.id;
+    const brand = await db.brand.findUnique({ where: { slug: brandSlug } });
+    const category = await db.category.findUnique({ where: { slug: categorySlug } });
+    if (!brand || !category) {
+      return NextResponse.json({ error: "Brand or category not found" }, { status: 400 });
     }
 
     const product = await db.product.update({
       where: { slug },
-      data,
+      data: {
+        ...rest,
+        inStock: rest.stockCount > 0 && rest.inStock,
+        brandId: brand.id,
+        categoryId: category.id,
+        features: JSON.stringify(features),
+        specs: JSON.stringify(specs),
+      },
     });
 
     return NextResponse.json({ product });
@@ -93,9 +95,11 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  if (!checkAuth(req)) {
+  if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const blocked = await mutationSecurityResponse(req, "admin-products", 60, 60_000);
+  if (blocked) return blocked;
   try {
     const { slug } = await params;
     await db.product.delete({ where: { slug } });

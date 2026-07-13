@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import {
-  ArrowLeft,
   Star,
   Plus,
   Minus,
@@ -73,6 +72,7 @@ export function ProductDetailView({ slug }: { slug: string }) {
         name: data.product.name,
         brand: data.product.brand?.name ?? "",
         price: data.product.price,
+        originalPrice: data.product.originalPrice,
         shape: data.product.shape,
         accent: data.product.accent,
       },
@@ -482,7 +482,13 @@ export function ProductDetailView({ slug }: { slug: string }) {
                 You might also like
               </h2>
               <button
-                onClick={() => navigate({ view: "shop", query: { category: p.category?.slug } })}
+                onClick={() =>
+                  navigate(
+                    p.category?.slug
+                      ? { view: "shop", query: { category: p.category.slug } }
+                      : { view: "shop" }
+                  )
+                }
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors link-underline"
               >
                 More in {p.category?.name}

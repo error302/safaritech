@@ -1,18 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-
-function checkAuth(req: NextRequest): boolean {
-  const token = req.headers.get("x-admin-token");
-  const expected = process.env.ADMIN_TOKEN;
-  return !!expected && token === expected;
-}
+import { requireAdmin } from "@/lib/admin-auth";
+import { mutationSecurityResponse } from "@/lib/request-security";
+import { productPayloadSchema } from "@/lib/admin-validation";
 
 /**
  * GET /api/admin/products — list all products (admin)
  * POST /api/admin/products — create a new product (admin)
  */
-export async function GET(req: NextRequest) {
-  if (!checkAuth(req)) {
+export async function GET() {
+  if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
@@ -36,16 +33,17 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!checkAuth(req)) {
+  if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const blocked = await mutationSecurityResponse(req, "admin-products", 60, 60_000);
+  if (blocked) return blocked;
   try {
-    const body = await req.json();
-    const { brandSlug, categorySlug, features, specs, ...rest } = body;
-
-    if (!rest.name || !rest.slug || !brandSlug || !categorySlug) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    const parsed = productPayloadSchema.safeParse(await req.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid product details" }, { status: 400 });
     }
+    const { brandSlug, categorySlug, features, specs, ...rest } = parsed.data;
 
     const brand = await db.brand.findUnique({ where: { slug: brandSlug } });
     if (!brand) return NextResponse.json({ error: "Brand not found" }, { status: 400 });
@@ -56,6 +54,7 @@ export async function POST(req: NextRequest) {
     const product = await db.product.create({
       data: {
         ...rest,
+        inStock: rest.stockCount > 0 && rest.inStock,
         brandId: brand.id,
         categoryId: category.id,
         features: JSON.stringify(features ?? []),

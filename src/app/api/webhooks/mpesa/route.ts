@@ -1,83 +1,108 @@
+import { timingSafeEqual } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { releaseOrderReservation } from "@/lib/order-reservations";
+import { rateLimitResponse } from "@/lib/request-security";
+import {
+  MpesaCallbackItem,
+  validateMpesaPayment,
+} from "@/lib/mpesa-callback";
 
-/**
- * POST /api/webhooks/mpesa — Daraja STK Push callback
- *
- * Daraja sends a POST with stkCallback containing:
- *  - ResultCode: 0 = success, anything else = failure
- *  - ResultDesc: human-readable description
- *  - CallbackMetadata.Item[]: amount, mpesaReceiptNumber, phoneNumber, etc.
- *
- * This endpoint updates the order's payment status based on the callback.
- */
+interface StkCallback {
+  MerchantRequestID?: string;
+  CheckoutRequestID?: string;
+  ResultCode?: number;
+  ResultDesc?: string;
+  CallbackMetadata?: { Item?: MpesaCallbackItem[] };
+}
+
+function hasValidSecret(req: NextRequest): boolean {
+  const expected = process.env.MPESA_CALLBACK_SECRET;
+  const received = req.nextUrl.searchParams.get("token");
+  if (!expected || !received) return false;
+
+  const expectedBuffer = Buffer.from(expected);
+  const receivedBuffer = Buffer.from(received);
+  return (
+    expectedBuffer.length === receivedBuffer.length &&
+    timingSafeEqual(expectedBuffer, receivedBuffer)
+  );
+}
+
 export async function POST(req: NextRequest) {
+  if (!hasValidSecret(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const blocked = await rateLimitResponse(req, "mpesa-webhook", 120, 60_000);
+  if (blocked) return blocked;
+
   try {
     const body = await req.json();
-
-    // Daraja wraps the callback in stkCallback
-    const callback = body?.Body?.stkCallback;
-    if (!callback) {
+    const callback = body?.Body?.stkCallback as StkCallback | undefined;
+    if (
+      !callback?.CheckoutRequestID ||
+      !callback.MerchantRequestID ||
+      typeof callback.ResultCode !== "number"
+    ) {
       return NextResponse.json({ error: "Invalid callback format" }, { status: 400 });
     }
 
-    const {
-      MerchantRequestID: merchantRequestId,
-      CheckoutRequestID: checkoutRequestId,
-      ResultCode: resultCode,
-      ResultDesc: resultDesc,
-    } = callback;
+    const order = await db.order.findUnique({
+      where: { mpesaCheckoutId: callback.CheckoutRequestID },
+    });
+    if (!order || order.mpesaRequestId !== callback.MerchantRequestID) {
+      return NextResponse.json({ ok: true });
+    }
 
-    // Find the order by M-Pesa request IDs
-    const order = await db.order.findFirst({
-      where: {
-        OR: [
-          { mpesaRequestId: merchantRequestId },
-          { mpesaCheckoutId: checkoutRequestId },
-        ],
+    if (callback.ResultCode !== 0) {
+      await releaseOrderReservation(order.id);
+      return NextResponse.json({ ok: true });
+    }
+
+    const metadata = callback.CallbackMetadata?.Item ?? [];
+    const payment = validateMpesaPayment(
+      metadata,
+      order.total,
+      order.customerPhone
+    );
+    if (!payment) {
+      await releaseOrderReservation(order.id);
+      return NextResponse.json({ ok: true });
+    }
+
+    if (order.paymentStatus === "PAID") {
+      return NextResponse.json({
+        ok: order.mpesaReceiptNumber === payment.receipt,
+      });
+    }
+    if (order.paymentStatus === "FAILED") {
+      return NextResponse.json({ ok: true });
+    }
+
+    const receiptOrder = await db.order.findUnique({
+      where: { mpesaReceiptNumber: payment.receipt },
+      select: { id: true },
+    });
+    if (receiptOrder && receiptOrder.id !== order.id) {
+      await releaseOrderReservation(order.id);
+      return NextResponse.json({ ok: true });
+    }
+
+    await db.order.update({
+      where: { id: order.id },
+      data: {
+        paymentStatus: "PAID",
+        status: "CONFIRMED",
+        mpesaReceiptNumber: payment.receipt,
+        paidAmount: payment.amount,
+        paidPhone: payment.phone,
+        paidAt: new Date(),
       },
     });
 
-    if (!order) {
-      console.warn("[M-Pesa webhook] Order not found for merchantRequestId:", merchantRequestId);
-      return NextResponse.json({ ok: true }); // ACK to Daraja even if order not found
-    }
-
-    if (resultCode === 0) {
-      // Success — extract receipt number and amount
-      const metadata = callback.CallbackMetadata?.Item ?? [];
-      const receiptItem = metadata.find((i: { Name: string }) => i.Name === "MpesaReceiptNumber");
-      const amountItem = metadata.find((i: { Name: string }) => i.Name === "Amount");
-
-      await db.order.update({
-        where: { id: order.id },
-        data: {
-          paymentStatus: "PAID",
-          status: "CONFIRMED",
-        },
-      });
-
-      console.log(
-        `[M-Pesa webhook] Order ${order.orderNumber} PAID — receipt: ${receiptItem?.Value}, amount: ${amountItem?.Value}`
-      );
-    } else {
-      // Failure
-      await db.order.update({
-        where: { id: order.id },
-        data: {
-          paymentStatus: "FAILED",
-          notes: `${order.notes ?? ""}\n[M-Pesa failure: ${resultDesc}]`.trim(),
-        },
-      });
-
-      console.log(
-        `[M-Pesa webhook] Order ${order.orderNumber} FAILED — ${resultDesc}`
-      );
-    }
-
     return NextResponse.json({ ok: true });
-  } catch (err) {
-    console.error("[/api/webhooks/mpesa]", err);
+  } catch (error) {
+    console.error("[/api/webhooks/mpesa]", error);
     return NextResponse.json({ error: "Webhook processing failed" }, { status: 500 });
   }
 }

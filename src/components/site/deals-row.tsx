@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ArrowRight, Star, Plus, ArrowUpRight, Tag } from "lucide-react";
+import { ArrowRight, Plus, Tag } from "lucide-react";
 import { useViewRouter } from "./view-router";
 import { useCart, formatKsh } from "./cart-context";
 import { ProductImage } from "./product-image";
@@ -20,7 +20,6 @@ interface Props {
  */
 export function DealsRow({ products, loading }: Props) {
   const trackRef = React.useRef<HTMLDivElement>(null);
-  const { navigate } = useViewRouter();
   useScrollReveal([loading, products]);
 
   const deals = products.filter((p) => p.originalPrice && p.originalPrice > p.price);
@@ -166,6 +165,7 @@ function DealCard({ product, index }: { product: Product; index: number }) {
                 name: product.name,
                 brand: product.brand?.name ?? "",
                 price: product.price,
+                originalPrice: product.originalPrice,
                 shape: product.shape,
                 accent: product.accent,
               })

@@ -1,214 +1,247 @@
+import { randomBytes } from "crypto";
+import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/admin-auth";
+import { calculateCouponDiscount, calculateShipping } from "@/lib/checkout";
 import { db } from "@/lib/db";
-import { initiateStkPush, isMpesaConfigured } from "@/lib/mpesa";
+import { initiateStkPush, isMpesaConfigured, normalizePhone } from "@/lib/mpesa";
+import { createOrderAccessToken } from "@/lib/order-access";
+import { releaseOrderReservation } from "@/lib/order-reservations";
+import { orderRequestSchema } from "@/lib/order-validation";
+import { mutationSecurityResponse } from "@/lib/request-security";
 
-/**
- * POST /api/orders — create an order from cart items + initiate M-Pesa STK Push
- *
- * Body: {
- *   items: [{ slug, name, brand, price, quantity, shape, accent, imageUrl }],
- *   customer: { name, email, phone, address, city, county, notes },
- *   couponCode?: string,
- *   shipping: number,
- *   subtotal: number,
- * }
- *
- * Returns: { order, mpesa: { success, mock, customerMessage, checkoutRequestId } }
- */
+class OrderInputError extends Error {}
+
+function createOrderNumber(): string {
+  const timestamp = Date.now().toString(36).toUpperCase().slice(-7);
+  const suffix = randomBytes(3).toString("hex").toUpperCase();
+  return `SFT-${timestamp}-${suffix}`;
+}
+
 export async function POST(req: NextRequest) {
+  const blocked = await mutationSecurityResponse(req, "order-create", 10, 10 * 60_000);
+  if (blocked) return blocked;
+
   try {
-    const body = await req.json();
-    const { items, customer, couponCode, shipping, subtotal } = body;
-
-    if (!items || !Array.isArray(items) || items.length === 0) {
-      return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
-    }
-    if (!customer?.name || !customer?.phone) {
-      return NextResponse.json({ error: "Customer name and phone are required" }, { status: 400 });
+    const parsed = orderRequestSchema.safeParse(await req.json());
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid checkout details", issues: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      );
     }
 
-    // Validate products against DB (prevent price tampering)
-    const slugs = items.map((i: { slug: string }) => i.slug);
-    const dbProducts = await db.product.findMany({
+    const quantities = new Map<string, number>();
+    for (const item of parsed.data.items) {
+      const quantity = (quantities.get(item.slug) ?? 0) + item.quantity;
+      if (quantity > 20) {
+        return NextResponse.json(
+          { error: `Maximum quantity exceeded for ${item.slug}` },
+          { status: 400 }
+        );
+      }
+      quantities.set(item.slug, quantity);
+    }
+
+    const slugs = [...quantities.keys()];
+    const products = await db.product.findMany({
       where: { slug: { in: slugs } },
-      select: { id: true, slug: true, price: true, name: true, brandId: true, imageUrl: true, shape: true, accent: true, brand: { select: { name: true } } },
+      select: {
+        id: true,
+        slug: true,
+        price: true,
+        name: true,
+        imageUrl: true,
+        shape: true,
+        accent: true,
+        brand: { select: { name: true } },
+      },
     });
-
-    const productMap = new Map(dbProducts.map((p) => [p.slug, p]));
-
-    let computedSubtotal = 0;
-    const orderItems: {
-      productId: string;
-      productName: string;
-      brandName: string;
-      unitPrice: number;
-      quantity: number;
-      lineTotal: number;
-      imageUrl: string | null;
-      shape: string;
-      accent: string;
-    }[] = [];
-
-    for (const item of items) {
-      const product = productMap.get(item.slug);
-      if (!product) {
-        return NextResponse.json({ error: `Product not found: ${item.slug}` }, { status: 400 });
-      }
-      const unitPrice = product.price; // always use DB price
-      const lineTotal = unitPrice * item.quantity;
-      computedSubtotal += lineTotal;
-      orderItems.push({
-        product: { connect: { id: product.id } },
-        productName: product.name,
-        brandName: product.brand?.name ?? "",
-        unitPrice,
-        quantity: item.quantity,
-        lineTotal,
-        imageUrl: product.imageUrl,
-        shape: product.shape,
-        accent: product.accent,
-      });
+    if (products.length !== slugs.length) {
+      return NextResponse.json({ error: "One or more products are unavailable" }, { status: 400 });
     }
 
-    // Coupon validation
-    let discount = 0;
-    let couponId: string | null = null;
-    let couponCodeStr: string | null = null;
+    const productMap = new Map(products.map((product) => [product.slug, product]));
+    const items = slugs.map((slug) => {
+      const product = productMap.get(slug);
+      if (!product) throw new OrderInputError(`Product not found: ${slug}`);
+      const quantity = quantities.get(slug) ?? 0;
+      return {
+        product,
+        quantity,
+        lineTotal: product.price * quantity,
+      };
+    });
+    const subtotal = items.reduce((sum, item) => sum + item.lineTotal, 0);
+    if (!Number.isSafeInteger(subtotal) || subtotal <= 0) {
+      return NextResponse.json({ error: "Invalid order total" }, { status: 400 });
+    }
 
-    if (couponCode) {
-      const coupon = await db.coupon.findUnique({
-        where: { code: couponCode.toUpperCase() },
-      });
-      if (coupon && coupon.active) {
-        const expired = coupon.expiresAt && coupon.expiresAt < new Date();
-        const exhausted = coupon.usageLimit && coupon.usedCount >= coupon.usageLimit;
-        const meetsMin = computedSubtotal >= coupon.minOrder;
+    const customerPhone = normalizePhone(parsed.data.customer.phone);
+    const { token: accessToken, hash: accessTokenHash } = createOrderAccessToken();
+    const orderNumber = createOrderNumber();
 
-        if (!expired && !exhausted && meetsMin) {
-          if (coupon.type === "percentage") {
-            discount = Math.round((computedSubtotal * coupon.value) / 100);
-            if (coupon.maxDiscount && discount > coupon.maxDiscount) {
-              discount = coupon.maxDiscount;
-            }
-          } else {
-            discount = Math.round(coupon.value);
+    const order = await db.$transaction(
+      async (tx) => {
+        for (const item of items) {
+          const result = await tx.product.updateMany({
+            where: {
+              id: item.product.id,
+              inStock: true,
+              stockCount: { gte: item.quantity },
+            },
+            data: { stockCount: { decrement: item.quantity } },
+          });
+          if (result.count !== 1) {
+            throw new OrderInputError(`${item.product.name} does not have enough stock`);
           }
-          couponId = coupon.id;
-          couponCodeStr = coupon.code;
+          await tx.product.updateMany({
+            where: { id: item.product.id, stockCount: 0 },
+            data: { inStock: false },
+          });
         }
-      }
-    }
 
-    const computedShipping = shipping ?? (computedSubtotal > 100000 ? 0 : 650);
-    const total = computedSubtotal - discount + computedShipping;
+        let discount = 0;
+        let couponId: string | null = null;
+        let couponCode: string | null = null;
+        if (parsed.data.couponCode) {
+          const coupon = await tx.coupon.findUnique({
+            where: { code: parsed.data.couponCode.toUpperCase() },
+          });
+          if (!coupon) throw new OrderInputError("Coupon not found");
+          const result = calculateCouponDiscount(coupon, subtotal);
+          if (!result.valid) throw new OrderInputError(result.reason ?? "Coupon is invalid");
+          discount = result.discount;
+          couponId = coupon.id;
+          couponCode = coupon.code;
+          await tx.coupon.update({
+            where: { id: coupon.id },
+            data: { usedCount: { increment: 1 } },
+          });
+        }
 
-    // Generate order number
-    const orderNumber = `SFT-${Date.now().toString(36).toUpperCase().slice(-8)}`;
+        const shipping = calculateShipping(subtotal - discount);
+        const total = subtotal - discount + shipping;
+        if (!Number.isSafeInteger(total) || total <= 0) {
+          throw new OrderInputError("Invalid order total");
+        }
 
-    // Create order
-    const order = await db.order.create({
-      data: {
-        orderNumber,
-        customerName: customer.name,
-        customerEmail: customer.email || "",
-        customerPhone: customer.phone,
-        shippingAddress: customer.address || null,
-        city: customer.city || null,
-        county: customer.county || null,
-        notes: customer.notes || null,
-        subtotal: computedSubtotal,
-        discount,
-        shipping: computedShipping,
-        total,
-        couponCode: couponCodeStr,
-        couponId,
-        paymentMethod: "mpesa",
-        paymentStatus: "INITIATED",
-        status: "PENDING",
-        items: { create: orderItems },
+        const created = await tx.order.create({
+          data: {
+            orderNumber,
+            accessTokenHash,
+            customerName: parsed.data.customer.name,
+            customerEmail: parsed.data.customer.email,
+            customerPhone,
+            shippingAddress: parsed.data.customer.address,
+            city: parsed.data.customer.city,
+            county: parsed.data.customer.county || null,
+            notes: parsed.data.customer.notes || null,
+            subtotal,
+            discount,
+            shipping,
+            total,
+            couponCode,
+            couponId,
+            paymentMethod: "mpesa",
+            paymentStatus: "PENDING",
+            status: "PENDING",
+          },
+        });
+
+        await tx.orderItem.createMany({
+          data: items.map((item) => ({
+            orderId: created.id,
+            productId: item.product.id,
+            productName: item.product.name,
+            brandName: item.product.brand.name,
+            unitPrice: item.product.price,
+            quantity: item.quantity,
+            lineTotal: item.lineTotal,
+            imageUrl: item.product.imageUrl,
+            shape: item.product.shape,
+            accent: item.product.accent,
+          })),
+        });
+
+        return created;
       },
-      include: { items: true },
-    });
-
-    // Increment coupon usage
-    if (couponId) {
-      await db.coupon.update({
-        where: { id: couponId },
-        data: { usedCount: { increment: 1 } },
-      });
-    }
-
-    // Initiate M-Pesa STK Push
-    const mpesaResult = await initiateStkPush({
-      phone: customer.phone,
-      amount: total,
-      accountReference: orderNumber,
-      transactionDesc: `Safaritech order ${orderNumber}`,
-    });
-
-    // Update order with M-Pesa request IDs
-    if (mpesaResult.success) {
-      await db.order.update({
-        where: { id: order.id },
-        data: {
-          mpesaRequestId: mpesaResult.merchantRequestId ?? null,
-          mpesaCheckoutId: mpesaResult.checkoutRequestId ?? null,
-        },
-      });
-    }
-
-    return NextResponse.json({
-      order: {
-        id: order.id,
-        orderNumber: order.orderNumber,
-        total: order.total,
-        subtotal: order.subtotal,
-        discount: order.discount,
-        shipping: order.shipping,
-        status: order.status,
-        paymentStatus: order.paymentStatus,
-      },
-      mpesa: {
-        success: mpesaResult.success,
-        mock: mpesaResult.mock ?? false,
-        customerMessage: mpesaResult.customerMessage,
-        error: mpesaResult.error,
-      },
-      mpesaConfigured: isMpesaConfigured(),
-    });
-  } catch (err) {
-    console.error("[/api/orders POST]", err);
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Failed to create order" },
-      { status: 500 }
+      { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }
     );
+
+    const mpesa = await initiateStkPush({
+      phone: customerPhone,
+      amount: order.total,
+      accountReference: order.orderNumber,
+      transactionDesc: `Safaritech order ${order.orderNumber}`,
+    });
+
+    if (!mpesa.success) {
+      await releaseOrderReservation(order.id);
+      return NextResponse.json(
+        {
+          error: mpesa.error ?? "M-Pesa checkout failed",
+          order: { id: order.id, orderNumber: order.orderNumber },
+          accessToken,
+        },
+        { status: 502 }
+      );
+    }
+
+    await db.order.update({
+      where: { id: order.id },
+      data: {
+        paymentStatus: "INITIATED",
+        mpesaRequestId: mpesa.merchantRequestId ?? null,
+        mpesaCheckoutId: mpesa.checkoutRequestId ?? null,
+      },
+    });
+
+    return NextResponse.json(
+      {
+        order: {
+          id: order.id,
+          orderNumber: order.orderNumber,
+          total: order.total,
+          subtotal: order.subtotal,
+          discount: order.discount,
+          shipping: order.shipping,
+          status: order.status,
+          paymentStatus: "INITIATED",
+        },
+        accessToken,
+        mpesa: {
+          success: true,
+          mock: mpesa.mock ?? false,
+          customerMessage: mpesa.customerMessage,
+        },
+        mpesaConfigured: isMpesaConfigured(),
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    if (error instanceof OrderInputError) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+    console.error("[/api/orders POST]", error);
+    return NextResponse.json({ error: "Failed to create order" }, { status: 500 });
   }
 }
 
-/** GET /api/orders — list orders (admin only, or by email for customers) */
-export async function GET(req: NextRequest) {
+export async function GET() {
+  if (!(await requireAdmin())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
-    const email = req.nextUrl.searchParams.get("email");
-    const token = req.headers.get("x-admin-token");
-    const expected = process.env.ADMIN_TOKEN;
-
-    const where: Record<string, unknown> = {};
-    if (email) {
-      where.customerEmail = email;
-    } else if (!expected || token !== expected) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const orders = await db.order.findMany({
-      where,
       orderBy: { createdAt: "desc" },
       take: 100,
       include: { items: true },
     });
-
     return NextResponse.json({ orders });
-  } catch (err) {
-    console.error("[/api/orders GET]", err);
-    return NextResponse.json({ error: "Failed" }, { status: 500 });
+  } catch (error) {
+    console.error("[/api/orders GET]", error);
+    return NextResponse.json({ error: "Failed to load orders" }, { status: 500 });
   }
 }
